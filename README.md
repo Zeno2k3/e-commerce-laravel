@@ -18,7 +18,7 @@ npm i
 #### build tallwindCSS
 
 ```bash
-run biuld
+run build
 npm run dev
 ```
 
