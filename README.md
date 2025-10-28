@@ -18,7 +18,7 @@ npm i
 #### build tallwindCSS
 
 ```bash
-run build
+npm run build
 npm run dev
 ```
 

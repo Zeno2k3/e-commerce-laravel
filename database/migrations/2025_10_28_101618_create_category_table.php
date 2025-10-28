@@ -11,16 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('diachi', function (Blueprint $table) {
-            $table->id('diachi_id');
-            $table->unsignedBigInteger('nguoidung_id');
-            $table->text('diachi');
+        Schema::create('category', function (Blueprint $table) {
+            $table->id('category_id');
+            $table->string('category_name', 255);
+            $table->text('description')->nullable();
             $table->timestamps();
-
-            $table->foreign('nguoidung_id')
-                ->references('nguoidung_id')
-                ->on('nguoidung')
-                ->onDelete('cascade');
         });
     }
 
@@ -29,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('diachi');
+        Schema::dropIfExists('category');
     }
 };
