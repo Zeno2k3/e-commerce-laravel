@@ -6,6 +6,7 @@
 
 @section('content')
     <div class="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
+
         <h1 class='mb-1 text-center text-2xl font-bold text-gray-800'>Đăng nhập</h1>
         <p class='mb-6 text-center text-gray-400'>Đăng nhập vào tài khoản của bạn để tiếp tục mua sắm</p>
         <form method="POST" action="{{ route('login') }}">
@@ -31,9 +32,10 @@
                 <div class="flex-grow border-t border-gray-300"></div>
             </div>
             <x-button type="button" variant="outline" class="mb-4 flex w-full items-center justify-center">
-                <img src="{{ asset('images/google-logo-search-new-svgrepo-com.svg') }}" alt="Google Logo"
-                    class="mr-2 inline h-5 w-5">
-                Đăng nhập bằng Google
+                <a href="{{ route('gg.redirect') }}"><img src="{{ asset('images/google-logo-search-new-svgrepo-com.svg') }}"
+                        alt="Google Logo" class="mr-2 inline h-5 w-5">
+                    Đăng nhập bằng Google
+                </a>
             </x-button>
         </form>
         <a href="#" class='text-blue-500 hover:underline'>Quên mật khẩu</a>
