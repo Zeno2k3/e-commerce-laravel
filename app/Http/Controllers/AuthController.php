@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Laravel\Socialite\Socialite;
+use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Exception;
@@ -13,15 +13,13 @@ class AuthController extends Controller
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
-            // dd($googleUser);
+            $googleUser = Socialite::driver('google')->stateless()->user();
 
             $findUser = User::where('email', $googleUser->email)->first();
             if ($findUser) {
                 Auth::login($findUser);
                 return redirect('/')->with('success', 'Đăng nhập thành công bằng Google.');
             }
-
             $newUser = User::create(
                 [
                     'full_name' => $googleUser->name,

@@ -30,6 +30,12 @@ php artisan key:generate
 php artisan serve
 ```
 
+#### Create database
+
+```bash
+php artisan migrate:fresh
+```
+
 ## Folder detail fontend
 
 ```bash
