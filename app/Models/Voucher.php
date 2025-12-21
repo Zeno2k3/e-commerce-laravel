@@ -20,7 +20,7 @@ class Voucher extends Model
      *
      * @var string
      */
-    protected $primaryKey = 'category_id';
+    protected $primaryKey = 'voucher_id';
 
     /**
      * Các cột có thể gán hàng loạt
