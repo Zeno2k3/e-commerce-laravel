@@ -12,7 +12,7 @@ class VoucherUsage extends Model
      *
      * @var string
      */
-    protected $table = 'voucher';
+    protected $table = 'voucher_usage';
 
 
     /**
