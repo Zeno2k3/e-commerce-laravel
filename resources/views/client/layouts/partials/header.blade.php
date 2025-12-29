@@ -35,9 +35,27 @@
                     <i class="fa-solid fa-globe text-2xl"></i>
                 </button>
 
-                <a href="/" class="hover:text-purple-600 transition">
-                    <i class="fa-regular fa-user text-2xl"></i>
-                </a>
+                @guest
+                <a href="{{ route('login') }}" class="hover:text-purple-600 transition" title="Đăng nhập">
+        <i class="fa-regular fa-user text-2xl"></i>
+    </a>
+@endguest
+
+@auth
+    <div class="relative group">
+        <a href="/profile" class="flex items-center gap-2 hover:text-purple-600 transition">
+            <i class="fa-solid fa-user-check text-2xl text-purple-600"></i>
+            
+            <span class="text-sm font-medium hidden md:block">
+                {{ Auth::user()->full_name }}
+            </span>
+        </a>
+
+        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden group-hover:block border border-gray-100">
+            <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50">Hồ sơ cá nhân</a>
+        </div>
+    </div>
+@endauth
 
                 <a href="{{ route('client.carts.index') }}" class="relative hover:text-purple-600 transition">
                     <i class="fa-solid fa-bag-shopping text-2xl"></i>
