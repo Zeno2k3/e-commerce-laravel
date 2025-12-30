@@ -1,33 +1,58 @@
 @extends('admin.layouts.app')
+
+@section('title', 'Quản lý khách hàng')
+
 @section('content')
-<div class="max-w-6xl mx-auto space-y-6">
-    <h2 class="text-2xl font-black text-slate-800 uppercase italic tracking-tighter border-b-4 border-blue-600 inline-block pb-2">Danh sách khách hàng</h2>
-    
-    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
-        <table class="w-full text-left">
-            <thead class="bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest">
-                <tr>
-                    <th class="px-6 py-5">Họ tên (Bảng user)</th>
-                    <th class="px-6 py-5 text-center">Email</th>
-                    <th class="px-6 py-5 text-center">Thao tác</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 text-sm font-bold">
-                <tr class="hover:bg-blue-50/50 transition duration-300">
-                    <td class="px-6 py-6 flex items-center space-x-4">
-                        <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px]">TV</div>
-                        <span class="text-slate-800 uppercase">Trần Văn Phú</span>
-                    </td>
-                    <td class="px-6 py-4 text-center text-slate-500 italic">phu.master@luxe.com</td>
-                    <td class="px-6 py-4 text-center">
-                        <div class="flex justify-center space-x-2">
-                            <button type="button" onclick="alert('Tính năng xem hồ sơ sắp ra mắt!')" class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition active:scale-90"><i class="fa-solid fa-eye"></i></button>
-                            <button type="button" onclick="alert('Tính năng xóa sắp ra mắt!')" class="w-8 h-8 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition active:scale-90"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+<div class="flex justify-between items-center mb-6">
+    <div class="flex items-center space-x-3">
+        <h2 class="text-2xl font-black text-slate-800 uppercase italic tracking-tighter border-b-4 border-indigo-600 pb-2">
+            Khách hàng
+        </h2>
+        <span class="bg-slate-100 text-slate-500 text-[10px] px-2 py-1 rounded font-bold italic border border-slate-200 uppercase">
+            Table: user
+        </span>
     </div>
 </div>
+
+<div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+    <table class="w-full text-left border-collapse">
+        <thead class="bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.2em]">
+            <tr>
+                <th class="px-6 py-5">Khách hàng (full_name)</th>
+                <th class="px-6 py-5">Email</th>
+                <th class="px-6 py-5 text-center">Vai trò (role)</th>
+                <th class="px-6 py-5 text-center">Trạng thái (status)</th>
+                <th class="px-6 py-5 text-right">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+            {{-- Vòng lặp lấy dữ liệu thật từ bảng user --}}
+            {{-- @foreach($users as $user) ... @endforeach --}}
+        </tbody>
+    </table>
+
+    {{-- Hiển thị khi database trống (Trừ tài khoản admin đang đăng nhập) --}}
+    <div class="py-24 text-center">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-slate-50 rounded-full mb-4 text-slate-200">
+            <i class="fa-solid fa-users-slash text-3xl"></i>
+        </div>
+        <p class="text-slate-400 font-black italic uppercase tracking-widest text-[10px]">
+            Chưa có dữ liệu người dùng khác trong hệ thống
+        </p>
+        <p class="text-slate-300 text-[9px] mt-1 font-bold">Kiểm chứng: Khớp bảng `user` (ecommerce_db)</p>
+    </div>
+</div>
+
+<script>
+    function viewCustomer(id) {
+        // Sau này dùng route('admin.customers.show', id)
+        alert('Xem chi tiết khách hàng ID: ' + id);
+    }
+
+    function deleteCustomer(id) {
+        if(confirm('Mày có chắc muốn xóa khách hàng này? Mọi lịch sử đơn hàng và địa chỉ liên quan sẽ bị ảnh hưởng!')) {
+            alert('Đã gửi yêu cầu xóa khách hàng ID: ' + id);
+        }
+    }
+</script>
 @endsection

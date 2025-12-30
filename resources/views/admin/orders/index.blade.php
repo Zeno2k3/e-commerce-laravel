@@ -1,36 +1,37 @@
 @extends('admin.layouts.app')
-@section('title', 'Danh sách Đơn hàng')
-@section('content')
-<div class="mb-6">
-    <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Danh sách đơn hàng</h2>
-</div>
 
-<div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-    <table class="w-full text-left">
-        <thead>
-            <tr class="bg-slate-50 border-b border-slate-100">
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Mã Đơn</th>
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Khách hàng</th>
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Tổng tiền</th>
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Trạng thái</th>
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Thao tác</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 text-sm">
-            <tr class="hover:bg-slate-50/50 transition">
-                <td class="px-6 py-4 font-black text-blue-600 italic text-center">#ORD-9921</td>
-                <td class="px-6 py-4 font-bold text-slate-700 tracking-tighter">Trần Văn Phú</td>
-                <td class="px-6 py-4 font-black text-slate-900 text-center">$240.00</td>
-                <td class="px-6 py-4 text-center">
-                    <span class="px-3 py-1 bg-amber-100 text-amber-600 text-[10px] font-black rounded-full uppercase italic">Chờ xử lý</span>
-                </td>
-                <td class="px-6 py-4 text-center">
-                    <a href="{{ route('admin.orders.show') }}" class="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-xl font-bold text-xs hover:bg-blue-600 hover:text-white transition shadow-sm">
-                        <i class="fa-solid fa-eye mr-1"></i> Xem chi tiết
-                    </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+@section('title', 'Quản lý đơn hàng')
+
+@section('content')
+<div class="max-w-6xl mx-auto space-y-6">
+    <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-black text-slate-800 uppercase italic tracking-tighter border-b-4 border-blue-600 pb-2">
+            Danh sách đơn hàng
+        </h2>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.2em]">
+                <tr>
+                    <th class="px-6 py-5">Mã đơn (order_id)</th>
+                    <th class="px-6 py-5">Khách hàng (user_id)</th>
+                    <th class="px-6 py-5 text-center">Tổng tiền</th>
+                    <th class="px-6 py-5 text-center">Trạng thái (status)</th>
+                    <th class="px-6 py-5 text-right">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-bold text-sm text-slate-700">
+                {{-- Mày sẽ dùng vòng lặp @foreach($orders as $order) ở đây --}}
+                {{-- Dữ liệu sẽ trống cho đến khi mày kết nối Database --}}
+            </tbody>
+        </table>
+        
+        {{-- Hiển thị thông báo nếu chưa có đơn hàng --}}
+        <div class="p-20 text-center">
+            <i class="fa-solid fa-box-open text-slate-200 text-6xl mb-4"></i>
+            <p class="text-slate-400 font-bold italic uppercase tracking-widest text-xs">Chưa có dữ liệu đơn hàng trong Database</p>
+        </div>
+    </div>
 </div>
 @endsection

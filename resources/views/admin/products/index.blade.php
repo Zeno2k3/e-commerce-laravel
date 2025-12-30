@@ -1,60 +1,54 @@
 @extends('admin.layouts.app')
+
+@section('title', 'Quản lý sản phẩm')
+
 @section('content')
 <div class="flex justify-between items-center mb-6">
-    <h2 class="text-2xl font-bold text-slate-800">Sản phẩm</h2>
-    <a href="{{ route('admin.products.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold shadow-lg hover:bg-blue-700 transition">
-        + Thêm mới
+    <div class="flex items-center space-x-3">
+        <h2 class="text-2xl font-black text-slate-800 uppercase italic tracking-tighter border-b-4 border-blue-600 pb-2">Sản phẩm</h2>
+        <span class="bg-slate-100 text-slate-500 text-[10px] px-2 py-1 rounded font-bold italic border border-slate-200">Table: product & variant</span>
+    </div>
+    <a href="{{ route('admin.products.create') }}" class="bg-blue-600 text-white px-5 py-3 rounded-2xl font-black shadow-lg shadow-blue-500/30 hover:bg-blue-700 active:scale-95 transition-all uppercase text-[10px] tracking-widest">
+        <i class="fa-solid fa-plus mr-2"></i> Thêm sản phẩm mới
     </a>
 </div>
-<div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-    <table class="w-full text-left">
-        <thead class="bg-slate-50 border-b border-slate-100">
+
+<div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+    <table class="w-full text-left border-collapse">
+        <thead class="bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.2em]">
             <tr>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Thông tin</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Giá</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Trạng thái</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-right">Thao tác</th>
+                <th class="px-6 py-5">Thông tin chính (Product)</th>
+                <th class="px-6 py-5 text-center">Danh mục (Category)</th>
+                <th class="px-6 py-5 text-center">Giá (Variant Price)</th>
+                <th class="px-6 py-5 text-center">Tồn kho (Stock)</th>
+                <th class="px-6 py-5 text-right">Quản lý</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
-            <tr class="hover:bg-slate-50/50 transition">
-                <td class="px-6 py-4 flex items-center">
-                    <img src="https://via.placeholder.com/40" class="rounded-lg mr-3 border">
-                    <span class="font-bold text-slate-700 text-sm">Nike Air Jordan 1</span>
-                </td>
-                <td class="px-6 py-4 font-black text-slate-900">$120.00</td>
-                <td class="px-6 py-4">
-                    <span class="px-2 py-1 bg-emerald-100 text-emerald-600 text-[10px] font-black rounded-md">CÒN HÀNG</span>
-                </td>
-                <td class="px-6 py-4 text-right">
-    <div class="flex justify-end items-center space-x-3">
-        <button type="button" 
-                onclick="handleEdit('Nike Air Jordan 1')" 
-                class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white active:scale-90 transition-all shadow-sm border border-blue-100" 
-                title="Sửa sản phẩm">
-            <i class="fas fa-edit text-xs"></i>
-        </button>
-
-        <button type="button" 
-                onclick="handleDelete('Nike Air Jordan 1')" 
-                class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white active:scale-90 transition-all shadow-sm border border-red-100" 
-                title="Xóa sản phẩm">
-            <i class="fas fa-trash text-xs"></i>
-        </button>
-    </div>
-</td>
-
-<script>
-    function handleEdit(name) {
-        alert('Chức năng sửa sản phẩm sắp ra mắt!');
-    }
-
-    function handleDelete(name) {
-        alert('Chức năng xóa sản phẩm sắp ra mắt!');
-    }
-</script>
-            </tr>
+            {{-- CHỖ NÀY ĐỂ TRỐNG ĐỂ ĐỔ DỮ LIỆU THẬT --}}
+            {{-- Mày sẽ dùng: @foreach($products as $product) ... @endforeach --}}
         </tbody>
     </table>
+
+    <div class="py-24 text-center">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-slate-50 rounded-full mb-4">
+            <i class="fa-solid fa-box-open text-slate-200 text-3xl"></i>
+        </div>
+        <p class="text-slate-400 font-black italic uppercase tracking-widest text-[10px]">Hiện tại không có sản phẩm nào</p>
+        <p class="text-slate-300 text-[9px] mt-1 font-bold">Vui lòng thêm sản phẩm mới để hiển thị tại đây</p>
+    </div>
 </div>
+
+<script>
+    function handleEdit(id) {
+        // Sau này truyền ID thật từ Database vào đây
+        alert('Đang mở trình chỉnh sửa cho ID: ' + id);
+    }
+
+    function handleDelete(id) {
+        if(confirm('Mày có chắc muốn xóa sản phẩm này? Mọi biến thể (Size, Màu) liên quan sẽ bị xóa sạch khỏi Database!')) {
+            alert('Đã gửi lệnh xóa cho ID: ' + id);
+        }
+    }
+</script>
 @endsection

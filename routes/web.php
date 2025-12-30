@@ -65,18 +65,19 @@ Route::prefix('admin')->group(function () {
 
     // Quản lý Sản phẩm
     Route::prefix('products')->group(function () {
-        Route::get('/', function () { 
-            return view('admin.products.index'); 
-        })->name('admin.products.index');
-        
-        Route::get('/create', function () { 
-            return view('admin.products.form'); 
-        })->name('admin.products.create');
-        
-        Route::get('/show', function () { 
-            return view('admin.products.show'); 
-        })->name('admin.products.show');
-    });
+    Route::get('/', function () { 
+        return view('admin.products.index'); 
+    })->name('admin.products.index');
+    
+    // SỬA CHỖ NÀY: Đổi 'admin.products.form' thành 'admin.products.create'
+    Route::get('/create', function () { 
+        return view('admin.products.create'); 
+    })->name('admin.products.create');
+    
+    Route::get('/show', function () { 
+        return view('admin.products.show'); 
+    })->name('admin.products.show');
+});
 
     // Quản lý Đơn hàng
     Route::prefix('orders')->group(function () {
