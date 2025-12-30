@@ -8,11 +8,10 @@
     @vite('resources/css/app.css')
 </head>
 
-<body>
-    <div class="flex min-h-screen items-center justify-center bg-gray-100">
+<body class="bg-gray-50 font-sans antialiased text-gray-900">
+    <div class="flex min-h-screen items-center justify-center bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-blue-100 via-white to-purple-100 p-4 selection:bg-indigo-500 selection:text-white">
         @yield('content')
     </div>
-
 </body>
 
 </html>

@@ -9,18 +9,6 @@ Route::get('/', function () {
     return view('client.home');
 });
 
-Route::view('/auth/login', 'auth.login')->name('login');
-Route::view('/auth/register', 'auth.register')->name('register');
-
-Route::get('/auth/google/redirect', function () {
-    return Socialite::driver('google')->redirect();
-})->name('gg.redirect');
-
-Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
-
-
-
-
 Route::get('/voucher', function () {
     return view('client.layouts.voucher');
 })->name('client.voucher');;
@@ -56,3 +44,15 @@ Route::get('/phu-kien', function () {
 Route::get('/khuyen-mai', function () {
     return view('client.sale');
 })->name('client.sale');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', function () {
+        return view('client.account.profile');
+    })->name('client.profile');
+
+    Route::prefix('admin')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('admin.dashboard');
+    });
+});
