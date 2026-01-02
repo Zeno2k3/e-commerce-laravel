@@ -1,3 +1,6 @@
+@extends('client.layouts.app')
+
+@section('content')
 <!DOCTYPE html>
 
 <html lang="en">
@@ -14,9 +17,8 @@
 <body>
     <div class='container flex min-h-screen flex-col items-center justify-center'>
         <h1 class='font-medium'>Welcome to the Home Page</h1>
-        <p>This is a sample home page using Blade templating in Laravel.</p>
-        <a href="{{ route('login') }}" class='italic text-blue-500 underline'>Login</a>
     </div>
 </body>
 
 </html>
+@endsection

@@ -42,9 +42,7 @@ class ProductVariant extends Model
         'stock' => 'integer',
     ];
 
-    /**
-     * Quan hệ: mỗi biến thể thuộc về một sản phẩm
-     */
+   
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id', 'product_id');

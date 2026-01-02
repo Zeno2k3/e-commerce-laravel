@@ -1,4 +1,4 @@
-<?php
+ơ<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,8 +16,6 @@ return new class extends Migration
             $table->string('full_name', 255);
             $table->string('email', 255)->unique();
             $table->string('password', 255)->nullable();
-            $table->text('asset_token')->nullable();
-            $table->text('refresh_token')->nullable();
             $table->string('phone_number', 20)->nullable();
             $table->enum('role', ['user', 'employee', 'admin'])->default('user');
             $table->enum('status', ['active', 'inactive'])->default('active');

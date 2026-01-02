@@ -1,10 +1,59 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderDetail extends Model
 {
-    //
+    use HasFactory;
+    /**
+     * Tên bảng trong database
+     *
+     * @var string
+     */
+    protected $table = 'order_detail';
+
+    /**
+     * Khóa chính của bảngApp\Models\Category::all();
+     *
+     * @var string
+     */
+
+    /**
+     * Tắt auto-increment vì đây là composite key
+     */
+    public $incrementing = false;
+
+    /**
+     * Loại khóa chính
+     *
+     */
+    protected $keyType = 'string';
+
+    /**
+     * Các cột có thể gán hàng loạt
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'order_id',
+        'variant_id',
+        'quantity',
+        'unit_price',
+        'total_price',
+    ];
+     public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id', 'order_id');
+    }
+
+    /**
+     * Quan hệ: Mỗi chi tiết thuộc về 1 sản phẩm biến thể
+     */
+    public function variant()
+    {
+        return $this->belongsTo(ProductVariant::class, 'variant_id', 'variant_id');
+    }
+
 }

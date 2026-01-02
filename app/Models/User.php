@@ -10,18 +10,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * Tên bảng trong database
-     *
-     * @var string
-     */
     protected $table = 'user';
-
-    /**
-     * Khóa chính của bảng
-     *
-     * @var string
-     */
     protected $primaryKey = 'user_id';
 
     /**
@@ -36,8 +25,6 @@ class User extends Authenticatable
         'phone_number',
         'role',
         'status',
-        'asset_token',
-        'refresh_token',
     ];
 
     /**
@@ -47,7 +34,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
@@ -58,7 +44,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'password' => 'hashed', // Laravel 11 sẽ tự hash khi tạo user
+            'password' => 'hashed', 
         ];
     }
 }
