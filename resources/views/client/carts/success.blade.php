@@ -25,7 +25,7 @@
 
         {{-- Nút quay về (Thêm vào cho UX tốt hơn) --}}
         <div class="mt-10">
-            <a href="{{ route('client.products.index') }}" class="inline-block px-8 py-3 rounded-full bg-[#7d3cff] text-white font-bold hover:bg-[#6c2bd9] transition shadow-lg shadow-purple-200">
+            <a href="{{ route('products.index') }}" class="inline-block px-8 py-3 rounded-full bg-[#7d3cff] text-white font-bold hover:bg-[#6c2bd9] transition shadow-lg shadow-purple-200">
                 Tiếp tục mua sắm
             </a>
         </div>
