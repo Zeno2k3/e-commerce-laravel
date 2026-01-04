@@ -6,8 +6,11 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller {
     public function index() {
-        // Lấy toàn bộ danh sách khách hàng từ bảng user
-        $users = DB::table('user')->get();
-        return view('admin.customers.index', compact('users'));
-    }
+    // Chỉ lấy những người là khách hàng bình thường
+    $users = DB::table('user')
+                ->where('role', '=', 'user')
+                ->get();
+
+    return view('admin.customers.index', compact('users'));
+}
 }

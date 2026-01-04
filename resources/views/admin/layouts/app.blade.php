@@ -1,276 +1,148 @@
-<!-- <!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin Dashboard') - Administration</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 font-sans antialiased">
-    <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-gray-50 text-gray-800">
-        
-        <div class="fixed flex flex-col top-0 left-0 w-64 bg-slate-900 h-full border-r transition-all duration-300 z-50">
-            <div class="flex items-center justify-center h-14 border-b border-gray-800">
-              <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-2 group">
-                <svg class="w-8 h-8 transition-transform group-hover:rotate-12" viewBox="0 0 62 65" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M61.8548 14.6253L29.7534 0.138246C29.1112 -0.141314 28.3888 -0.141314 27.7466 0.138246L1.35484 12.0253C0.514436 12.4042 0 13.242 0 14.1613V50.8387C0 51.758 0.514436 52.5958 1.35484 52.9747L27.7466 64.8618C28.068 65.0039 28.412 65.0741 28.7534 65.0741C29.0948 65.0741 29.4388 65.0039 29.7602 64.8618L60.6452 50.9747C61.4856 50.5958 62 49.758 62 48.8387V16.1613C62 15.242 61.4856 14.4042 60.6452 14.0253L61.8548 14.6253Z" fill="#FF2D20"/>
-                  <path d="M54.5 50.5L31 61V37L54.5 26.5V50.5Z" fill="white" fill-opacity="0.3"/>
-                  <path d="M7.5 50.5L31 61V37L7.5 26.5V50.5Z" fill="white" fill-opacity="0.6"/>
-                </svg>
-                <span class="text-white text-lg font-black tracking-tighter uppercase group-hover:text-red-500 transition-colors">Laravel</span>
-              </a>
-            </div>
-            <div class="overflow-y-auto overflow-x-hidden flex-grow">
-                <ul class="flex flex-col py-4 space-y-1">
-                    <li class="px-5">
-                        <div class="flex flex-row items-center h-8">
-                            <div class="text-xs font-bold tracking-widest text-gray-500 uppercase">Menu</div>
-                        </div>
-                    </li>
-                    
-                    <li>
-                        <a href="{{ route('admin.dashboard') }}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-slate-800 text-white border-l-4 border-transparent hover:border-blue-500 pr-6 transition-all {{ request()->is('admin/dashboard') ? 'bg-slate-800 border-blue-500' : '' }}">
-                            <span class="inline-flex justify-center items-center ml-4">
-                                <i class="fa-solid fa-house"></i>
-                            </span>
-                            <span class="ml-2 text-sm tracking-wide truncate">Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ route('admin.products.index') }}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-slate-800 text-white border-l-4 border-transparent hover:border-blue-500 pr-6 transition-all {{ request()->is('admin/products*') ? 'bg-slate-800 border-blue-500' : '' }}">
-                            <span class="inline-flex justify-center items-center ml-4">
-                                <i class="fa-solid fa-box-open"></i>
-                            </span>
-                            <span class="ml-2 text-sm tracking-wide truncate">Sản phẩm</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ route('admin.orders.index') }}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-slate-800 text-white border-l-4 border-transparent hover:border-blue-500 pr-6 transition-all {{ request()->is('admin/orders*') ? 'bg-slate-800 border-blue-500' : '' }}">
-                            <span class="inline-flex justify-center items-center ml-4">
-                                <i class="fa-solid fa-cart-shopping"></i>
-                            </span>
-                            <span class="ml-2 text-sm tracking-wide truncate">Đơn hàng</span>
-                            <span class="px-2 py-0.5 ml-auto text-[10px] font-bold tracking-wide text-red-500 bg-red-100 rounded-full">NEW</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ route('admin.customers.index') }}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-slate-800 text-white border-l-4 border-transparent hover:border-blue-500 pr-6 transition-all {{ request()->is('admin/customers*') ? 'bg-slate-800 border-blue-500' : '' }}">
-                            <span class="inline-flex justify-center items-center ml-4">
-                              <i class="fa-solid fa-users"></i>
-                            </span>
-                            <span class="ml-2 text-sm tracking-wide truncate">Khách hàng</span>
-                        </a>
-                    </li>
-
-                    <li class="px-5 pt-4">
-                        <div class="flex flex-row items-center h-8">
-                            <div class="text-xs font-bold tracking-widest text-gray-500 uppercase">Hệ thống</div>
-                        </div>
-                    </li>
-
-                    <li>
-                        <a href="{{ route('admin.settings') }}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-slate-800 text-white border-l-4 border-transparent hover:border-blue-500 pr-6 transition-all {{ request()->is('admin/settings') ? 'bg-slate-800 border-blue-500' : '' }}">
-                            <span class="inline-flex justify-center items-center ml-4">
-                                <i class="fa-solid fa-gear"></i>
-                            </span>
-                            <span class="ml-2 text-sm tracking-wide truncate">Cài đặt</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <form method="POST" action="{{ route('logout') }}" class="block">
-                            @csrf
-                            <button type="submit" class="w-full relative flex flex-row items-center h-11 focus:outline-none hover:bg-red-800 text-white border-l-4 border-transparent hover:border-red-500 pr-6 transition-all">
-                                <span class="inline-flex justify-center items-center ml-4">
-                                    <i class="fa-solid fa-right-from-bracket"></i>
-                                </span>
-                                <span class="ml-2 text-sm tracking-wide truncate">Đăng xuất</span>
-                            </button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="fixed w-full flex items-center justify-between h-14 text-white z-10">
-            <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 bg-slate-900 border-none">
-                <img class="w-7 h-7 md:w-9 md:h-9 mr-2 rounded-lg overflow-hidden border border-gray-700" src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" />
-                <span class="hidden md:block font-bold text-sm tracking-wider uppercase text-blue-400">Quản trị viên</span>
-            </div>
-            <div class="flex justify-between items-center h-14 bg-white pl-64 w-full shadow-sm border-b border-gray-200">
-                <div class="bg-gray-50 rounded-xl flex items-center w-full max-w-xl ml-6 px-4 py-1.5 border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-                    <button class="outline-none focus:outline-none text-gray-400">
-                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                    </button>
-                    <input type="search" placeholder="Tìm kiếm dữ liệu..." class="w-full pl-3 text-xs text-black outline-none bg-transparent" />
-                </div>
-                <ul class="flex items-center px-6 space-x-4">
-                    <li>
-                        <a href="#" class="relative p-2 text-gray-400 hover:text-blue-600 transition-colors">
-                            <i class="fa-solid fa-bell text-lg"></i>
-                            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <div class="block w-px h-6 bg-gray-200"></div>
-                    </li>
-                    <li class="flex items-center">
-                        <span class="text-xs font-bold text-gray-600 mr-2 italic">{{ Auth::user()->name ?? 'Quản trị viên' }}</span>
-                        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-bold">AD</div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="h-full ml-64 mt-14 p-8">
-             @yield('content')
-        </div>
-    </div>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin Dashboard') - Administration</title>
+    <title>@yield('title', 'Quản lý hệ thống') - Administration</title>
+    
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v={{ time() }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
-        @keyframes swing {
-            0% { transform: rotate(0deg); }
-            20% { transform: rotate(15deg); }
-            40% { transform: rotate(-10deg); }
-            60% { transform: rotate(5deg); }
-            80% { transform: rotate(-5deg); }
-            100% { transform: rotate(0deg); }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f1f5f9; 
         }
-        .animate-swing { animation: swing 0.5s ease-in-out; }
         
-        /* Làm mượt scrollbar cho Sidebar */
-        .overflow-y-auto::-webkit-scrollbar { width: 4px; }
-        .overflow-y-auto::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        .sidebar-link {
+            transition: all 0.2s ease;
+            border-radius: 12px;
+            margin: 4px 12px;
+        }
+        .sidebar-link.active {
+            background: #6366f1;
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased">
-    <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-gray-50 text-gray-800">
-        
-        <div class="fixed flex flex-col top-0 left-0 w-64 bg-slate-900 h-full border-r transition-all duration-300 z-50">
-            <div class="flex items-center justify-center h-14 border-b border-gray-800">
-              <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-2 group">
-                <svg class="w-8 h-8 transition-transform group-hover:rotate-12" viewBox="0 0 62 65" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M61.8548 14.6253L29.7534 0.138246C29.1112 -0.141314 28.3888 -0.141314 27.7466 0.138246L1.35484 12.0253C0.514436 12.4042 0 13.242 0 14.1613V50.8387C0 51.758 0.514436 52.5958 1.35484 52.9747L27.7466 64.8618C28.068 65.0039 28.412 65.0741 28.7534 65.0741C29.0948 65.0741 29.4388 65.0039 29.7602 64.8618L60.6452 50.9747C61.4856 50.5958 62 49.758 62 48.8387V16.1613C62 15.242 61.4856 14.4042 60.6452 14.0253L61.8548 14.6253Z" fill="#FF2D20"/>
-                  <path d="M54.5 50.5L31 61V37L54.5 26.5V50.5Z" fill="white" fill-opacity="0.3"/>
-                  <path d="M7.5 50.5L31 61V37L7.5 26.5V50.5Z" fill="white" fill-opacity="0.6"/>
-                </svg>
-                <span class="text-white text-lg font-black tracking-tighter uppercase group-hover:text-red-500 transition-colors">Laravel</span>
-              </a>
-            </div>
-            <div class="overflow-y-auto overflow-x-hidden flex-grow">
-                <ul class="flex flex-col py-4 space-y-1">
-                    <li class="px-5">
-                        <div class="flex flex-row items-center h-8 text-xs font-bold tracking-widest text-gray-500 uppercase">Menu</div>
-                    </li>
-                    
-                    <li>
-                        <a href="{{ route('admin.dashboard') }}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-slate-800 text-white border-l-4 border-transparent hover:border-blue-500 pr-6 transition-all {{ request()->is('admin/dashboard') ? 'bg-slate-800 border-blue-500' : '' }}">
-                            <span class="inline-flex justify-center items-center ml-4"><i class="fa-solid fa-house"></i></span>
-                            <span class="ml-2 text-sm tracking-wide truncate">Dashboard</span>
-                        </a>
-                    </li>
+<body class="flex h-screen overflow-hidden">
 
-                    <li>
-                        <a href="{{ route('admin.products.index') }}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-slate-800 text-white border-l-4 border-transparent hover:border-blue-500 pr-6 transition-all {{ request()->is('admin/products*') ? 'bg-slate-800 border-blue-500' : '' }}">
-                            <span class="inline-flex justify-center items-center ml-4"><i class="fa-solid fa-box-open"></i></span>
-                            <span class="ml-2 text-sm tracking-wide truncate">Sản phẩm</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ route('admin.orders.index') }}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-slate-800 text-white border-l-4 border-transparent hover:border-blue-500 pr-6 transition-all {{ request()->is('admin/orders*') ? 'bg-slate-800 border-blue-500' : '' }}">
-                            <span class="inline-flex justify-center items-center ml-4"><i class="fa-solid fa-cart-shopping"></i></span>
-                            <span class="ml-2 text-sm tracking-wide truncate">Đơn hàng</span>
-                            <span class="px-2 py-0.5 ml-auto text-[10px] font-bold text-red-500 bg-red-100 rounded-full">NEW</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ route('admin.customers.index') }}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-slate-800 text-white border-l-4 border-transparent hover:border-blue-500 pr-6 transition-all {{ request()->is('admin/customers*') ? 'bg-slate-800 border-blue-500' : '' }}">
-                            <span class="inline-flex justify-center items-center ml-4"><i class="fa-solid fa-users"></i></span>
-                            <span class="ml-2 text-sm tracking-wide truncate">Khách hàng</span>
-                        </a>
-                    </li>
-
-                    <li class="px-5 pt-4">
-                        <div class="flex flex-row items-center h-8 text-xs font-bold tracking-widest text-gray-500 uppercase">Hệ thống</div>
-                    </li>
-
-                    <li>
-                        <a href="{{ route('admin.settings') }}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-slate-800 text-white border-l-4 border-transparent hover:border-blue-500 pr-6 transition-all {{ request()->is('admin/settings') ? 'bg-slate-800 border-blue-500' : '' }}">
-                            <span class="inline-flex justify-center items-center ml-4"><i class="fa-solid fa-gear"></i></span>
-                            <span class="ml-2 text-sm tracking-wide truncate">Cài đặt</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <form method="POST" action="{{ route('logout') }}" class="block">
-                            @csrf
-                            <button type="submit" class="w-full relative flex flex-row items-center h-11 focus:outline-none hover:bg-red-800 text-white border-l-4 border-transparent hover:border-red-500 pr-6 transition-all">
-                                <span class="inline-flex justify-center items-center ml-4"><i class="fa-solid fa-right-from-bracket"></i></span>
-                                <span class="ml-2 text-sm tracking-wide truncate">Đăng xuất</span>
-                            </button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="fixed w-full flex items-center justify-between h-14 text-white z-10">
-            <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 bg-slate-900 border-none">
-                <img class="w-7 h-7 md:w-9 md:h-9 mr-2 rounded-lg border border-gray-700" src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" />
-                <span class="hidden md:block font-bold text-sm tracking-wider uppercase text-blue-400">Quản trị viên</span>
-            </div>
-            <div class="flex justify-between items-center h-14 bg-white pl-64 w-full shadow-sm border-b border-gray-200">
-                <div class="bg-gray-50 rounded-xl flex items-center w-full max-w-xl ml-6 px-4 py-1.5 border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-                    <i class="fa-solid fa-magnifying-glass text-gray-400 text-xs"></i>
-                    <input type="search" placeholder="Tìm kiếm dữ liệu..." class="w-full pl-3 text-xs text-black outline-none bg-transparent" />
-                </div>
-                <ul class="flex items-center px-6 space-x-4">
-                    <li>
-                        <a href="javascript:void(0)" onclick="this.querySelector('i').classList.toggle('animate-swing')" class="relative p-2 text-gray-400 hover:text-blue-600 transition-colors">
-                            <i class="fa-solid fa-bell text-lg"></i>
-                            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-                        </a>
-                    </li>
-                    <li><div class="block w-px h-6 bg-gray-200"></div></li>
-                    <li class="flex items-center">
-                        <span class="text-xs font-bold text-gray-600 mr-2 italic lowercase uppercase tracking-tighter">{{ Auth::user()->name ?? 'Administrator' }}</span>
-                        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-bold">AD</div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="h-full ml-64 mt-14 p-8">
-             @yield('content')
-        </div>
+    <aside class="w-72 bg-white border-r border-slate-200 flex flex-col flex-shrink-0 hidden lg:flex">
+        <div class="p-8 pb-4 flex items-center space-x-4">
+    <div class="w-16 h-16 flex-shrink-0 flex items-center justify-center overflow-hidden">
+        <img src="https://laravelnews.s3.amazonaws.com/images/laravel-featured.png" 
+             alt="FlexStyle Logo" 
+             class="w-full h-full object-contain transform scale-125 drop-shadow-md">
     </div>
+    <div class="flex flex-col">
+        <span class="text-slate-900 font-extrabold tracking-tight text-2xl uppercase italic leading-none">Laravel Shop</span>
+        <span class="text-[11px] text-indigo-500 font-bold tracking-[0.2em] mt-1.5">Trang của Admin</span>
+    </div>
+</div>
 
-    <script>
-        document.querySelectorAll('button, a').forEach(elem => {
-            elem.addEventListener('mousedown', () => elem.style.transform = 'scale(0.95)');
-            elem.addEventListener('mouseup', () => elem.style.transform = 'scale(1)');
-        });
-    </script>
+        <nav class="flex-1 overflow-y-auto custom-scrollbar pt-4">
+            <div class="px-6 mb-2 text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">Menu chính</div>
+            
+            <a href="{{ route('admin.dashboard') }}" class="sidebar-link flex items-center p-3 text-sm font-bold text-slate-600 hover:bg-slate-50 {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <i class="fa-solid fa-house-chimney mr-3 w-5"></i> Tổng quan
+            </a>
+
+            <a href="{{ route('admin.products.index') }}" class="sidebar-link flex items-center p-3 text-sm font-bold text-slate-600 hover:bg-slate-50 {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-store mr-3 w-5"></i> Sản phẩm
+            </a>
+
+            <a href="{{ route('admin.orders.index') }}" class="sidebar-link flex items-center p-3 text-sm font-bold text-slate-600 hover:bg-slate-50 {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-receipt mr-3 w-5"></i> Đơn hàng
+                <span class="ml-auto bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded-full font-black">2</span>
+            </a>
+
+            <a href="{{ route('admin.customers.index') }}" class="sidebar-link flex items-center p-3 text-sm font-bold text-slate-600 hover:bg-slate-50 {{ request()->routeIs('admin.customers.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-user-group mr-3 w-5"></i> Khách hàng
+            </a>
+
+            <div class="px-6 mt-8 mb-2 text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">Hệ thống</div>
+            
+            <a href="{{ route('admin.settings') }}" class="sidebar-link flex items-center p-3 text-sm font-bold text-slate-600 hover:bg-slate-50 {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
+                <i class="fa-solid fa-sliders mr-3 w-5"></i> Cài đặt
+            </a>
+        </nav>
+
+        <!-- <div class="p-6 border-t border-slate-100">
+    <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-2xl border border-slate-100">
+        <div class="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center font-black text-white text-xs shadow-sm">AD</div>
+        <div class="flex-1 overflow-hidden">
+            <p class="text-xs font-bold text-slate-800 truncate">Administrator</p>
+            <p class="text-[10px] text-slate-400 font-medium truncate">admin@shop.com</p>
+        </div>
+        
+        <button onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+                class="text-slate-400 hover:text-red-500 transition-colors p-2 hover:bg-red-50 rounded-lg"
+                title="Đăng xuất">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+            @csrf
+        </form>
+    </div>
+</div> -->
+<div class="p-6 border-t border-slate-100">
+    <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-2xl border border-slate-100">
+        <div class="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center font-black text-white text-xs shadow-sm">
+            {{ strtoupper(substr(Auth::user()->full_name ?? 'AD', 0, 1)) }}
+        </div>
+
+        <div class="flex-1 overflow-hidden">
+            <p class="text-xs font-bold text-slate-800 truncate">{{ Auth::user()->full_name ?? '' }}</p>
+            <p class="text-[10px] text-slate-400 font-medium truncate">{{ Auth::user()->email ?? '' }}</p>
+        </div>
+        
+        <form action="{{ route('logout') }}" method="POST" class="flex items-center">
+            @csrf
+            <button type="submit" class="text-slate-400 hover:text-red-500 transition-colors p-2 hover:bg-red-50 rounded-lg" title="Đăng xuất">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+        </form>
+    </div>
+</div>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0 bg-[#f8fafc] overflow-hidden">
+        <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-10 z-10">
+            <div class="relative w-1/3">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" placeholder="Tìm kiếm tài khoản, đơn hàng..." class="w-full bg-slate-100/50 border-none rounded-2xl py-2.5 pl-11 pr-4 text-xs font-medium focus:ring-2 focus:ring-indigo-500/20 transition">
+            </div>
+            
+            <div class="flex items-center space-x-6">
+                <button class="relative text-slate-400 hover:text-slate-600 transition">
+                    <i class="fa-solid fa-bell text-lg"></i>
+                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <div class="w-px h-6 bg-slate-200"></div>
+                <div class="flex items-center space-x-3">
+    @auth
+        <span class="text-xs font-bold text-slate-700">Hi, {{ Auth::user()->full_name }}!</span>
+        <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-black text-[10px]">
+            {{ substr(Auth::user()->full_name, 0, 1) }}
+        </div>
+    @endauth
+</div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-10 custom-scrollbar">
+            @yield('content')
+        </div>
+    </main>
+
 </body>
 </html>
