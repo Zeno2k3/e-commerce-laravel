@@ -5,23 +5,26 @@
 <div class="bg-[#f9fafb] min-h-screen font-sans pb-20">
     <div class="container mx-auto px-4 py-12">
 
-        {{-- TIÊU ĐỀ TRANG (Đã tăng kích thước) --}}
+        {{-- TIÊU ĐỀ TRANG --}}
         <div class="text-center mb-20 max-w-4xl mx-auto">
-            {{-- Badge tiêu đề phụ - Giữ nguyên 2xl nhưng tăng padding --}}
-            <span class="inline-block py-3 px-6 rounded-lg bg-purple-100 text-[#7d3cff] font-bold text-xl mb-6 tracking-widest uppercase shadow-sm">
+            {{-- Badge: Đồng bộ text-2xl font-bold tracking-widest --}}
+            <span class="inline-block py-3 px-6 rounded-lg bg-purple-100 text-[#7d3cff] font-bold text-2xl mb-6 tracking-widest uppercase shadow-sm">
                 <i class="fa-solid fa-shield-halved mr-2"></i> CHÍNH SÁCH BẢO MẬT
             </span>
-            <h1 class="text-3xl md:text-6xl font-black text-gray-900 mb-8 tracking-tight leading-tight">
+            {{-- H1: Đồng bộ text-4xl md:text-5xl lg:text-5xl --}}
+            <h1 class="text-4xl md:text-5xl lg:text-5xl font-black text-gray-900 mb-8 tracking-tight leading-tight">
                 Bảo Vệ <span class="text-[#7d3cff]">Quyền Riêng Tư</span>
             </h1>
-            <p class="text-gray-500 text-2xl max-w-3xl mx-auto leading-relaxed">
+            {{-- Intro: text-xl font-medium --}}
+            <p class="text-gray-500 text-xl max-w-3xl mx-auto leading-relaxed font-medium">
                 FlexStyle cam kết bảo vệ thông tin cá nhân của khách hàng. Chúng tôi tuân thủ nghiêm ngặt các quy định về bảo mật dữ liệu và quyền riêng tư của người dùng.
             </p>
         </div>
 
         {{-- KHỐI 1: THÔNG TIN CHÚNG TÔI THU THẬP --}}
         <div class="mb-20">
-            <h2 class="text-4xl font-black text-gray-900 mb-10 flex items-center gap-4">
+            {{-- H2: Đồng bộ text-3xl font-bold --}}
+            <h2 class="text-3xl font-bold text-gray-900 mb-10 flex items-center gap-4">
                 <i class="fa-solid fa-database text-[#7d3cff]"></i> Thông Tin Chúng Tôi Thu Thập
             </h2>
             <div class="grid md:grid-cols-3 gap-10">
@@ -57,7 +60,8 @@
 
         {{-- KHỐI 2: MỤC ĐÍCH SỬ DỤNG THÔNG TIN --}}
         <div class="bg-white p-12 rounded-[3rem] shadow-xl shadow-gray-200/50 border border-gray-50 mb-20">
-            <h2 class="text-4xl font-black text-gray-900 mb-12 flex items-center gap-4">
+            {{-- H2: Đồng bộ text-3xl font-bold --}}
+            <h2 class="text-3xl font-bold text-gray-900 mb-12 flex items-center gap-4">
                 <i class="fa-solid fa-bullseye text-[#7d3cff]"></i> Mục Đích Sử Dụng Thông Tin
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
@@ -82,9 +86,9 @@
 
         {{-- KHỐI 3: QUYỀN CỦA KHÁCH HÀNG --}}
         <div class="mb-20">
-            <h2 class="text-4xl font-black text-gray-900 mb-10">Quyền Của Khách Hàng</h2>
+            {{-- H2: Đồng bộ text-3xl font-bold --}}
+            <h2 class="text-3xl font-bold text-gray-900 mb-10">Quyền Của Khách Hàng</h2>
             <div class="grid md:grid-cols-2 gap-8">
-                {{-- Các ô nội dung được tăng cỡ chữ lên text-xl --}}
                 <div class="bg-[#f1f5f9] p-10 rounded-3xl border border-gray-200 shadow-sm transition hover:shadow-md">
                     <h4 class="text-2xl font-bold text-gray-900 mb-3">Quyền truy cập</h4>
                     <p class="text-gray-600 text-xl leading-relaxed">Xem thông tin cá nhân chúng tôi đang lưu trữ</p>
@@ -114,21 +118,22 @@
 
         {{-- KHỐI 4: CHÍNH SÁCH COOKIE --}}
         <div class="bg-[#f1f5f9] p-12 rounded-[3rem] border border-gray-200 mb-20 shadow-inner">
-            <h3 class="text-4xl font-black text-gray-900 mb-6">Chính Sách Cookie</h3>
-            <p class="text-gray-700 mb-12 text-2xl leading-relaxed">Chúng tôi sử dụng cookie để cải thiện trải nghiệm người dùng và phân tích lưu lượng truy cập website.</p>
+            {{-- H3 -> H2 style: text-3xl font-bold --}}
+            <h3 class="text-3xl font-bold text-gray-900 mb-6">Chính Sách Cookie</h3>
+            <p class="text-gray-700 mb-12 text-xl leading-relaxed font-medium">Chúng tôi sử dụng cookie để cải thiện trải nghiệm người dùng và phân tích lưu lượng truy cập website.</p>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                 <div>
                     <h5 class="font-bold text-gray-900 mb-4 text-2xl">Cookie cần thiết</h5>
-                    <p class="text-gray-500 text-xl italic leading-relaxed">Đảm bảo website hoạt động bình thường và bảo mật phiên đăng nhập.</p>
+                    <p class="text-gray-500 text-lg italic leading-relaxed">Đảm bảo website hoạt động bình thường và bảo mật phiên đăng nhập.</p>
                 </div>
                 <div>
                     <h5 class="font-bold text-gray-900 mb-4 text-2xl">Cookie phân tích</h5>
-                    <p class="text-gray-500 text-xl italic leading-relaxed">Giúp chúng tôi hiểu cách người dùng tương tác với website để cải thiện dịch vụ.</p>
+                    <p class="text-gray-500 text-lg italic leading-relaxed">Giúp chúng tôi hiểu cách người dùng tương tác với website để cải thiện dịch vụ.</p>
                 </div>
                 <div>
                     <h5 class="font-bold text-gray-900 mb-4 text-2xl">Cookie marketing</h5>
-                    <p class="text-gray-500 text-xl italic leading-relaxed">Sử dụng để cá nhân hóa quảng cáo và hiển thị nội dung phù hợp với sở thích.</p>
+                    <p class="text-gray-500 text-lg italic leading-relaxed">Sử dụng để cá nhân hóa quảng cáo và hiển thị nội dung phù hợp với sở thích.</p>
                 </div>
             </div>
         </div>
@@ -137,7 +142,7 @@
         <div class="grid lg:grid-cols-2 gap-12 mb-20">
             {{-- Chia sẻ thông tin --}}
             <div class="bg-purple-50 p-12 rounded-[3rem] border-2 border-purple-100">
-                <h4 class="font-bold text-3xl text-gray-900 mb-8">Chia Sẻ Thông Tin</h4>
+                <h4 class="font-bold text-2xl text-gray-900 mb-8">Chia Sẻ Thông Tin</h4>
                 <div class="space-y-6 text-xl text-gray-700 leading-relaxed">
                     <p class="italic mb-6">Chúng tôi KHÔNG chia sẻ với bên thứ ba không liên quan hoặc các công ty marketing khác.</p>
                     <p class="font-bold text-[#7d3cff]">Chúng tôi chỉ chia sẻ với:</p>
@@ -150,7 +155,7 @@
             </div>
             {{-- Biện pháp bảo mật --}}
             <div class="bg-gray-900 p-12 rounded-[3rem] text-white shadow-2xl">
-                <h4 class="font-bold text-3xl mb-8">Biện Pháp Bảo Mật</h4>
+                <h4 class="font-bold text-2xl mb-8">Biện Pháp Bảo Mật</h4>
                 <div class="space-y-8">
                     <div class="flex items-center gap-5">
                         <i class="fa-solid fa-lock text-[#7d3cff] text-3xl"></i>
@@ -188,7 +193,8 @@
         {{-- LIÊN HỆ BẢO MẬT --}}
         <div class="text-center bg-gray-900 rounded-[4rem] p-16 text-white shadow-2xl shadow-purple-200 relative overflow-hidden">
             <div class="relative z-10">
-                <h3 class="text-4xl font-black mb-10 uppercase tracking-tight">Có Thắc Mắc Về Quyền Riêng Tư?</h3>
+                {{-- H3 -> H2 style: text-3xl md:text-4xl font-black --}}
+                <h3 class="text-3xl md:text-4xl font-black mb-10 uppercase tracking-tight">Có Thắc Mắc Về Quyền Riêng Tư?</h3>
                 <div class="flex flex-wrap justify-center gap-16 text-2xl font-bold">
                     <span class="flex items-center gap-4"><i class="fa-solid fa-phone text-[#7d3cff] text-4xl"></i> 1900 6789</span>
                     <span class="flex items-center gap-4"><i class="fa-solid fa-envelope text-[#7d3cff] text-4xl"></i> support@flexstyle.com</span>

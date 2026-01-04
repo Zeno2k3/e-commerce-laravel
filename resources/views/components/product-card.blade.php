@@ -10,7 +10,8 @@
             </span>
         @endif
 
-        <a href="#" class="block w-full h-full">
+        {{-- [SỬA 1] Gắn link vào ảnh sản phẩm --}}
+        <a href="{{ route('client.product.detail', ['id' => $product['id']]) }}" class="block w-full h-full">
             <img src="{{ asset($product['image']) }}"
                  alt="{{ $product['name'] }}"
                  class="w-full h-full object-contain mix-blend-multiply p-4 transition-transform duration-500 group-hover:scale-110">
@@ -23,7 +24,8 @@
 
     <div class="flex flex-col flex-1">
 
-        <a href="#" class="block group/link">
+        {{-- [SỬA 2] Gắn link vào tên sản phẩm --}}
+        <a href="{{ route('client.product.detail', ['id' => $product['id']]) }}" class="block group/link">
             <h3 class="text-gray-800 font-bold text-[15px] leading-snug mb-2 line-clamp-2 min-h-[44px] group-hover/link:text-[#7d3cff] transition-colors">
                 {{ $product['name'] }}
             </h3>

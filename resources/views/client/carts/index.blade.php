@@ -125,7 +125,7 @@
                         </a>
 
                         {{-- Nút Tiếp tục mua sắm --}}
-                        <a href="{{ route('products.index') }}" class="block w-full bg-[#eff2f5] border-2 border-gray-200 hover:bg-white hover:border-gray-300 text-gray-700 text-center font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95">
+                        <a href="{{ route('client.products.index') }}" class="block w-full bg-[#eff2f5] border-2 border-gray-200 hover:bg-white hover:border-gray-300 text-gray-700 text-center font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95">
                             <i class="fa-solid fa-arrow-left"></i> Tiếp tục mua sắm
                         </a>
                     </div>

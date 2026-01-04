@@ -35,82 +35,27 @@
                     <i class="fa-solid fa-globe text-2xl"></i>
                 </button>
 
-                {{-- BỌC NGOÀI BẰNG DIV RELATIVE ĐỂ CHỨA DROPDOWN --}}
-            <div class="relative" x-data="{ open: false }">
+                @guest
+                <a href="{{ route('login') }}" class="hover:text-purple-600 transition" title="Đăng nhập">
+        <i class="fa-regular fa-user text-2xl"></i>
+    </a>
+@endguest
 
-                {{-- 1. NÚT KÍCH HOẠT (TRIGGER) --}}
-                <button @click="open = !open" class="hover:text-purple-600 transition-colors outline-none pt-1">
-                    <i class="fa-regular fa-user text-2xl"></i>
-                </button>
+@auth
+    <div class="relative group">
+        <a href="/profile" class="flex items-center gap-2 hover:text-purple-600 transition">
+            <i class="fa-solid fa-user-check text-2xl text-purple-600"></i>
+            
+            <span class="text-sm font-medium hidden md:block">
+                {{ Auth::user()->full_name }}
+            </span>
+        </a>
 
-                {{-- 2. MENU DROPDOWN --}}
-                <div x-show="open"
-                    @click.outside="open = false"
-                    x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 translate-y-2"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 translate-y-2"
-                    class="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 overflow-hidden"
-                    style="display: none;">
-
-                    {{-- KIỂM TRA TRẠNG THÁI ĐĂNG NHẬP --}}
-                    @auth
-                        {{-- TRƯỜNG HỢP 1: ĐÃ ĐĂNG NHẬP --}}
-
-                        {{-- Tên người dùng --}}
-                        <div class="px-4 py-3 border-b border-gray-100 bg-gray-50">
-                            <p class="text-xs text-gray-500 uppercase font-bold">Xin chào,</p>
-                            <p class="text-sm font-bold text-gray-900 truncate">{{ Auth::user()->name ?? 'Bạn' }}</p>
-                        </div>
-
-                        {{-- Link Lịch sử đơn hàng --}}
-                        <a href="{{ route('client.history') }}" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors">
-                            <i class="fa-solid fa-clock-rotate-left text-gray-400"></i>
-                            Lịch sử đơn hàng
-                        </a>
-
-                        {{-- Link Thông tin tài khoản (Optional - thêm cho đầy đủ) --}}
-                        <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors">
-                            <i class="fa-regular fa-address-card text-gray-400"></i>
-                            Thông tin cá nhân
-                        </a>
-
-                        <div class="border-t border-gray-100 my-1"></div>
-
-                        {{-- Nút Đăng xuất --}}
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors text-left">
-                                <i class="fa-solid fa-right-from-bracket"></i>
-                                Đăng xuất
-                            </button>
-                        </form>
-
-                    @else
-                        {{-- TRƯỜNG HỢP 2: CHƯA ĐĂNG NHẬP --}}
-
-                        <div class="px-4 py-3 text-center">
-                            <p class="text-sm text-gray-500 mb-3">Vui lòng đăng nhập để xem đơn hàng</p>
-                        </div>
-
-                        {{-- Link Đăng nhập --}}
-                        <a href="{{ route('login') }}" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors">
-                            <i class="fa-solid fa-right-to-bracket text-gray-400"></i>
-                            Đăng nhập
-                        </a>
-
-                        {{-- Link Đăng ký --}}
-                        <a href="{{ route('register') }}" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors">
-                            <i class="fa-solid fa-user-plus text-gray-400"></i>
-                            Đăng ký
-                        </a>
-
-                    @endauth
-
-                </div>
-            </div>
+        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden group-hover:block border border-gray-100">
+            <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50">Hồ sơ cá nhân</a>
+        </div>
+    </div>
+@endauth
 
                 <a href="{{ route('client.carts.index') }}" class="relative hover:text-purple-600 transition">
                     <i class="fa-solid fa-bag-shopping text-2xl"></i>
