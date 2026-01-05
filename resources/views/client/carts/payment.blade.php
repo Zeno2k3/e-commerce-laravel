@@ -3,19 +3,26 @@
 @section('content')
 <script src="//unpkg.com/alpinejs" defer></script>
 
-{{-- Khai báo x-data ở div ngoài cùng để quản lý toàn bộ trạng thái của trang --}}
+{{-- KHAI BÁO DỮ LIỆU TÍNH TOÁN --}}
 <div class="bg-[#f9fafb] min-h-screen font-sans pb-20 pt-10"
      x-data="{
          shippingMethod: 'standard',
-         paymentMethod: 'card'
+         paymentMethod: 'card',
+         voucherCode: '',
+         discount: 0,
+
+         // Hàm tính tổng: Tạm tính (1tr) + Ship - Giảm giá
+         get total() {
+             let ship = this.shippingMethod === 'standard' ? 30000 : 50000;
+             return 1000000 + ship - this.discount;
+         }
      }">
 
     <div class="container mx-auto px-4 max-w-6xl">
 
-        {{-- Form UI (Không cần action backend) --}}
         <form action="" class="grid grid-cols-1 lg:grid-cols-12 gap-8" onsubmit="event.preventDefault(); alert('Giao diện đã sẵn sàng! (Chưa xử lý Backend)');">
 
-            {{-- ==================== CỘT TRÁI (8 PHẦN) ==================== --}}
+            {{-- ==================== CỘT TRÁI (GIỮ NGUYÊN) ==================== --}}
             <div class="lg:col-span-8 space-y-8">
 
                 {{-- 1. THÔNG TIN GIAO HÀNG --}}
@@ -39,7 +46,6 @@
                             </div>
                         </div>
                         <div>
-
                             <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wide">Địa chỉ nhận hàng <span class="text-red-500">*</span></label>
                             <input type="text" placeholder="Số nhà, tên đường..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#7d3cff] focus:bg-white outline-none transition-all">
                         </div>
@@ -66,7 +72,7 @@
                     </div>
                 </div>
 
-                {{-- 2. PHƯƠNG THỨC VẬN CHUYỂN (Chuyển đổi UI bằng Alpine) --}}
+                {{-- 2. PHƯƠNG THỨC VẬN CHUYỂN --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-[#7d3cff]">
@@ -76,7 +82,6 @@
                     </div>
 
                     <div class="space-y-4">
-                        {{-- Option Standard --}}
                         <label class="relative flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all hover:border-gray-400"
                                :class="shippingMethod === 'standard' ? 'border-[#7d3cff] bg-purple-50/10' : 'border-gray-200'">
                             <div class="flex items-center gap-4">
@@ -89,7 +94,6 @@
                             <span class="text-lg font-bold text-gray-900">30.000₫</span>
                         </label>
 
-                        {{-- Option Fast --}}
                         <label class="relative flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all hover:border-gray-400"
                                :class="shippingMethod === 'fast' ? 'border-[#7d3cff] bg-purple-50/10' : 'border-gray-200'">
                             <div class="flex items-center gap-4">
@@ -104,7 +108,7 @@
                     </div>
                 </div>
 
-                {{-- 3. PHƯƠNG THỨC THANH TOÁN (Logic ẩn hiện form) --}}
+                {{-- 3. PHƯƠNG THỨC THANH TOÁN --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-[#7d3cff]">
@@ -114,30 +118,25 @@
                     </div>
 
                     <div class="space-y-4">
-                        {{-- Radio Card --}}
                         <label class="flex items-center p-4 border rounded-xl cursor-pointer transition-all hover:border-gray-400"
                                :class="paymentMethod === 'card' ? 'border-[#7d3cff] bg-purple-50/10' : 'border-gray-200'">
                             <input type="radio" name="payment" value="card" x-model="paymentMethod" class="appearance-none w-6 h-6 border-2 border-gray-300 rounded-full checked:bg-[#7d3cff] checked:border-[#7d3cff] cursor-pointer transition-all mr-4">
                             <span class="text-lg font-medium text-gray-900">Thẻ tín dụng/ghi nợ</span>
                         </label>
 
-                        {{-- Radio Momo --}}
                         <label class="flex items-center p-4 border rounded-xl cursor-pointer transition-all hover:border-gray-400"
                                :class="paymentMethod === 'momo' ? 'border-[#7d3cff] bg-purple-50/10' : 'border-gray-200'">
                             <input type="radio" name="payment" value="momo" x-model="paymentMethod" class="appearance-none w-6 h-6 border-2 border-gray-300 rounded-full checked:bg-[#7d3cff] checked:border-[#7d3cff] cursor-pointer transition-all mr-4">
                             <span class="text-lg font-medium text-gray-900">Ví MoMo</span>
                         </label>
 
-                        {{-- Radio COD --}}
                         <label class="flex items-center p-4 border rounded-xl cursor-pointer transition-all hover:border-gray-400"
                                :class="paymentMethod === 'cod' ? 'border-[#7d3cff] bg-purple-50/10' : 'border-gray-200'">
                             <input type="radio" name="payment" value="cod" x-model="paymentMethod" class="appearance-none w-6 h-6 border-2 border-gray-300 rounded-full checked:bg-[#7d3cff] checked:border-[#7d3cff] cursor-pointer transition-all mr-4">
                             <span class="text-lg font-medium text-gray-900">Thanh toán khi nhận hàng (COD)</span>
                         </label>
 
-                        {{-- === LOGIC HIỂN THỊ NỘI DUNG CON === --}}
-
-                        {{-- 1. Form nhập thẻ (Chỉ hiện khi paymentMethod == 'card') --}}
+                        {{-- Logic hiển thị nội dung con --}}
                         <div x-show="paymentMethod === 'card'" x-transition.opacity.duration.300ms class="pt-6 space-y-4 border-t border-gray-100 mt-4">
                             <div>
                                 <label class="block mb-2 text-sm font-semibold text-gray-700">Số thẻ*</label>
@@ -159,7 +158,6 @@
                             </div>
                         </div>
 
-                        {{-- 2. Mã QR (Chỉ hiện khi paymentMethod == 'momo') --}}
                         <div x-show="paymentMethod === 'momo'" x-transition.opacity.duration.300ms class="pt-6 flex flex-col items-center justify-center border-t border-gray-100 mt-4">
                             <div class="w-48 h-48 bg-white border-2 border-gray-800 flex items-center justify-center mb-4 shadow-sm">
                                 <span class="text-xl font-bold text-gray-900">QR CODE</span>
@@ -167,11 +165,9 @@
                             <p class="text-gray-500">Quét mã để thanh toán</p>
                         </div>
 
-                         {{-- 3. Thông báo COD (Chỉ hiện khi paymentMethod == 'cod') --}}
                         <div x-show="paymentMethod === 'cod'" x-transition.opacity.duration.300ms class="pt-6 text-center border-t border-gray-100 mt-4">
                             <p class="text-gray-600 italic">Bạn sẽ thanh toán tiền mặt cho shipper khi nhận được hàng.</p>
                         </div>
-
                     </div>
                 </div>
 
@@ -181,14 +177,14 @@
                         <i class="fa-solid fa-arrow-left"></i> Quay lại giỏ hàng
                     </a>
                  </div>
-
             </div>
 
-            {{-- ==================== CỘT PHẢI (4 PHẦN) ==================== --}}
+            {{-- ==================== CỘT PHẢI: TÓM TẮT ĐƠN HÀNG (ĐÃ SỬA GIỐNG ẢNH) ==================== --}}
             <div class="lg:col-span-4">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
                     <h3 class="text-xl font-extrabold text-gray-900 mb-6">Tóm tắt đơn hàng</h3>
 
+                    {{-- Sản phẩm (Giữ nguyên) --}}
                     <div class="space-y-4 mb-6">
                         <div class="flex gap-4">
                             <div class="w-16 h-16 rounded-lg border border-gray-100 overflow-hidden relative shrink-0">
@@ -204,6 +200,7 @@
 
                     <hr class="border-gray-200 my-4">
 
+                    {{-- Các dòng tính tiền --}}
                     <div class="space-y-3 text-sm text-gray-600">
                         <div class="flex justify-between">
                             <span>Tạm tính</span>
@@ -211,29 +208,46 @@
                         </div>
                         <div class="flex justify-between">
                             <span>Phí vận chuyển</span>
-                            {{-- Logic hiển thị giá ship dựa trên lựa chọn bên trái --}}
                             <span class="font-bold text-gray-900" x-text="shippingMethod === 'standard' ? '30.000₫' : '50.000₫'"></span>
                         </div>
-                        <div class="flex justify-between items-center text-[#7d3cff]">
-                            <span>Giảm giá</span>
-                            <span class="font-bold">-0₫</span>
+
+                        {{-- [SỬA] GIAO DIỆN VOUCHER GIỐNG HÌNH ẢNH --}}
+                        <div class="flex justify-between items-center mt-4">
+                            {{-- Cụm Input + Button bên trái --}}
+                            <div class="flex gap-2">
+                                <input type="text"
+                                       x-model="voucherCode"
+                                       placeholder="Nhập voucher"
+                                       class="border border-gray-400 rounded px-3 py-2 w-40 focus:outline-none focus:border-[#8b5cf6] text-sm text-gray-700">
+
+                                <button type="button"
+                                        @click="if(voucherCode.trim()){ discount = 100000 } else { discount = 0 }"
+                                        class="bg-[#8b5cf6] hover:bg-[#7c3aed] text-white px-4 py-2 rounded text-sm font-bold shadow-sm transition-colors">
+                                    Áp dụng
+                                </button>
+                            </div>
+
+                            {{-- Số tiền giảm hiển thị bên phải --}}
+                            <span class="font-medium text-gray-900"
+                                  x-show="discount > 0"
+                                  x-text="'-' + discount.toLocaleString('vi-VN') + 'đ'"
+                                  x-transition.opacity>
+                            </span>
                         </div>
                     </div>
 
                     <hr class="border-gray-200 my-4">
 
+                    {{-- TỔNG CỘNG --}}
                     <div class="flex justify-between items-center mb-6">
-                        <span class="font-extrabold text-gray-900 text-lg">Tổng cộng</span>
-                        <span class="text-2xl font-black text-gray-900" x-text="shippingMethod === 'standard' ? '1.030.000₫' : '1.050.000₫'"></span>
+                        <span class="font-extrabold text-gray-900 text-xl">Tổng cộng</span>
+                        <span class="text-2xl font-black text-gray-900" x-text="total.toLocaleString('vi-VN') + 'đ'"></span>
                     </div>
 
                     <a href="{{ route('client.carts.success') }}"
-                        class="block text-center w-full bg-[#8b5cf6] hover:bg-[#7c3aed] text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-purple-200 transition-all active:scale-95 flex items-center justify-center gap-2">
-                            <span>Hoàn tất đơn hàng</span>
-                            <i class="fa-solid fa-arrow-right"></i>
+                        class="block text-center w-full bg-[#8b5cf6] hover:bg-[#7c3aed] text-white font-bold text-lg py-3 rounded-md shadow-lg shadow-purple-200 transition-all active:scale-95">
+                            Hoàn tất đơn hàng
                     </a>
-
-
                 </div>
             </div>
 

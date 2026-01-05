@@ -16,27 +16,56 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-6">
 
-            {{-- 2. CỘT TRÁI: ẢNH SẢN PHẨM --}}
+           {{-- 2. CỘT TRÁI: ẢNH SẢN PHẨM --}}
             <div class="space-y-4">
-                {{-- Ảnh lớn --}}
-                <div class="rounded-2xl overflow-hidden border border-gray-100 relative group">
-                    <img src="{{ asset($product['image']) }}" alt="{{ $product['name'] }}" class="w-full h-auto object-cover">
+                @php
+                    // ================================================================
+                    // KHỞI TẠO DỮ LIỆU GIẢ LẬP (Để demo chức năng chuyển ảnh)
+                    // Sau này bạn thay thế đoạn này bằng dữ liệu thật từ Controller
+                    // Ví dụ: $gallery = $product->images;
+                    // ================================================================
 
-                    {{-- Nhãn giảm giá --}}
-                    @if(isset($product['discount']) && $product['discount'])
-                        <span class="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                            {{ $product['discount'] }}
-                        </span>
-                    @endif
-                </div>
+                    $mainImg = asset($product['image']);
 
-                {{-- Ảnh nhỏ (Thumbnails) --}}
-                <div class="grid grid-cols-4 gap-4">
-                    @for($i = 0; $i < 4; $i++)
-                        <div class="rounded-xl overflow-hidden border {{ $i == 0 ? 'border-[#7d3cff] border-2' : 'border-gray-200' }} cursor-pointer hover:border-gray-400">
-                             <img src="{{ asset($product['image']) }}" class="w-full h-full object-cover">
-                        </div>
-                    @endfor
+                    // Mảng chứa 4 ảnh khác nhau (Ảnh chính + 3 ảnh mẫu từ mạng)
+                    $gallery = [
+                        $mainImg,
+                        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
+                        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80',
+                        'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80'
+                    ];
+                @endphp
+
+                {{-- Bắt đầu Alpine.js: Mặc định chọn ảnh đầu tiên --}}
+                <div x-data="{ activeImage: '{{ $gallery[0] }}' }" class="flex flex-col gap-4">
+
+                    {{-- ẢNH LỚN --}}
+                    <div class="rounded-2xl overflow-hidden border border-gray-100 relative group aspect-square bg-gray-50 flex items-center justify-center">
+                        {{-- :src binding giúp thay đổi ảnh ngay lập tức khi click thumbnail --}}
+                        <img :src="activeImage"
+                             src="{{ $gallery[0] }}"
+                             alt="{{ $product['name'] }}"
+                             class="w-full h-full object-contain transition-opacity duration-300 ease-in-out">
+
+                        {{-- Nhãn giảm giá --}}
+                        @if(isset($product['discount']) && $product['discount'])
+                            <span class="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                {{ $product['discount'] }}
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- ẢNH NHỎ (THUMBNAILS) --}}
+                    <div class="grid grid-cols-4 gap-4">
+                        @foreach($gallery as $imgUrl)
+                            <div @click="activeImage = '{{ $imgUrl }}'"
+                                 :class="activeImage === '{{ $imgUrl }}' ? 'border-[#7d3cff] ring-1 ring-[#7d3cff]/30' : 'border-gray-200 hover:border-gray-400 opacity-70 hover:opacity-100'"
+                                 class="rounded-xl overflow-hidden border-2 cursor-pointer transition-all aspect-square h-24 bg-gray-50">
+
+                                 <img src="{{ $imgUrl }}" class="w-full h-full object-cover">
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
 
@@ -114,7 +143,7 @@
                         <button @click="qty++" class="w-12 h-12 flex items-center justify-center text-gray-500 hover:text-[#7d3cff]"><i class="fa-solid fa-plus"></i></button>
                     </div>
 
-                    <button class="flex-1 bg-[#7d3cff] hover:bg-[#6c2bd9] text-white font-bold text-lg py-3 px-6 rounded-xl shadow-lg shadow-purple-200 transition-all transform active:scale-95 flex items-center justify-center gap-3">
+                    <button onclick="addToCartDemo(event)"  class="flex-1 bg-[#7d3cff] hover:bg-[#6c2bd9] text-white font-bold text-lg py-3 px-6 rounded-xl shadow-lg shadow-purple-200 transition-all transform active:scale-95 flex items-center justify-center gap-3">
                         <i class="fa-solid fa-cart-plus"></i>
                         Thêm vào giỏ hàng
                     </button>
@@ -171,10 +200,40 @@
                     Đánh giá ({{ count($product['reviews']) }})
                 </button>
             </div>
-
-            {{-- Nội dung Tab 1: Mô tả --}}
+{{-- Nội dung Tab 1: Mô tả (Đã sửa theo mẫu ảnh yêu cầu) --}}
             <div x-show="activeTab === 'description'" class="bg-gray-50 rounded-2xl p-8 text-gray-700 leading-relaxed">
-                <p class="text-lg">{{ $product['description'] }}</p>
+
+                {{-- 1. Đoạn giới thiệu chung --}}
+                <div class="mb-6">
+                    <p class="text-400">
+                        {{--
+                           Nếu data của bạn chưa có HTML, bạn có thể hardcode text mẫu giống ảnh
+                           hoặc dùng {!! $product['description'] !!} nếu trong DB đã lưu dạng HTML.
+                           Dưới đây là text demo giống hệt ảnh bạn gửi:
+                        --}}
+                        Áo khoác jean 100% có nón, form regular fit, phù hợp mặc hàng ngày.
+                    </p>
+                </div>
+
+                {{-- 2. Phần Đặc điểm nổi bật --}}
+                <div class="space-y-3">
+                    <h4 class="font-bold text-gray-900 text-lg">Đặc điểm nổi bật:</h4>
+
+                    <ul class="list-disc pl-5 space-y-2 marker:text-gray-400">
+                        <li>Chất liệu cao cấp, bền đẹp theo thời gian</li>
+                        <li>Thiết kế hiện đại, phù hợp nhiều dịp</li>
+                        <li>Form dáng chuẩn, tôn dáng người mặc</li>
+                        <li>Dễ dàng phối đồ với nhiều trang phục khác</li>
+                        <li>Chăm sóc đơn giản, giặt máy được</li>
+                    </ul>
+                </div>
+
+                {{--
+                   LƯU Ý:
+                   Sau này để nội dung này động theo từng sản phẩm,
+                   bạn nên cài CKEditor hoặc Summernote cho trang Admin để nhập liệu dạng văn bản phong phú (Rich Text).
+                   Khi đó ngoài view chỉ cần gọi: {!! $product['description'] !!} là nó tự hiện danh sách đẹp như trên.
+                --}}
             </div>
 
             {{-- Nội dung Tab 2: Thông số kỹ thuật (Đã chỉnh sửa để hiện dữ liệu thật) --}}
@@ -298,4 +357,5 @@
 
     </div>
 </div>
+
 @endsection

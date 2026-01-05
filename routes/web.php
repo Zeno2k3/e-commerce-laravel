@@ -122,3 +122,6 @@ Route::get('/payment', function () {
 })->name('client.carts.payment');
 
 
+Route::get('/lichsu-donhang', function () {
+    return view('client.account.orders');
+})->name('client.account.orders');
