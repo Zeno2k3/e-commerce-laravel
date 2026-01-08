@@ -1,0 +1,12 @@
+/**
+ * Base CSS - Các styles chung cho cả Admin và Client
+ * File này chứa các @source directives và base styles
+ */
+
+@import 'tailwindcss';
+
+/* Source directives cho Tailwind CSS */
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';

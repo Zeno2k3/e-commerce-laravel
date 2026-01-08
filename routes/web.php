@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () { return view('client.home'); })->name('home');
+Route::get('/', function () { return view('client.pages.home'); })->name('home');
 Route::get('/voucher', function () { return view('client.layouts.voucher'); })->name('client.voucher');
 Route::get('/gio-hang', function () { return view('client.carts.index'); })->name('client.carts.index');
 Route::get('/success', function () { return view('client.carts.success'); })->name('client.carts.success');
@@ -23,13 +23,13 @@ Route::get('/san-pham', function () { return view('client.products.index'); })->
 Route::get('/men', function () { return view('client.products.men'); })->name('client.men');
 Route::get('/women', function () { return view('client.products.women'); })->name('client.women');
 Route::get('/phu-kien', function () { return view('client.products.phu-kien'); })->name('client.accessories');
-Route::get('/khuyen-mai', function () { return view('client.sale'); })->name('client.sale');
+Route::get('/khuyen-mai', function () { return view('client.pages.sale'); })->name('client.sale');
 Route::get('/profile', function () { return view('client.account.profile'); })->name('client.profile');
-Route::get('/about', function() { return view('client.about'); })->name('client.about');
-Route::get('/contact', function() { return view('client.contact'); })->name('client.contact');
-Route::get('/chinhsach-giaohang',  function() { return view('client.chinhsach-giaohang'); })->name('client.chinhsach-giaohang');
-Route::get('/doitrahang', function () {return view('client.doitrahang'); })->name('client.doitrahang');
-Route::get('/chinhsach-baomat', function () {return view('client.chinhsach-baomat'); })->name('client.chinhsach-baomat');
+Route::get('/about', function() { return view('client.pages.about'); })->name('client.about');
+Route::get('/contact', function() { return view('client.pages.contact'); })->name('client.contact');
+Route::get('/chinhsach-giaohang',  function() { return view('client.pages.shipping-policy'); })->name('client.chinhsach-giaohang');
+Route::get('/doitrahang', function () {return view('client.pages.return-policy'); })->name('client.doitrahang');
+Route::get('/chinhsach-baomat', function () {return view('client.pages.privacy-policy'); })->name('client.chinhsach-baomat');
 
 Route::post('/logout', function () {
     Auth::logout();
@@ -42,6 +42,15 @@ Route::get('/san-pham', function () {
     return view('client.products.index');
 })->name('client.products.index');
 
+Route::get('/payment', function () {
+    return view('client.carts.payment');
+})->name('client.carts.payment');
+
+
+Route::get('/lichsu-donhang', function () {
+    return view('client.account.orders');
+})->name('client.account.orders');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
 
 //Giả dữ liệu Chi tiết sp
@@ -138,13 +147,3 @@ Route::prefix('admin')->group(function () {
         Route::delete('/{customer}', [CustomerController::class, 'destroy'])->name('admin.customers.destroy');
     });
 });
-
-Route::get('/payment', function () {
-    return view('client.carts.payment');
-})->name('client.carts.payment');
-
-
-Route::get('/lichsu-donhang', function () {
-    return view('client.account.orders');
-})->name('client.account.orders');
-Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);

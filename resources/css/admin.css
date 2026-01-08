@@ -1,0 +1,8 @@
+/**
+ * Admin CSS
+ * Import base styles và thêm các styles riêng cho Admin
+ */
+
+@import './_base.css';
+
+/* Admin-specific styles có thể thêm ở đây */

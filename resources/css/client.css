@@ -1,0 +1,23 @@
+/**
+ * Client CSS
+ * Import base styles và thêm các styles riêng cho Client
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
+@import './_base.css';
+
+@theme {
+  --font-sans: 'Source Sans 3', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@layer base {
+  body {
+    font-size: 16px;
+    line-height: 1.6;
+    font-family: var(--font-sans);
+  }
+}
+
+/* Client-specific styles có thể thêm ở đây */

@@ -14,7 +14,7 @@ class VoucherController extends Controller
      * Display a listing of the vouchers.
      * GET /admin/vouchers
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         $query = Voucher::query();
 
@@ -45,28 +45,20 @@ class VoucherController extends Controller
         $perPage = $request->input('per_page', 15);
         $vouchers = $query->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Lấy danh sách voucher thành công.',
-            'data' => $vouchers,
-        ]);
+        return view('admin.vouchers.index', compact('vouchers'));
     }
 
     /**
      * Store a newly created voucher in storage.
      * POST /admin/vouchers
      */
-    public function store(VoucherRequest $request): JsonResponse
+    public function store(VoucherRequest $request)
     {
         $validated = $request->validated();
 
-        $voucher = Voucher::create($validated);
+        Voucher::create($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Tạo voucher thành công.',
-            'data' => $voucher,
-        ], 201);
+        return redirect()->route('admin.vouchers.index')->with('success', 'Tạo voucher thành công!');
     }
 
     /**
@@ -93,17 +85,13 @@ class VoucherController extends Controller
      * 
      * Route Model Binding: Laravel tự động inject Voucher model
      */
-    public function update(VoucherRequest $request, Voucher $voucher): JsonResponse
+    public function update(VoucherRequest $request, Voucher $voucher)
     {
         $validated = $request->validated();
 
         $voucher->update($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cập nhật voucher thành công.',
-            'data' => $voucher->fresh(),
-        ]);
+        return redirect()->route('admin.vouchers.index')->with('success', 'Cập nhật voucher thành công!');
     }
 
     /**
@@ -112,22 +100,16 @@ class VoucherController extends Controller
      * 
      * Route Model Binding: Laravel tự động inject Voucher model
      */
-    public function destroy(Voucher $voucher): JsonResponse
+    public function destroy(Voucher $voucher)
     {
         // Kiểm tra nếu voucher đã được sử dụng
         if ($voucher->usages()->exists()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Không thể xóa voucher đã được sử dụng. Hãy vô hiệu hóa thay vì xóa.',
-            ], 422);
+            return redirect()->route('admin.vouchers.index')->with('error', 'Không thể xóa voucher đã được sử dụng. Hãy vô hiệu hóa thay vì xóa.');
         }
 
         $voucher->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Xóa voucher thành công.',
-        ]);
+        return redirect()->route('admin.vouchers.index')->with('success', 'Xóa voucher thành công!');
     }
 
     /**

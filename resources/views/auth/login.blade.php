@@ -1,4 +1,4 @@
-@extends('layout.guest')
+@extends('auth.layout')
 
 @section('title')
     Trang đăng nhập
