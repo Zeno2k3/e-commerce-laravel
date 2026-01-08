@@ -91,3 +91,42 @@ Route::prefix('admin')->group(function () {
         Route::delete('/{customer}', [CustomerController::class, 'destroy'])->name('admin.customers.destroy');
     });
 });
+
+Route::get('/payment', function () {
+    return view('client.carts.payment');
+})->name('client.carts.payment');
+
+
+Route::get('/lichsu-donhang', function () {
+    return view('client.account.orders');
+})->name('client.account.orders');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes - Voucher Management (CRUD)
+|--------------------------------------------------------------------------
+| 
+| Các route này sử dụng Route Model Binding.
+| Laravel tự động inject Voucher model dựa trên voucher_id trong URL.
+|
+*/
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    // Voucher statistics
+    Route::get('vouchers/statistics', [AdminVoucherController::class, 'statistics'])
+        ->name('admin.vouchers.statistics');
+
+    // Resource routes cho Voucher (index, store, show, update, destroy)
+    Route::apiResource('vouchers', AdminVoucherController::class)
+        ->names([
+            'index' => 'admin.vouchers.index',
+            'store' => 'admin.vouchers.store',
+            'show' => 'admin.vouchers.show',
+            'update' => 'admin.vouchers.update',
+            'destroy' => 'admin.vouchers.destroy',
+        ]);
+
+    // Toggle status route
+    Route::patch('vouchers/{voucher}/toggle-status', [AdminVoucherController::class, 'toggleStatus'])
+        ->name('admin.vouchers.toggle-status');
+});
