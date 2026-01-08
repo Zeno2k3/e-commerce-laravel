@@ -1,92 +1,269 @@
-## SETUP
+# 🛒 Laravel E-Commerce
 
-#### Clone github
+Dự án website thương mại điện tử được xây dựng bằng Laravel 11 với giao diện hiện đại sử dụng TailwindCSS v4.
+
+## 📌 Tính năng chính
+
+### 🛍️ Khách hàng (Client)
+- Trang chủ với banner, sản phẩm nổi bật, danh mục
+- Danh sách sản phẩm với bộ lọc và sắp xếp
+- Chi tiết sản phẩm với đánh giá và sản phẩm liên quan
+- Giỏ hàng và thanh toán
+- Quản lý tài khoản và lịch sử đơn hàng
+- Trang thông tin: Giới thiệu, Liên hệ, Chính sách
+
+### 🔐 Quản trị (Admin)
+- Quản lý nhân viên
+- Quản lý sản phẩm
+- Quản lý đơn hàng
+- Quản lý danh mục
+- Quản lý voucher/khuyến mãi
+- Quản lý khách hàng
+
+---
+
+## 🚀 Cài đặt
+
+### 1. Clone repository
 
 ```bash
-git clone url <name-folder>
-cd name-folder
-
+git clone <repository-url> <folder-name>
+cd <folder-name>
 ```
 
-#### Download packe
+### 2. Cài đặt dependencies
 
 ```bash
-composer i
-npm i
+composer install
+npm install
 ```
 
-#### build tallwindCSS
-
-```bash
-npm run build
-npm run dev
-```
-
-#### Generate key
+### 3. Cấu hình môi trường
 
 ```bash
 cp .env.example .env
 php artisan key:generate
-php artisan serve
 ```
 
-## Folder detail fontend
+### 4. Cấu hình database
+
+Chỉnh sửa file `.env` với thông tin database của bạn:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ecommerce_laravel
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 5. Migrate và seed database
 
 ```bash
-resources/
-├── lang/                                  # File đa ngôn ngữ (nếu cần)
-│   ├── vi/                                # Ngôn ngữ tiếng Việt
-│   │   ├── messages.php                   # Chuỗi văn bản dùng chung
-│   │   └── auth.php                       # Chuỗi xác thực dùng chung
-├── views/                                 # Blade templates
-│   ├── admin/                             # Giao diện admin
-│   │   ├── dashboard.blade.php            # Trang tổng quan (dashboard) của admin
-│   │   ├── products/                      # Quản lý sản phẩm
-│   │   │   ├── index.blade.php            # Hiển thị danh sách sản phẩm ở trang admin để quản lý (CRUD).
-│   │   │   ├── form.blade.php             # Form chung cho create/edit
-│   │   │   └── show.blade.php             # Hiển thị chi tiết một sản phẩm ở trang admin.
-│   │   ├── orders/                        # Quản lý đơn hàng
-│   │   │   ├── index.blade.php            # Hiển thị danh sách đơn hàng ở trang admin để quản lý.
-│   │   │   └── show.blade.php             # Hiển thị chi tiết một đơn hàng ở trang admin.
-│   │   └── layouts/                       # Layout admin
-│   │       ├── app.blade.php              # Layout chính admin, chung cho tất cả các trang admin.
-│   │       └── partials/                  # Thành phần tái sử dụng
-│   │           ├── sidebar.blade.php      # Thanh điều hướng bên trái (sidebar) cho giao diện admin.
-│   │           └── navbar.blade.php       # Thanh điều hướng trên cùng (navbar) cho giao diện admin.
-│   ├── client/                            # Giao diện người dùng
-│   │   ├── home.blade.php                 # Trang chủ của trang web bán hàng.
-│   │   ├── products/                      # Sản phẩm
-│   │   │   ├── index.blade.php            # Hiển thị danh sách sản phẩm cho người dùng.
-│   │   │   ├── show.blade.php             # Hiển thị chi tiết một sản phẩm cho người dùng.
-│   │   │   └── search.blade.php           # Hiển thị kết quả tìm kiếm sản phẩm.
-│   │   ├── cart/                          # Giỏ hàng
-│   │   │   ├── index.blade.php            # Hiển thị giỏ hàng của người dùng.
-│   │   │   └── checkout.blade.php         # Hiển thị form thanh toán để hoàn tất đơn hàng.
-│   │   ├── account/                       # Tài khoản người dùng
-│   │   │   ├── profile.blade.php          # Hiển thị và chỉnh sửa thông tin cá nhân của người dùng.
-│   │   │   └── orders.blade.php           # Hiển thị lịch sử đơn hàng của người dùng.
-│   │   └── layouts/                       # Layout frontend
-│   │       ├── app.blade.php              # Layout chính client, cấu trúc chung cho các trang người dùng.
-│   │       ├── partials/                  # Thành phần tái sử dụng
-│   │       │   ├── header.blade.php       # Phần đầu trang (header)
-│   │       │   ├── footer.blade.php       # Phần chân trang (footer)
-│   │       │   └── navbar.blade.php       # Thanh điều hướng (navbar)
-│   ├── auth/                              # Giao diện xác thực
-│   │   ├── login.blade.php                # Form đăng nhập cho người dùng
-│   │   ├── register.blade.php             # Form đăng ký tài khoản mới
-│   │   └── password/                      # Reset mật khẩu
-│   │       ├── forgot.blade.php           # Form yêu cầu reset mật khẩu.
-│   │       └── reset.blade.php            # Form đặt lại mật khẩu sau khi nhận link reset.
-│   ├── components/                        # Blade components tái sử dụng
-│   │   ├── product-card.blade.php         # Hiển thị thông tin một sản phẩm (hình ảnh, tên, giá, nút hành động).
-│   │   ├── alert.blade.php                # Component hiển thị thông báo (success, error, warning).
-│   │   ├── pagination.blade.php           # Component hiển thị phân trang cho danh sách dữ liệu.
-│   │   └── breadcrumb.blade.php           # Component hiển thị điều hướng breadcrumb (đường dẫn phân cấp).
-│   └── layouts/                           # Layout chung
-│       ├── app.blade.php                  # Layout chính cho các trang yêu cầu đăng nhập (cả admin và client).
-│       └── guest.blade.php                # Layout cho các trang không yêu cầu đăng nhập (đăng nhập, đăng ký, quên mật khẩu).
-├── js/                                # JavaScript
-│   └── app.js
-└── css/                     # CSS
-    └── app.css
+php artisan migrate
+php artisan db:seed
 ```
+
+### 6. Build assets và chạy server
+
+```bash
+npm run build
+npm run dev          # Development với hot reload
+php artisan serve    # Chạy server Laravel
+```
+
+---
+
+## 📁 Cấu trúc thư mục Resources
+
+```
+resources/
+├── css/
+│   ├── _base.css              # Styles chung (Tailwind imports, @source)
+│   ├── admin.css              # Styles riêng cho Admin
+│   └── client.css             # Styles riêng cho Client + Font
+│
+├── js/
+│   ├── admin.js               # JavaScript cho Admin
+│   ├── client.js              # JavaScript cho Client
+│   ├── bootstrap.js           # Axios config
+│   └── client/
+│       └── cart.js            # Logic giỏ hàng
+│
+└── views/
+    ├── admin/                 # Giao diện Admin
+    │   ├── layouts/
+    │   │   ├── app.blade.php          # Layout chính Admin
+    │   │   └── partials/
+    │   │       ├── sidebar.blade.php
+    │   │       ├── navbar.blade.php
+    │   │       └── footer.blade.php
+    │   ├── dashboard.blade.php
+    │   ├── employees/
+    │   ├── products/
+    │   ├── orders/
+    │   ├── categories/
+    │   ├── vouchers/
+    │   └── customers/
+    │
+    ├── client/                # Giao diện Client
+    │   ├── layouts/
+    │   │   ├── app.blade.php          # Layout chính Client
+    │   │   ├── voucher.blade.php
+    │   │   └── partials/
+    │   │       ├── header.blade.php
+    │   │       ├── navbar.blade.php
+    │   │       └── footer.blade.php
+    │   ├── pages/                     # Các trang tĩnh
+    │   │   ├── home.blade.php
+    │   │   ├── about.blade.php
+    │   │   ├── contact.blade.php
+    │   │   ├── sale.blade.php
+    │   │   ├── privacy-policy.blade.php
+    │   │   ├── shipping-policy.blade.php
+    │   │   └── return-policy.blade.php
+    │   ├── products/                  # Trang sản phẩm
+    │   │   ├── index.blade.php
+    │   │   ├── show.blade.php
+    │   │   ├── men.blade.php
+    │   │   ├── women.blade.php
+    │   │   ├── phu-kien.blade.php
+    │   │   └── search.blade.php
+    │   ├── carts/                     # Giỏ hàng
+    │   │   ├── index.blade.php
+    │   │   ├── payment.blade.php
+    │   │   └── success.blade.php
+    │   └── account/                   # Tài khoản
+    │       ├── profile.blade.php
+    │       └── orders.blade.php
+    │
+    ├── auth/                  # Xác thực
+    │   ├── layout.blade.php
+    │   ├── login.blade.php
+    │   └── register.blade.php
+    │
+    └── components/            # Blade Components tái sử dụng
+        ├── product-card.blade.php
+        ├── alert.blade.php
+        ├── breadcrumb.blade.php
+        ├── button.blade.php
+        ├── pagination.blade.php
+        │
+        ├── admin/             # Components cho Admin
+        │   ├── card.blade.php
+        │   ├── form-modal.blade.php
+        │   ├── input.blade.php
+        │   ├── select.blade.php
+        │   ├── status-badge.blade.php
+        │   └── action-buttons.blade.php
+        │
+        └── client/            # Components cho Client
+            ├── page-header.blade.php      # Header section (tag, title, highlight)
+            ├── category-filter.blade.php  # Buttons lọc danh mục
+            ├── sort-bar.blade.php         # Thanh sắp xếp
+            ├── pagination.blade.php       # Phân trang
+            ├── features-bar.blade.php     # Cam kết dịch vụ
+            ├── newsletter.blade.php       # Form đăng ký nhận tin
+            ├── cta-section.blade.php      # Call-to-action section
+            ├── contact-card.blade.php     # Card thông tin liên hệ
+            ├── faq-item.blade.php         # Item FAQ
+            ├── info-card.blade.php        # Card thông tin
+            └── rights-card.blade.php      # Card quyền lợi
+```
+
+---
+
+## 🎨 Components Guide
+
+### Client Components
+
+Các component Client được thiết kế với tính năng tùy chỉnh màu sắc (purple, pink, amber, red, blue):
+
+```blade
+{{-- Page Header với màu tím --}}
+<x-client.page-header 
+    icon="fa-solid fa-star"
+    tag="VỀ CHÚNG TÔI"
+    title="Câu Chuyện Của"
+    highlight="LaravelShop"
+    description="Mô tả ngắn"
+    color="purple" />
+
+{{-- Category Filter với màu hồng --}}
+<x-client.category-filter 
+    :categories="$categories" 
+    activeCategory="all"
+    color="pink" />
+
+{{-- Sort Bar --}}
+<x-client.sort-bar 
+    title="Sản phẩm"
+    :count="10"
+    :sortOptions="['Nổi bật', 'Giá thấp', 'Giá cao']"
+    :activeSort="0"
+    color="purple" />
+
+{{-- Pagination --}}
+<x-client.pagination 
+    :currentPage="1" 
+    :totalPages="5"
+    color="purple" />
+
+{{-- Features Bar --}}
+<x-client.features-bar />
+
+{{-- Newsletter --}}
+<x-client.newsletter />
+
+{{-- CTA Section --}}
+<x-client.cta-section 
+    title="Tiêu đề"
+    description="Mô tả"
+    :buttons="[
+        ['text' => 'Khám Phá', 'url' => '/products', 'primary' => true],
+        ['text' => 'Liên Hệ', 'url' => '/contact', 'primary' => false]
+    ]" />
+```
+
+### Admin Components
+
+```blade
+{{-- Form Modal --}}
+<x-admin.form-modal 
+    id="createModal" 
+    title="Tạo mới" 
+    action="{{ route('admin.items.store') }}" 
+    method="POST">
+    <x-admin.input name="name" label="Tên" required />
+    <x-admin.select name="status" label="Trạng thái" :options="['1' => 'Active', '0' => 'Inactive']" />
+</x-admin.form-modal>
+
+{{-- Status Badge --}}
+<x-admin.status-badge :status="$item->status" />
+
+{{-- Action Buttons --}}
+<x-admin.action-buttons :item="$item" edit-modal="editModal" />
+```
+
+---
+
+## 🛠️ Tech Stack
+
+- **Backend:** Laravel 11
+- **Frontend:** Blade Templates, TailwindCSS v4
+- **Icons:** Font Awesome 6
+- **JavaScript:** Alpine.js (cho interactions)
+- **Database:** MySQL
+
+---
+
+## 📝 License
+
+MIT License
+
+---
+
+## 👥 Team
+
+- Developed by **LaravelShop Team**
