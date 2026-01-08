@@ -8,7 +8,7 @@
                         alt="FlexStyle"
                         class="h-20 w-auto mix-blend-multiply opacity-90 hover:opacity-100 transition">
                 </a>
-                <p class="text-gray-600 leading-relaxed text-base">
+                <p class="text-gray-600 leading-relaxed text-xl">
                     Cửa hàng thời trang hàng đầu Việt Nam, mang đến những sản phẩm chất lượng cao với giá cả hợp lý.
                 </p>
             </div>
@@ -16,21 +16,21 @@
             <div>
                 <h3 class="font-bold text-gray-900 uppercase tracking-wider mb-4 text-xl">Liên kết nhanh</h3>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Về chúng tôi</a></li>
-                    <li><a href="#" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Liên hệ</a></li>
-                    <li><a href="#" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Chính sách giao hàng</a></li>
-                    <li><a href="#" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Đổi trả hàng</a></li>
-                    <li><a href="#" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Chính sách bảo mật</a></li>
+                    <li><a href="{{ route('client.about') }}" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Về chúng tôi</a></li>
+                    <li><a href="{{ route('client.contact') }}" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Liên hệ</a></li>
+                    <li><a href="{{ route('client.chinhsach-giaohang') }}" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Chính sách giao hàng</a></li>
+                    <li><a href="{{ route('client.doitrahang') }}" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Đổi trả hàng</a></li>
+                    <li><a href="{{ route('client.chinhsach-baomat') }}" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Chính sách bảo mật</a></li>
                 </ul>
             </div>
 
             <div>
                 <h3 class="font-bold text-gray-900 uppercase tracking-wider mb-4 text-xl">Danh mục</h3>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Thời trang nam</a></li>
-                    <li><a href="#" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Thời trang nữ</a></li>
-                    <li><a href="#" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Phụ kiện</a></li>
-                    <li><a href="#" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Sản phẩm sale</a></li>
+                    <li><a href="{{ route('client.men') }}" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Thời trang nam</a></li>
+                    <li><a href="{{ route('client.women') }}" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Thời trang nữ</a></li>
+                    <li><a href="{{ route('client.accessories') }}" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Phụ kiện</a></li>
+                    <li><a href="{{ route('client.sale') }}" class="text-gray-600 hover:text-purple-600 transition duration-300 text-xl font-medium">Sản phẩm sale</a></li>
                 </ul>
             </div>
 
