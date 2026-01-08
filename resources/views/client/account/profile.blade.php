@@ -27,15 +27,11 @@
                                 Thành viên
                             </span>
                         </div>
-
-                        <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                            <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition shadow-sm whitespace-nowrap">
-                                <i class="fa-regular fa-pen-to-square mr-2"></i>Chỉnh sửa thông tin
+                        
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition shadow-sm">
+                                Chỉnh sửa thông tin
                             </button>
-
-                            <a href="{{route('client.account.orders')}}" class="flex items-center justify-center px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm font-medium text-blue-700 hover:bg-blue-100 transition shadow-sm whitespace-nowrap">
-                                <i class="fa-solid fa-clock-rotate-left mr-2"></i>Lịch sử mua hàng
-                            </a>
                         </div>
                     </div>
 
@@ -46,83 +42,15 @@
                                 <dt class="text-sm font-medium text-gray-500">Họ và tên</dt>
                                 <dd class="mt-1 text-sm text-gray-900 border-b border-gray-100 pb-2">{{ Auth::user()->full_name }}</dd>
                             </div>
-
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Địa chỉ Email</dt>
                                 <dd class="mt-1 text-sm text-gray-900 border-b border-gray-100 pb-2">{{ Auth::user()->email }}</dd>
                             </div>
-
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Số điện thoại</dt>
-                                <dd class="mt-1 text-sm text-gray-900 border-b border-gray-100 pb-2">
-                                    {{ Auth::user()->phone ?? 'Chưa cập nhật' }}
-                                </dd>
-                            </div>
-
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Địa chỉ</dt>
-                                <dd class="mt-1 text-sm text-gray-900 border-b border-gray-100 pb-2">
-                                    {{ Auth::user()->address ?? 'Chưa cập nhật' }}
-                                </dd>
-                            </div>
-
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Ngày tham gia</dt>
                                 <dd class="mt-1 text-sm text-gray-900 border-b border-gray-100 pb-2">{{ Auth::user()->created_at->format('d/m/Y') }}</dd>
                             </div>
                         </dl>
-                    </div>
-
-                    <div class="mt-10 border-t border-gray-100 pt-8">
-                        <div class="mb-6">
-                            <h3 class="text-lg font-semibold text-gray-900">Cài đặt tài khoản</h3>
-                            <p class="text-sm text-gray-500 mt-1">Quản lý cài đặt bảo mật và thông báo</p>
-                        </div>
-
-                        <div class="space-y-6">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-gray-50 last:border-0 last:pb-0">
-                                <div class="mb-4 sm:mb-0">
-                                    <h4 class="text-sm font-medium text-gray-900">Đổi mật khẩu</h4>
-                                    <p class="text-sm text-gray-500 mt-1">Cập nhật mật khẩu để bảo mật tài khoản</p>
-                                </div>
-                                <button class="w-full sm:w-40 flex justify-center items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition shadow-sm whitespace-nowrap">
-                                    Đổi mật khẩu
-                                </button>
-                            </div>
-
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-gray-50 last:border-0 last:pb-0">
-                                <div class="mb-4 sm:mb-0">
-                                    <h4 class="text-sm font-medium text-gray-900">Thông báo email</h4>
-                                    <p class="text-sm text-gray-500 mt-1">Nhận thông báo về đơn hàng và khuyến mãi</p>
-                                </div>
-
-                                <div class="w-full sm:w-auto flex justify-end">
-                                    <button id="btn-setup-email" onclick="showEmailOptions()" class="w-full sm:w-40 flex justify-center items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition shadow-sm whitespace-nowrap">
-                                        Cài đặt
-                                    </button>
-
-                                    <div id="email-options-group" class="hidden flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                                        <button onclick="handleEmailChoice('subscribe')" class="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:text-purple-600 hover:border-purple-200 hover:bg-purple-50 transition shadow-sm whitespace-nowrap">
-                                            <i class="fa-solid fa-gift mr-2"></i> Nhận thông báo
-                                        </button>
-
-                                        <button onclick="handleEmailChoice('unsubscribe')" class="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition shadow-sm whitespace-nowrap">
-                                            <i class="fa-solid fa-xmark mr-2"></i> Hủy đăng ký
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between">
-                                <div class="mb-4 sm:mb-0">
-                                    <h4 class="text-sm font-medium text-gray-900">Xóa tài khoản</h4>
-                                    <p class="text-sm text-gray-500 mt-1">Xóa vĩnh viễn tài khoản và dữ liệu</p>
-                                </div>
-                                <button class="w-full sm:w-40 flex justify-center items-center px-4 py-2 bg-red-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-red-700 transition shadow-sm whitespace-nowrap">
-                                    Xóa tài khoản
-                                </button>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="mt-10 border-t border-gray-100 pt-8">
@@ -140,26 +68,9 @@
                             </form>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-
-    <script>
-        function showEmailOptions() {
-            document.getElementById('btn-setup-email').style.display = 'none';
-            const group = document.getElementById('email-options-group');
-            group.classList.remove('hidden');
-            group.classList.add('flex');
-        }
-
-        function handleEmailChoice(type) {
-            if(type === 'subscribe') {
-                alert('Đã chọn: Nhận thông báo quà tặng!');
-            } else {
-                alert('Đã chọn: Hủy đăng ký thông báo!');
-            }
-        }
-    </script>
 @endsection
+
