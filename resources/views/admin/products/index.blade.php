@@ -1,94 +1,99 @@
 @extends('admin.layouts.app')
-
 @section('title', 'Quản lý sản phẩm')
 
-@section('content')
-<div class="flex justify-between items-center mb-6">
-    <div class="flex items-center space-x-3">
-        <h2 class="text-2xl font-black text-slate-800 uppercase italic tracking-tighter border-b-4 border-blue-600 pb-2">Sản phẩm</h2>
-        <span class="bg-slate-100 text-slate-500 text-[10px] px-2 py-1 rounded font-bold italic border border-slate-200">Table: product & variant</span>
-    </div>
-    <a href="{{ route('admin.products.create') }}" class="bg-blue-600 text-white px-5 py-3 rounded-2xl font-black shadow-lg shadow-blue-500/30 hover:bg-blue-700 active:scale-95 transition-all uppercase text-[10px] tracking-widest">
-        <i class="fa-solid fa-plus mr-2"></i> Thêm sản phẩm mới
-    </a>
-</div>
+@section('add_button')
+<button onclick="openModal('createModal')" class="w-10 h-10 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center hover:bg-purple-200 transition">
+    <i class="fa-solid fa-plus"></i>
+</button>
+@endsection
 
-<div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
-    {{-- Kiểm tra nếu có dữ liệu từ Controller gửi sang --}}
+@section('content')
+<div class="bg-white min-h-full">
+    @if(session('success'))
+        <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
+            <p class="text-green-700">{{ session('success') }}</p>
+        </div>
+    @endif
+
     @if($products->count() > 0)
-        <table class="w-full text-left border-collapse">
-            <thead class="bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.2em]">
-                <tr>
-                    <th class="px-6 py-5">Thông tin chính (Product)</th>
-                    <th class="px-6 py-5 text-center">Danh mục (Category)</th>
-                    <th class="px-6 py-5 text-center">Giá từ (Min Price)</th>
-                    <th class="px-6 py-5 text-center">Tồn kho (Stock)</th>
-                    <th class="px-6 py-5 text-right">Quản lý</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-                @foreach($products as $product)
-                <tr class="hover:bg-slate-50 transition duration-200">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
-                                <i class="fa-solid fa-image text-xl"></i>
-                            </div>
-                            <div>
-                                <div class="font-black uppercase text-xs text-slate-800">{{ $product->product_name }}</div>
-                                <div class="text-[9px] text-slate-400 italic font-bold">MÃ SP: #{{ $product->product_id }}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="text-[10px] font-black uppercase px-2 py-1 bg-blue-50 text-blue-500 rounded border border-blue-100 italic">
-                            {{ $product->category_name ?? 'Chưa phân loại' }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <div class="font-black text-slate-700 italic text-sm">
-                            ${{ number_format($product->min_price, 2) }}
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="px-3 py-1 bg-slate-900 text-white text-[9px] font-black rounded-full uppercase tracking-tighter">
-                            Tổng: {{ $product->total_stock ?? 0 }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex justify-end space-x-1">
-                            <button onclick="handleEdit({{ $product->product_id }})" class="p-2 text-slate-400 hover:text-blue-600 transition">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <button onclick="handleDelete({{ $product->product_id }})" class="p-2 text-slate-400 hover:text-red-500 transition">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        @foreach($products as $product)
+            <x-admin.card 
+                :title="$product->product_name"
+                :subtitle="$product->category->category_name ?? 'Chưa phân loại'"
+                :email="$product->description ?? 'Không có mô tả'"
+                status="active"
+                :id="$product->product_id"
+                :onEdit="'openEditModal(' . $product->product_id . ', \'' . addslashes($product->product_name) . '\', \'' . addslashes($product->description ?? '') . '\', \'' . ($product->category_id ?? '') . '\')'"
+                :onDelete="'deleteItem(' . $product->product_id . ')'"
+            />
+        @endforeach
+        
+        @if($products->hasPages())
+            <div class="px-6 py-4 flex justify-center">{{ $products->links() }}</div>
+        @endif
     @else
-        {{-- Hiển thị khi database thực sự trống --}}
         <div class="py-24 text-center">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-slate-50 rounded-full mb-4">
-                <i class="fa-solid fa-box-open text-slate-200 text-3xl"></i>
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
+                <i class="fa-solid fa-box-open text-3xl text-gray-300"></i>
             </div>
-            <p class="text-slate-400 font-black italic uppercase tracking-widest text-[10px]">Hiện tại không có sản phẩm nào</p>
-            <p class="text-slate-300 text-[9px] mt-1 font-bold italic uppercase">Vui lòng kiểm tra bảng `product` trong `ecommerce_db`</p>
+            <p class="text-gray-500 font-medium">Chưa có sản phẩm nào</p>
         </div>
     @endif
 </div>
 
-<script>
-    function handleEdit(id) {
-        alert('Mở chỉnh sửa sản phẩm ID: ' + id);
-    }
+{{-- Create Modal --}}
+<x-admin.form-modal id="createModal" title="Thêm sản phẩm mới" action="{{ route('admin.products.store') }}" method="POST">
+    <x-admin.input name="product_name" label="Tên sản phẩm" placeholder="Nhập tên sản phẩm" required />
+    <x-admin.input name="description" label="Mô tả" placeholder="Nhập mô tả sản phẩm" />
+    <div class="mt-4">
+        <x-admin.select name="category_id" label="Danh mục" :options="$categories->pluck('category_name', 'category_id')->toArray()" />
+    </div>
+</x-admin.form-modal>
 
-    function handleDelete(id) {
-        if(confirm('Mày có chắc muốn xóa sản phẩm này? Mọi biến thể (Size, Màu) sẽ bị xóa sạch!')) {
-            alert('Đã xóa ID: ' + id);
+{{-- Edit Modal --}}
+<div id="editModal" class="fixed inset-0 z-50 hidden overflow-y-auto" role="dialog">
+    <div class="fixed inset-0 bg-black/40" onclick="closeModal('editModal')"></div>
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg">
+            <div class="px-6 py-4 border-b border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900">Chỉnh sửa sản phẩm</h3>
+            </div>
+            <form id="editForm" method="POST">
+                @csrf @method('PUT')
+                <div class="px-6 py-6">
+                    <x-admin.input name="edit_product_name" label="Tên sản phẩm" placeholder="Nhập tên sản phẩm" required />
+                    <x-admin.input name="edit_description" label="Mô tả" placeholder="Nhập mô tả sản phẩm" />
+                    <div class="mt-4">
+                        <x-admin.select name="category_id" label="Danh mục" :options="$categories->pluck('category_name', 'category_id')->toArray()" />
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
+                    <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-500 text-white font-semibold rounded-xl hover:bg-purple-600 transition">
+                        <i class="fa-solid fa-floppy-disk"></i><span>Lưu</span>
+                    </button>
+                    <button type="button" onclick="closeModal('editModal')" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-gray-700 font-semibold rounded-xl border border-gray-300 hover:bg-gray-50 transition">
+                        <i class="fa-solid fa-xmark"></i><span>Hủy</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<form id="deleteForm" method="POST" style="display: none;">@csrf @method('DELETE')</form>
+
+<script>
+    function openEditModal(id, name, description, categoryId) {
+        document.getElementById('editForm').action = '/admin/products/' + id;
+        document.getElementById('edit_product_name').value = name;
+        document.getElementById('edit_description').value = description;
+        if(categoryId) document.querySelector('#editModal select[name="category_id"]').value = categoryId;
+        openModal('editModal');
+    }
+    function deleteItem(id) {
+        if(confirm('Bạn có chắc muốn xóa?')) {
+            document.getElementById('deleteForm').action = '/admin/products/' + id;
+            document.getElementById('deleteForm').submit();
         }
     }
 </script>

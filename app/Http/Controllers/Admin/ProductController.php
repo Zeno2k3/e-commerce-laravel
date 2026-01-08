@@ -1,36 +1,46 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
+use App\Models\Product;
+use App\Models\Category;
+use Illuminate\Http\Request;
 
-class ProductController extends Controller {
-    public function index() {
-        // Fix lỗi 1055 bằng cách liệt kê cụ thể các cột
-        $products = DB::table('product')
-            ->leftJoin('category', 'product.category_id', '=', 'category.category_id')
-            ->leftJoin('product_variant', 'product.product_id', '=', 'product_variant.product_id')
-            ->select(
-                'product.product_id', 
-                'product.product_name', 
-                'product.category_id',
-                'category.category_name',
-                DB::raw('SUM(product_variant.stock) as total_stock'),
-                DB::raw('MIN(product_variant.price) as min_price')
-            )
-            ->groupBy(
-                'product.product_id', 
-                'product.product_name', 
-                'product.category_id',
-                'category.category_name'
-            )
-            ->get();
-
-        return view('admin.products.index', compact('products'));
+class ProductController extends Controller
+{
+    public function index()
+    {
+        $products = Product::with('category')->orderBy('created_at', 'desc')->paginate(10);
+        $categories = Category::all();
+        return view('admin.products.index', compact('products', 'categories'));
     }
 
-    public function create() {
-        $categories = DB::table('category')->get();
-        return view('admin.products.create', compact('categories'));
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'product_name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'category_id' => 'nullable|exists:category,category_id',
+        ]);
+        Product::create($validated);
+        return redirect()->route('admin.products.index')->with('success', 'Tạo sản phẩm thành công!');
+    }
+
+    public function update(Request $request, Product $product)
+    {
+        $validated = $request->validate([
+            'product_name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'category_id' => 'nullable|exists:category,category_id',
+        ]);
+        $product->update($validated);
+        return redirect()->route('admin.products.index')->with('success', 'Cập nhật thành công!');
+    }
+
+    public function destroy(Product $product)
+    {
+        $product->delete();
+        return redirect()->route('admin.products.index')->with('success', 'Xóa thành công!');
     }
 }

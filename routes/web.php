@@ -1,11 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\VoucherController;
+use App\Http\Controllers\Admin\CustomerController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -25,7 +26,6 @@ Route::get('/phu-kien', function () { return view('client.products.phu-kien'); }
 Route::get('/khuyen-mai', function () { return view('client.sale'); })->name('client.sale');
 Route::get('/profile', function () { return view('client.account.profile'); })->name('client.profile');
 
-// Đưa Logout ra ngoài prefix hoặc để trong tùy mày, nhưng phải dùng POST
 Route::post('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
@@ -35,31 +35,59 @@ Route::post('/logout', function () {
 
 /*
 |--------------------------------------------------------------------------
-| 2. TRANG QUẢN TRỊ (ADMIN)
+| 2. TRANG QUẢN TRỊ (ADMIN) - 6 Modules
 |--------------------------------------------------------------------------
 */
 
 Route::prefix('admin')->group(function () {
+    // Redirect /admin to /admin/employees
+    Route::get('/', function () {
+        return redirect()->route('admin.employees.index');
+    });
     
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-
+    // 1. Quản lý nhân viên
+    Route::prefix('employees')->group(function () {
+        Route::get('/', [EmployeeController::class, 'index'])->name('admin.employees.index');
+        Route::post('/', [EmployeeController::class, 'store'])->name('admin.employees.store');
+        Route::put('/{employee}', [EmployeeController::class, 'update'])->name('admin.employees.update');
+        Route::delete('/{employee}', [EmployeeController::class, 'destroy'])->name('admin.employees.destroy');
+    });
+    
+    // 2. Quản lý sản phẩm
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('admin.products.index');
-        Route::get('/create', [ProductController::class, 'create'])->name('admin.products.create');
-        Route::get('/show/{id}', [ProductController::class, 'show'])->name('admin.products.show');
+        Route::post('/', [ProductController::class, 'store'])->name('admin.products.store');
+        Route::put('/{product}', [ProductController::class, 'update'])->name('admin.products.update');
+        Route::delete('/{product}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
     });
-
+    
+    // 3. Quản lý đơn hàng
     Route::prefix('orders')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('admin.orders.index');
-        Route::get('/show/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
+        Route::patch('/{order}/status', [OrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
     });
-
-    Route::get('/customers', [UserController::class, 'index'])->name('admin.customers.index');
-
-    // Gom nhóm Cài đặt lại cho gọn, bỏ cái khai báo lẻ ở trên đi
-    Route::prefix('settings')->group(function () {
-        Route::get('/', [SettingController::class, 'index'])->name('admin.settings');
-        Route::post('/update-profile', [SettingController::class, 'updateProfile'])->name('admin.settings.updateProfile');
-        Route::post('/update-password', [SettingController::class, 'updatePassword'])->name('admin.settings.updatePassword');
+    
+    // 4. Danh mục sản phẩm
+    Route::prefix('categories')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('admin.categories.index');
+        Route::post('/', [CategoryController::class, 'store'])->name('admin.categories.store');
+        Route::put('/{category}', [CategoryController::class, 'update'])->name('admin.categories.update');
+        Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+    });
+    
+    // 5. Quản lý voucher
+    Route::prefix('vouchers')->group(function () {
+        Route::get('/', [VoucherController::class, 'index'])->name('admin.vouchers.index');
+        Route::post('/', [VoucherController::class, 'store'])->name('admin.vouchers.store');
+        Route::put('/{voucher}', [VoucherController::class, 'update'])->name('admin.vouchers.update');
+        Route::delete('/{voucher}', [VoucherController::class, 'destroy'])->name('admin.vouchers.destroy');
+    });
+    
+    // 6. Quản lý người dùng (khách hàng)
+    Route::prefix('customers')->group(function () {
+        Route::get('/', [CustomerController::class, 'index'])->name('admin.customers.index');
+        Route::post('/', [CustomerController::class, 'store'])->name('admin.customers.store');
+        Route::put('/{customer}', [CustomerController::class, 'update'])->name('admin.customers.update');
+        Route::delete('/{customer}', [CustomerController::class, 'destroy'])->name('admin.customers.destroy');
     });
 });
