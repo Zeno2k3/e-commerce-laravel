@@ -43,7 +43,7 @@ class AuthController extends Controller
             $user = Auth::user();
             
             if ($user->role === 'admin') {
-                return redirect()->route('admin.dashboard')->with('success', 'Chào mừng quản trị viên quay trở lại.');
+                return redirect()->route('admin.employees.index')->with('success', 'Chào mừng quản trị viên quay trở lại.');
             }
 
             return redirect('/')->with('success', 'Đăng nhập thành công.');

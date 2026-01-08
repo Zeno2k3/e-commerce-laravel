@@ -25,6 +25,11 @@ Route::get('/women', function () { return view('client.products.women'); })->nam
 Route::get('/phu-kien', function () { return view('client.products.phu-kien'); })->name('client.accessories');
 Route::get('/khuyen-mai', function () { return view('client.sale'); })->name('client.sale');
 Route::get('/profile', function () { return view('client.account.profile'); })->name('client.profile');
+Route::get('/about', function() { return view('client.about'); })->name('client.about');
+Route::get('/contact', function() { return view('client.contact'); })->name('client.contact');
+Route::get('/chinhsach-giaohang',  function() { return view('client.chinhsach-giaohang'); })->name('client.chinhsach-giaohang');
+Route::get('/doitrahang', function () {return view('client.doitrahang'); })->name('client.doitrahang');
+Route::get('/chinhsach-baomat', function () {return view('client.chinhsach-baomat'); })->name('client.chinhsach-baomat');
 
 Route::post('/logout', function () {
     Auth::logout();
@@ -32,6 +37,48 @@ Route::post('/logout', function () {
     request()->session()->regenerateToken();
     return redirect('/'); 
 })->name('logout');
+
+Route::get('/san-pham', function () {
+    return view('client.products.index');
+})->name('client.products.index');
+
+
+
+//Giả dữ liệu Chi tiết sp
+
+Route::get('/san-pham/{id}', function ($id) {
+    // --- KHAI BÁO DỮ LIỆU GIẢ TẠI ĐÂY ---
+    $product = [
+        'id' => $id,
+        'name' => 'Áo Khoác Jean Phối Nón The Original 039 Xanh Dương',
+        'sku' => 'W9ED09E',
+        'price' => 1000000,
+        'old_price' => 10999000,
+        'discount' => '-90%',
+        'description' => 'Áo khoác jean 100% có nón, form regular fit, phù hợp mặc hàng ngày. Chất liệu bền đẹp...',
+        'image' => 'images/jacket.png', // Đảm bảo ảnh này có trong thư mục public/images
+        'rating' => 4.0,
+        'reviews_count' => 69,
+        'specs' => [
+            'material' => 'Jean Cotton 100%',
+            'origin' => 'Việt Nam',
+            'brand' => 'FlexStyle',
+            'style' => 'Regular'
+        ],
+        'reviews' => [
+            ['user' => 'Nguyễn Văn A', 'avatar_text' => 'A', 'rating' => 5, 'time' => '2 ngày trước', 'content' => 'Sản phẩm tốt!'],
+            ['user' => 'Trần Thị B', 'avatar_text' => 'B', 'rating' => 4, 'time' => '1 tuần trước', 'content' => 'Giao hàng nhanh.'],
+        ],
+        'related_products' => [
+             ['id' => 101, 'name' => 'Sản phẩm gợi ý 1', 'price' => 500000, 'image' => 'images/jacket.png', 'discount' => '-50%'],
+             ['id' => 102, 'name' => 'Sản phẩm gợi ý 2', 'price' => 250000, 'image' => 'images/shirt.png', 'discount' => null],
+        ]
+    ];
+
+    // Truyền biến $product vào giao diện 'client.products.show'
+    return view('client.products.show', compact('product'));
+
+})->name('client.product.detail');
 
 /*
 |--------------------------------------------------------------------------
@@ -101,32 +148,3 @@ Route::get('/lichsu-donhang', function () {
     return view('client.account.orders');
 })->name('client.account.orders');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
-
-/*
-|--------------------------------------------------------------------------
-| Admin Routes - Voucher Management (CRUD)
-|--------------------------------------------------------------------------
-| 
-| Các route này sử dụng Route Model Binding.
-| Laravel tự động inject Voucher model dựa trên voucher_id trong URL.
-|
-*/
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
-    // Voucher statistics
-    Route::get('vouchers/statistics', [AdminVoucherController::class, 'statistics'])
-        ->name('admin.vouchers.statistics');
-
-    // Resource routes cho Voucher (index, store, show, update, destroy)
-    Route::apiResource('vouchers', AdminVoucherController::class)
-        ->names([
-            'index' => 'admin.vouchers.index',
-            'store' => 'admin.vouchers.store',
-            'show' => 'admin.vouchers.show',
-            'update' => 'admin.vouchers.update',
-            'destroy' => 'admin.vouchers.destroy',
-        ]);
-
-    // Toggle status route
-    Route::patch('vouchers/{voucher}/toggle-status', [AdminVoucherController::class, 'toggleStatus'])
-        ->name('admin.vouchers.toggle-status');
-});

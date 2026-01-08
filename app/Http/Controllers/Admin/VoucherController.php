@@ -36,7 +36,6 @@ class VoucherController extends Controller
                   ->orWhere('description', 'like', "%{$search}%");
             });
         }
-
         // Order by
         $orderBy = $request->input('order_by', 'created_at');
         $orderDirection = $request->input('order_direction', 'desc');
