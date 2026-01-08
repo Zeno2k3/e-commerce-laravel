@@ -9,10 +9,52 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $categories = Category::orderBy('created_at', 'desc')->get();
-        $products = Product::with('category')->orderBy('created_at', 'desc')->paginate(12);
+        
+        // Build query with filters
+        $query = Product::with('category');
+        
+        // Filter by categories
+        if ($request->has('categories') && !empty($request->categories)) {
+            $query->whereIn('category_id', $request->categories);
+        }
+        
+        // Filter by price range
+        if ($request->filled('price_min')) {
+            $query->where('price', '>=', $request->price_min);
+        }
+        if ($request->filled('price_max')) {
+            $query->where('price', '<=', $request->price_max);
+        }
+        
+        // Search by product name
+        if ($request->filled('search')) {
+            $query->where('product_name', 'like', '%' . $request->search . '%');
+        }
+        
+        // Sort
+        $sort = $request->get('sort', 'newest');
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'name':
+                $query->orderBy('product_name', 'asc');
+                break;
+            case 'price_asc':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_desc':
+                $query->orderBy('price', 'desc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+        
+        $products = $query->paginate(12)->withQueryString();
+        
         return view('admin.categories.index', compact('categories', 'products'));
     }
 

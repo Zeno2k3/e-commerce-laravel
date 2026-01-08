@@ -47,4 +47,9 @@ class Voucher extends Model
     ];
     public $timestamps=true;
 
+    public function getRouteKeyName()
+    {
+        return 'voucher_id';
+    }
+
 }

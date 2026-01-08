@@ -118,16 +118,34 @@
                 @csrf @method('PUT')
                 <div class="px-6 py-6 space-y-4">
                     <div class="grid grid-cols-2 gap-4">
-                        <x-admin.input name="edit_description" label="Tên voucher" placeholder="CHÀO MỪNG THÀNH VIÊN MỚI" required />
-                        <x-admin.input name="edit_voucher_code" label="Mã voucher" placeholder="WELCOME50" required />
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tên voucher</label>
+                            <input type="text" name="description" id="edit_description" placeholder="CHÀO MỪNG THÀNH VIÊN MỚI" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-200 focus:border-purple-400">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Mã voucher</label>
+                            <input type="text" name="voucher_code" id="edit_voucher_code" placeholder="WELCOME50" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-200 focus:border-purple-400">
+                        </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <x-admin.input name="edit_usage_conditions" label="Điều kiện" placeholder="Đơn tối thiểu 300.000đ" />
-                        <x-admin.input name="edit_discount_percentage" label="% Giảm giá" type="number" placeholder="50" required />
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Điều kiện</label>
+                            <input type="text" name="usage_conditions" id="edit_usage_conditions" placeholder="Đơn tối thiểu 300.000đ" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-200 focus:border-purple-400">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">% Giảm giá</label>
+                            <input type="number" name="discount_percentage" id="edit_discount_percentage" placeholder="50" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-200 focus:border-purple-400">
+                        </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <x-admin.input name="edit_start_date" label="Ngày bắt đầu" type="date" required />
-                        <x-admin.input name="edit_end_date" label="Ngày kết thúc" type="date" required />
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Ngày bắt đầu</label>
+                            <input type="date" name="start_date" id="edit_start_date" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-200 focus:border-purple-400">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Ngày kết thúc</label>
+                            <input type="date" name="end_date" id="edit_end_date" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-200 focus:border-purple-400">
+                        </div>
                     </div>
                     <input type="hidden" name="quantity" value="100">
                     <x-admin.select name="status" label="Trạng thái" :options="['1' => 'Còn hoạt động', '0' => 'Ngưng hoạt động']" />

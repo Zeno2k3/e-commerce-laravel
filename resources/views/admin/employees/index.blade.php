@@ -75,11 +75,20 @@
                 @method('PUT')
                 <div class="px-6 py-6">
                     <div class="grid grid-cols-2 gap-4">
-                        <x-admin.input name="edit_full_name" label="Họ và tên" placeholder="Nguyễn Văn Quản Lý" required />
-                        <x-admin.input name="edit_phone_number" label="Số điện thoại" placeholder="0123456789" />
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Họ và tên</label>
+                            <input type="text" name="full_name" id="edit_full_name" placeholder="Nguyễn Văn Quản Lý" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-200 focus:border-purple-400">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+                            <input type="text" name="phone_number" id="edit_phone_number" placeholder="0123456789" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-200 focus:border-purple-400">
+                        </div>
                     </div>
-                    <x-admin.input name="edit_email" label="Nhập email" type="email" placeholder="email@example.com" required />
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" name="email" id="edit_email" placeholder="email@example.com" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-200 focus:border-purple-400">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mt-4">
                         <x-admin.input name="password" label="Nhập mật khẩu" type="password" placeholder="Để trống nếu không đổi" />
                         <x-admin.input name="password_confirmation" label="Nhập lại mật khẩu" type="password" placeholder="Nhập lại mật khẩu" />
                     </div>
