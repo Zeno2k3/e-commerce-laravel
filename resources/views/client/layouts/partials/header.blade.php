@@ -2,7 +2,7 @@
     <div class="container mx-auto px-4 h-20 flex items-center justify-between">
 
         <div class="flex-shrink-0">
-            <a href="/san-pham">
+            <a href="/">
                 <img src="{{ asset('images/logo.png') }}" alt="FlexStyle Logo" class="h-20 w-auto">
             </a>
         </div>
