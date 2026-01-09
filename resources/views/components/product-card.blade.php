@@ -1,6 +1,48 @@
-@props(['product'])
+@props(['product', 'removeOnUnfavorite' => false])
 
-<div class="group flex flex-col bg-white border border-gray-100 rounded-2xl p-3 hover:shadow-xl hover:shadow-purple-100 hover:border-purple-300 transition-all duration-300 h-full relative overflow-hidden">
+<div x-data="{
+    isFavorited: {{ \Illuminate\Support\Js::from($product['is_favorited'] ?? false) }},
+    isLoading: false,
+    removeOnUnfavorite: {{ \Illuminate\Support\Js::from($removeOnUnfavorite) }},
+    toggleFavorite(id) {
+        if (this.isLoading) return;
+        this.isLoading = true;
+        
+        fetch('{{ route('client.favorite.toggle') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name=\'csrf-token\']').content,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ product_id: id })
+        })
+        .then(response => {
+            if (response.status === 401) {
+                window.location.href = '{{ route('login') }}';
+                return;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.status === 'success') {
+                this.isFavorited = !this.isFavorited;
+                
+                // Remove element if enabled and unfavorited
+                if (this.removeOnUnfavorite && !this.isFavorited) {
+                     this.$el.closest('.product-item-wrapper').remove();
+                     
+                     // RELOAD if no items left (to show empty state)
+                     if (document.querySelectorAll('.product-item-wrapper').length === 0) {
+                         window.location.reload();
+                     }
+                }
+            }
+        })
+        .catch(error => console.error('Error:', error))
+        .finally(() => this.isLoading = false);
+    }
+}" class="group flex flex-col bg-white border border-gray-100 rounded-2xl p-3 hover:shadow-xl hover:shadow-purple-100 hover:border-purple-300 transition-all duration-300 h-full relative overflow-hidden">
 
     {{-- 1. ẢNH SẢN PHẨM --}}
     <div class="relative w-full aspect-[4/5] bg-purple-50 rounded-xl overflow-hidden mb-3 group-hover:bg-white transition-colors duration-300">
@@ -20,8 +62,10 @@
         </a>
 
         {{-- Nút yêu thích (Heart) --}}
-        <button class="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 shadow-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
-            <i class="fa-regular fa-heart"></i>
+        <button @click.prevent="toggleFavorite({{ $product['id'] }})"
+                :class="{'text-red-500 bg-red-50 opacity-100 translate-x-0': isFavorited, 'text-gray-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0': !isFavorited}"
+                class="absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-sm transition-all transform z-20">
+            <i :class="isFavorited ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
         </button>
     </div>
 

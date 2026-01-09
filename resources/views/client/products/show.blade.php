@@ -192,8 +192,11 @@
                         <span x-text="isLoading ? 'Đang xử lý...' : (selectedVariant && selectedVariant.stock > 0 ? 'Thêm vào giỏ hàng' : 'Vui lòng chọn biến thể')"></span>
                     </button>
 
-                    <button class="w-14 h-14 flex-shrink-0 border-2 border-gray-200 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 hover:border-red-200 transition-all">
-                        <i class="fa-regular fa-heart text-2xl"></i>
+                    <button 
+                        @click="toggleFavorite"
+                        :class="{'bg-red-50 text-red-500 border-red-200': isFavorited, 'text-gray-400 hover:text-red-500 hover:bg-red-50 hover:border-red-200': !isFavorited}"
+                        class="w-14 h-14 flex-shrink-0 border-2 border-gray-200 rounded-xl flex items-center justify-center transition-all group">
+                        <i :class="isFavorited ? 'fa-solid fa-heart' : 'fa-regular fa-heart'" class="text-2xl transition-transform group-hover:scale-110"></i>
                     </button>
                 </div>
 
@@ -519,6 +522,40 @@ function productDetailApp(productId, variants, galleryArray) {
         hoverRating: 0,
         reviewContent: '',
         isSubmitting: false,
+
+        // Favorite
+        isFavorited: {{ \Illuminate\Support\Js::from($product['is_favorited'] ?? false) }},
+
+        // Toggle Favorite
+        toggleFavorite() {
+            if (this.isLoading) return;
+            this.isLoading = true;
+            
+            fetch('{{ route('client.favorite.toggle') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=\'csrf-token\']').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ product_id: this.productId })
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    window.location.href = '{{ route('login') }}';
+                    return;
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.status === 'success') {
+                    this.isFavorited = !this.isFavorited;
+                    // Optional: Show toast or feedback
+                }
+            })
+            .catch(error => console.error('Error:', error))
+            .finally(() => this.isLoading = false);
+        },
         
         // Computed Arrays
         availableSizes: [],

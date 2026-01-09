@@ -48,6 +48,7 @@ Route::post('/logout', function () {
 // Profile
 Route::prefix('profile')->group(function () {
     Route::get('/', [App\Http\Controllers\Client\ProfileController::class, 'index'])->name('client.profile.index');
+    Route::get('/favorited', [App\Http\Controllers\Client\ProfileController::class, 'favorited'])->name('client.profile.favorites'); // New Route
     Route::put('/info', [App\Http\Controllers\Client\ProfileController::class, 'update'])->name('client.profile.update');
     Route::put('/password', [App\Http\Controllers\Client\ProfileController::class, 'updatePassword'])->name('client.profile.password');
 });
@@ -65,6 +66,9 @@ Route::get('/khuyen-mai', [ProductClientController::class, 'sale'])->name('clien
 // Ajax Search
 Route::get('/ajax/search', [App\Http\Controllers\Client\AjaxSearchController::class, 'search'])->name('client.ajax.search');
 
+// Favorites
+Route::post('/favorite/toggle', [App\Http\Controllers\Client\FavoriteController::class, 'toggle'])->name('client.favorite.toggle');
+
 
 
 //---------------------------- Thanh Toan ------------------------------
@@ -80,9 +84,7 @@ Route::get('/success', function () {
 Route::post('/payment', [CartController::class, 'payment'])->name('client.cart.payment');
 
 
-Route::get('/lichsu-donhang', function () {
-    return view('client.account.orders');
-})->name('client.account.orders');
+Route::get('/lichsu-donhang', [App\Http\Controllers\Client\ProfileController::class, 'orders'])->name('client.account.orders')->middleware('auth');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
 // ChatBot

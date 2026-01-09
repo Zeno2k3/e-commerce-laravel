@@ -88,4 +88,11 @@ class Product extends Model
         return $this->hasMany(Review::class, 'product_id', 'product_id');
     }
 
+    /**
+     * Relationship: Product has many favorites
+     */
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'product_id', 'product_id');
+    }
 }

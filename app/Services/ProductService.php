@@ -42,6 +42,7 @@ class ProductService
             'rating' => $avgRating > 0 ? (float)number_format($avgRating, 1) : 0,
             'reviews_count' => $reviewsCount,
             'reviews' => $reviewsCount, // Map for backward compatibility with component
+            'is_favorited' => auth()->check() ? $product->favorites()->where('user_id', auth()->id())->exists() : false,
         ];
     }
 
@@ -257,7 +258,9 @@ class ProductService
                 'style' => 'Modern',
             ],
             'reviews' => $reviews,
+            'reviews' => $reviews,
             'related_products' => $relatedProducts,
+            'is_favorited' => auth()->check() ? $product->favorites()->where('user_id', auth()->id())->exists() : false,
         ];
     }
 }

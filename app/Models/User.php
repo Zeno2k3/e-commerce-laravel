@@ -51,4 +51,12 @@ class User extends Authenticatable
     {
         return 'user_id';
     }
+
+    /**
+     * Get the favorites for the user.
+     */
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'user_id', 'user_id');
+    }
 }

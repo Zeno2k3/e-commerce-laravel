@@ -7,83 +7,70 @@
     $user = Auth::user();
 @endphp
 
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto space-y-6">
-        {{-- Header Card --}}
-        <div class="bg-gray-50 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            {{-- Gradient Banner --}}
-            <div class="h-32 bg-gradient-to-r from-blue-500 to-purple-600" style="background: linear-gradient(to right, #3b82f6, #9333ea);"></div>
-            
-            <div class="px-8 pb-8">
-                <div class="relative flex justify-between items-end -mt-12 mb-6">
-                    {{-- Avatar Display --}}
-                    <div class="p-1.5 bg-white rounded-full">
-                        <div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-3xl font-bold text-gray-500 border-4 border-white overflow-hidden">
-                            @if($user->avatar)
-                                {{-- Kiểm tra nếu avatar là đường dẫn storage hay url đầy đủ --}}
-                                <img src="{{ Str::startsWith($user->avatar, 'http') ? $user->avatar : asset('storage/' . $user->avatar) }}" alt="Avatar" class="w-full h-full object-cover">
-                            @else
-                                {{ strtoupper(substr($user->full_name ?? 'U', 0, 1)) }}
-                            @endif
+<div class="bg-gray-50 py-12">
+    <div class="container mx-auto px-4">
+        
+        {{-- Breadcrumb --}}
+        <nav class="flex text-sm text-gray-500 mb-8" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="{{ route('home') }}" class="hover:text-purple-600 transition-colors">
+                        <i class="fa-solid fa-house mr-2"></i>Trang chủ
+                    </a>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-chevron-right mx-2 text-gray-400"></i>
+                        <span class="text-gray-900 font-medium">Hồ sơ cá nhân</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            {{-- Sidebar --}}
+            <div class="lg:w-1/4">
+               @include('client.profile.partials.sidebar')
+            </div>
+
+            {{-- Main Content --}}
+            <div class="flex-1">
+                {{-- Header Card (Removed massive banner, kept simpler) --}}
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
+                     <div class="flex justify-between items-center">
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900 mb-1">Thông tin tài khoản</h1>
+                            <p class="text-gray-500">Quản lý và cập nhật thông tin cá nhân của bạn</p>
+                        </div>
+                        <button onclick="openModal('editProfileModal')" 
+                                class="px-5 py-2.5 bg-[#7d3cff] text-white rounded-xl hover:bg-[#6c2bd9] transition font-bold text-sm shadow-lg shadow-purple-200">
+                            <i class="fa-solid fa-user-pen mr-2"></i> Chỉnh sửa
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6 pb-4 border-b border-gray-100">Chi tiết hồ sơ</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Họ và tên</label>
+                            <p class="text-gray-900 font-semibold text-lg">{{ $user->full_name }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Địa chỉ Email</label>
+                            <p class="text-gray-900 font-semibold text-lg">{{ $user->email }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Số điện thoại</label>
+                            <p class="text-gray-900 font-semibold text-lg">{{ $user->phone_number ?? 'Chưa cập nhật' }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Ngày tham gia</label>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                {{ $user->created_at ? $user->created_at->format('d/m/Y') : 'N/A' }}
+                            </span>
                         </div>
                     </div>
-    
-                    {{-- Action Button --}}
-                    <button onclick="openModal('editProfileModal')" 
-                            class="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 hover:text-purple-600 transition font-medium text-sm shadow-sm">
-                        <i class="fa-solid fa-pen-to-square mr-2"></i> Chỉnh sửa thông tin
-                    </button>
-                </div>
-    
-                <div class="space-y-1">
-                    <h1 class="text-2xl font-bold text-gray-800">{{ $user->full_name }}</h1>
-                    <p class="text-gray-500">{{ $user->email }}</p>
-                    <span class="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium mt-2 capitalize">
-                        Thành viên
-                    </span>
-                </div>
-            </div>
-        </div>
-    
-        {{-- Details Sections --}}
-        <div class="grid grid-cols-1 gap-6">
-            {{-- Personal Info Display --}}
-            <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                <h3 class="text-lg font-bold text-gray-800 mb-6">Thông tin cá nhân</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Họ và tên</label>
-                        <p class="text-gray-800 font-medium border-b border-gray-200 pb-2">{{ $user->full_name }}</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Địa chỉ Email</label>
-                        <p class="text-gray-800 font-medium border-b border-gray-200 pb-2">{{ $user->email }}</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Số điện thoại</label>
-                        <p class="text-gray-800 font-medium border-b border-gray-200 pb-2">{{ $user->phone_number ?? 'Chưa cập nhật' }}</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Ngày tham gia</label>
-                        <p class="text-gray-800 font-medium border-b border-gray-200 pb-2">{{ $user->created_at ? $user->created_at->format('d/m/Y') : 'N/A' }}</p>
-                    </div>
-                </div>
-            </div>
-    
-            {{-- Danger Zone / Logout --}}
-            <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                <h3 class="text-lg font-bold text-red-600 mb-4">Khu vực đăng xuất</h3>
-                <div class="bg-red-50 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-4 border border-red-100">
-                    <div>
-                        <h4 class="text-red-800 font-medium">Đăng xuất khỏi hệ thống</h4>
-                        <p class="text-red-600 text-sm mt-1">Kết thúc phiên làm việc hiện tại của bạn.</p>
-                    </div>
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="px-6 py-2 bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition font-medium text-sm shadow-sm flex items-center gap-2">
-                            <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
-                        </button>
-                    </form>
                 </div>
             </div>
         </div>

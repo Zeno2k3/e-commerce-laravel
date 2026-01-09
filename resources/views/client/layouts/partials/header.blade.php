@@ -130,7 +130,8 @@
                     .then(data => {
                         let html = '';
 
-                        // Categories
+                        // Categories - REMOVED as per user request
+                        /*
                         if (data.categories.length > 0) {
                             html += `<div class="p-3 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider">Danh mục gợi ý</div>`;
                             data.categories.forEach(cat => {
@@ -141,6 +142,7 @@
                                 `;
                             });
                         }
+                        */
 
                         // Products
                         if (data.products.length > 0) {
@@ -161,11 +163,11 @@
                             });
                         }
 
-                        // No results
-                        if (data.categories.length === 0 && data.products.length === 0) {
+                        // No results (Check products only)
+                        if (data.products.length === 0) {
                             html = `
                                 <div class="p-4 text-center text-gray-500 text-sm">
-                                    Không tìm thấy kết quả nào cho "<b>${keyword}</b>"
+                                    Không tìm thấy sản phẩm nào cho "<b>${keyword}</b>"
                                 </div>
                             `;
                         } else {
