@@ -1,21 +1,21 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Thêm sản phẩm mới')
+@section('title', 'Chỉnh sửa sản phẩm')
 
 @section('content')
 <div class="fixed inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-purple-900/20 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
     <div class="my-8 w-full max-w-6xl relative animate-slideIn">
         <div class="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl border border-gray-200">
             {{-- Header --}}
-            <div class="bg-gradient-to-r from-purple-600 to-blue-600 px-8 py-6 rounded-t-3xl border-b border-purple-500/20">
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6 rounded-t-3xl border-b border-blue-500/20">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                            <i class="fa-solid fa-box-open text-2xl text-white"></i>
+                            <i class="fa-solid fa-edit text-2xl text-white"></i>
                         </div>
                         <div>
-                            <h2 class="text-2xl font-black text-white tracking-tight">Thêm Sản Phẩm Mới</h2>
-                            <p class="text-purple-200 text-sm font-medium">Quản lý sản phẩm & biến thể</p>
+                            <h2 class="text-2xl font-black text-white tracking-tight">Chỉnh Sửa Sản Phẩm #{{ $product->product_id }}</h2>
+                            <p class="text-blue-200 text-sm font-medium">{{ $product->product_name }}</p>
                         </div>
                     </div>
                     <a href="{{ route('admin.products.index') }}" 
@@ -26,8 +26,9 @@
             </div>
 
             {{-- Form --}}
-            <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.products.update', $product->product_id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
                 
                 <div class="p-8 space-y-8 max-h-[calc(100vh-240px)] overflow-y-auto">
                     {{-- Error Messages --}}
@@ -48,7 +49,7 @@
                     {{-- Product Info --}}
                     <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-info-circle text-purple-500"></i>
+                            <i class="fa-solid fa-info-circle text-blue-500"></i>
                             Thông tin chính
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -56,16 +57,16 @@
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">
                                     Tên sản phẩm <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="product_name" value="{{ old('product_name') }}" required 
-                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                                <input type="text" name="product_name" value="{{ old('product_name', $product->product_name) }}" required 
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                                     placeholder="VD: Nike Air Jordan 1 Retro">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Danh mục</label>
-                                <select name="category_id" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
+                                <select name="category_id" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
                                     <option value="">-- Chọn danh mục --</option>
                                     @foreach($categories as $cat)
-                                        <option value="{{ $cat->category_id }}" {{ old('category_id') == $cat->category_id ? 'selected' : '' }}>
+                                        <option value="{{ $cat->category_id }}" {{ $product->category_id == $cat->category_id ? 'selected' : '' }}>
                                             {{ $cat->category_name }}
                                         </option>
                                     @endforeach
@@ -74,8 +75,8 @@
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Mô tả</label>
                                 <textarea name="description" rows="3"
-                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none resize-none"
-                                    placeholder="Mô tả chi tiết sản phẩm...">{{ old('description') }}</textarea>
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                                    placeholder="Mô tả chi tiết sản phẩm...">{{ old('description', $product->description) }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -84,18 +85,19 @@
                     <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 shadow-xl">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                                <i class="fa-solid fa-layer-group text-blue-400"></i>
+                                <i class="fa-solid fa-layer-group text-purple-400"></i>
                                 Biến thể sản phẩm
                             </h3>
                             <button type="button" onclick="addVariantRow()" 
-                                class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition flex items-center gap-2">
+                                class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white text-sm font-semibold rounded-lg transition flex items-center gap-2">
                                 <i class="fa-solid fa-plus"></i>
                                 Thêm biến thể
                             </button>
                         </div>
                         <div id="variantsContainer" class="space-y-4">
-                            {{-- Initial variant row --}}
+                            @foreach($product->variants as $index => $variant)
                             <div class="variant-row bg-slate-800 rounded-xl p-5 border border-slate-700 relative">
+                                <input type="hidden" name="variants[{{ $index }}][id]" value="{{ $variant->variant_id }}">
                                 <button type="button" onclick="this.closest('.variant-row').remove()" 
                                     class="absolute top-3 right-3 w-8 h-8 bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white rounded-lg transition flex items-center justify-center">
                                     <i class="fa-solid fa-trash text-sm"></i>
@@ -103,46 +105,55 @@
                                 <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
                                     <div>
                                         <label class="block text-xs font-bold text-slate-400 mb-1">Size</label>
-                                        <input type="text" name="variants[0][size]" value="{{ old('variants.0.size') }}"
-                                            class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                                        <input type="text" name="variants[{{ $index }}][size]" value="{{ old('variants.'.$index.'.size', $variant->size) }}"
+                                            class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-purple-500"
                                             placeholder="42">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-400 mb-1">Màu sắc</label>
-                                        <input type="text" name="variants[0][color]" value="{{ old('variants.0.color') }}"
-                                            class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                                        <input type="text" name="variants[{{ $index }}][color]" value="{{ old('variants.'.$index.'.color', $variant->color) }}"
+                                            class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-purple-500"
                                             placeholder="Đỏ">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-400 mb-1">Chất liệu</label>
-                                        <input type="text" name="variants[0][material]" value="{{ old('variants.0.material') }}"
-                                            class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                                        <input type="text" name="variants[{{ $index }}][material]" value="{{ old('variants.'.$index.'.material', $variant->material) }}"
+                                            class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-purple-500"
                                             placeholder="Leather">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-400 mb-1">Giá <span class="text-red-400">*</span></label>
-                                        <input type="number" name="variants[0][price]" value="{{ old('variants.0.price') }}" required
-                                            class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                                        <input type="number" name="variants[{{ $index }}][price]" value="{{ old('variants.'.$index.'.price', $variant->price) }}" required
+                                            class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-purple-500"
                                             placeholder="150000">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-slate-400 mb-1">Tồn kho <span class="text-red-400">*</span></label>
-                                        <input type="number" name="variants[0][stock]" value="{{ old('variants.0.stock') }}" required
-                                            class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                                        <input type="number" name="variants[{{ $index }}][stock]" value="{{ old('variants.'.$index.'.stock', $variant->stock) }}" required
+                                            class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-purple-500"
                                             placeholder="100">
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-400 mb-2">Ảnh biến thể</label>
+                                    <label class="block text-xs font-bold text-slate-400 mb-2">
+                                        Ảnh biến thể 
+                                        @if($variant->url_image)
+                                            <span class="text-green-400">(Đã có ảnh)</span>
+                                        @endif
+                                    </label>
                                     <div class="flex items-center gap-3">
-                                        <input type="file" name="variants[0][url_image]" accept="image/*" onchange="previewImage(this, 0)"
-                                            class="flex-1 text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-500 file:text-white file:cursor-pointer hover:file:bg-blue-600">
-                                        <div id="preview-0" class="hidden w-16 h-16 rounded-lg overflow-hidden border-2 border-slate-600">
-                                            <img src="" class="w-full h-full object-cover" alt="Preview">
+                                        <input type="file" name="variants[{{ $index }}][url_image]" accept="image/*" onchange="previewImage(this, {{ $index }})"
+                                            class="flex-1 text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-500 file:text-white file:cursor-pointer hover:file:bg-purple-600">
+                                        <div id="preview-{{ $index }}" class="{{ $variant->url_image ? '' : 'hidden' }} w-16 h-16 rounded-lg overflow-hidden border-2 border-slate-600">
+                                            <img src="{{ $variant->url_image ? asset($variant->url_image) : '' }}" class="w-full h-full object-cover" alt="Preview">
                                         </div>
                                     </div>
+                                    @if($variant->url_image)
+                                        <p class="text-xs text-slate-500 mt-1">Không chọn file mới = giữ ảnh cũ</p>
+                                    @endif
                                 </div>
                             </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -155,9 +166,9 @@
                         Hủy
                     </a>
                     <button type="submit" 
-                        class="text-gray-600 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 font-semibold rounded-xl shadow-lg transition flex items-center gap-2">
+                        class="text-gray-600 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 font-semibold rounded-xl shadow-lg transition flex items-center gap-2">
                         <i class="fa-solid fa-save"></i>
-                        Lưu sản phẩm
+                        Cập nhật sản phẩm
                     </button>
                 </div>
             </form>
@@ -174,7 +185,7 @@
 </style>
 
 <script>
-let variantIndex = 1;
+let variantIndex = {{ $product->variants->count() }};
 
 function addVariantRow() {
     const container = document.getElementById('variantsContainer');
@@ -188,31 +199,31 @@ function addVariantRow() {
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">Size</label>
                     <input type="text" name="variants[${variantIndex}][size]" 
-                        class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder="42">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">Màu sắc</label>
                     <input type="text" name="variants[${variantIndex}][color]" 
-                        class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder="Đỏ">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">Chất liệu</label>
                     <input type="text" name="variants[${variantIndex}][material]" 
-                        class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder="Leather">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">Giá <span class="text-red-400">*</span></label>
                     <input type="number" name="variants[${variantIndex}][price]" required
-                        class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder="150000">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">Tồn kho <span class="text-red-400">*</span></label>
                     <input type="number" name="variants[${variantIndex}][stock]" required
-                        class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 bg-slate-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder="100">
                 </div>
             </div>
@@ -220,7 +231,7 @@ function addVariantRow() {
                 <label class="block text-xs font-bold text-slate-400 mb-2">Ảnh biến thể</label>
                 <div class="flex items-center gap-3">
                     <input type="file" name="variants[${variantIndex}][url_image]" accept="image/*" onchange="previewImage(this, ${variantIndex})"
-                        class="flex-1 text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-500 file:text-white file:cursor-pointer hover:file:bg-blue-600">
+                        class="flex-1 text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-500 file:text-white file:cursor-pointer hover:file:bg-purple-600">
                     <div id="preview-${variantIndex}" class="hidden w-16 h-16 rounded-lg overflow-hidden border-2 border-slate-600">
                         <img src="" class="w-full h-full object-cover" alt="Preview">
                     </div>

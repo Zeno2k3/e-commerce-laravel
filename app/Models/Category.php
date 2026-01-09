@@ -14,12 +14,6 @@ class Category extends Model
      * @var string
      */
     protected $table = 'category';
-
-    /**
-     * Khóa chính của bảngApp\Models\Category::all();
-     *
-     * @var string
-     */
     protected $primaryKey = 'category_id';
 
     /**

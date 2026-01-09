@@ -28,12 +28,13 @@ class ProductVariant extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-         'product_id',
+        'product_id',
         'size',
         'color',
         'material',
         'price',
         'stock',
+        'url_image',
     ];
 
     public $timestamps=true;

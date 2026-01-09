@@ -9,6 +9,9 @@ use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Admin\CustomerController;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\ProductClientController;
+
 /*
 |--------------------------------------------------------------------------
 | 1. TRANG DÀNH CHO KHÁCH HÀNG (CLIENT)
@@ -17,7 +20,6 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () { return view('client.pages.home'); })->name('home');
 Route::get('/voucher', function () { return view('client.layouts.voucher'); })->name('client.voucher');
-Route::get('/gio-hang', function () { return view('client.carts.index'); })->name('client.carts.index');
 Route::get('/success', function () { return view('client.carts.success'); })->name('client.carts.success');
 Route::get('/san-pham', function () { return view('client.products.index'); })->name('client.products.index');
 Route::get('/men', function () { return view('client.products.men'); })->name('client.men');
@@ -38,9 +40,11 @@ Route::post('/logout', function () {
     return redirect('/'); 
 })->name('logout');
 
-Route::get('/san-pham', function () {
-    return view('client.products.index');
-})->name('client.products.index');
+// ----------------------------- San Pham -----------------------------
+
+Route::get('/san-pham', [ProductClientController::class, 'index'])->name('client.products.index');
+Route::get('/san-pham/{id}', [ProductClientController::class, 'show'])->name('client.products.show');
+Route::get('/san-pham/{category_id}', [ProductClientController::class, 'get_product_by_category_id'])->name('client.products.get_product_by_category_id');
 
 Route::get('/payment', function () {
     return view('client.carts.payment');
@@ -51,6 +55,14 @@ Route::get('/lichsu-donhang', function () {
     return view('client.account.orders');
 })->name('client.account.orders');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
+
+
+
+// --------------------------- Gio hang User ---------------------------
+
+Route::get('/gio-hang', [CartController::class, 'index'])->name('client.carts.index');
+Route::post('/gio-hang', [CartController::class, 'addToCart'])->name('client.cart.add');
+
 
 
 //Giả dữ liệu Chi tiết sp
@@ -112,7 +124,9 @@ Route::prefix('admin')->group(function () {
     // 2. Quản lý sản phẩm
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('admin.products.index');
+        Route::get('/create', [ProductController::class, 'create'])->name('admin.products.create');
         Route::post('/', [ProductController::class, 'store'])->name('admin.products.store');
+        Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
         Route::put('/{product}', [ProductController::class, 'update'])->name('admin.products.update');
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
     });

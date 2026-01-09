@@ -57,9 +57,23 @@
         </div>
 
         {{-- 3. NÚT THÊM GIỎ HÀNG (Quan trọng: Đã có onclick) --}}
-        <button onclick="addToCartDemo(event)" class="w-full bg-gradient-to-r from-[#7d3cff] to-[#a76bf8] hover:to-[#7d3cff] text-white font-bold text-sm py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-purple-200 hover:shadow-lg hover:shadow-purple-300 transform active:scale-95">
+        
+        @if(Auth::check())
+
+        <form id="add-to-cart-form" action="{{ route('client.cart.add') }}" method="POST">
+            @csrf
+            <input type="hidden" name="product_id" value="{{ $product['id'] }}">
+            <button class="w-full bg-gradient-to-r from-[#7d3cff] to-[#a76bf8] hover:to-[#7d3cff] text-white font-bold text-sm py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-purple-200 hover:shadow-lg hover:shadow-purple-300 transform active:scale-95">
+                <i class="fa-solid fa-cart-plus"></i>
+                Thêm vào giỏ
+            </button>
+        </form>
+    
+        @else
+        <button class="w-full bg-gradient-to-r from-[#7d3cff] to-[#a76bf8] hover:to-[#7d3cff] text-white font-bold text-sm py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-purple-200 hover:shadow-lg hover:shadow-purple-300 transform active:scale-95">
             <i class="fa-solid fa-cart-plus"></i>
-            Thêm vào giỏ
+            <a href="{{ route('login') }}">Thêm vào giỏ</a>
         </button>
+        @endif
     </div>
 </div>

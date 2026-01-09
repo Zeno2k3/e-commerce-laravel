@@ -154,6 +154,9 @@
                     @endforeach
                 </div>
 
+
+                <!-- Pagination -->
+
                 <div class="mt-12 flex justify-center items-center gap-4">
                     <button class="group w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[#7d3cff] bg-white hover:bg-purple-50 rounded-lg transition-all border border-gray-100">
                         <i class="fa-solid fa-angles-left text-sm group-hover:-translate-x-0.5 transition-transform"></i>

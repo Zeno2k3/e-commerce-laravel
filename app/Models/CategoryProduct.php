@@ -36,7 +36,7 @@ class CategoryProduct extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-         'category_id',
+        'category_id',
         'product_id',
     ];
 

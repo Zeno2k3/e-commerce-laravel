@@ -8,7 +8,7 @@
     <div class="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-gray-900/5">
         <div class="relative bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-8 text-center sm:px-10">
             <h2 class="text-3xl font-bold tracking-tight text-white">Đăng nhập</h2>
-            <p class="mt-2 text-blue-10">Chào mừng bạn quay trở lại!</p>
+            <p class="mt-2 text-white">Chào mừng bạn quay trở lại!</p>
         </div>
 
         <div class="px-6 py-8 sm:px-10">
