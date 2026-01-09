@@ -32,9 +32,36 @@ class Product extends Model
         'category_id',
         'product_name',
         'description',
+        'rating',
+        'reviews_count',
+        'discount_percentage',
+        'old_price',
+        'product_type',
     ];
 
     public $timestamps=true;
+    
+    /**
+     * Cast attributes to appropriate types
+     */
+    protected $casts = [
+        'rating' => 'decimal:1',
+        'reviews_count' => 'integer',
+        'discount_percentage' => 'decimal:2',
+        'old_price' => 'decimal:2',
+    ];
+    
+    /**
+     * Accessor: Get discount as formatted string (e.g., "-25%")
+     */
+    public function getDiscountAttribute(): ?string
+    {
+        if ($this->discount_percentage > 0) {
+            return '-' . number_format($this->discount_percentage, 0) . '%';
+        }
+        return null;
+    }
+    
     /**
      * Quan hệ: Mỗi sản phẩm thuộc về một danh mục
      */

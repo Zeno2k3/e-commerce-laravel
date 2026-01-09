@@ -2,45 +2,6 @@
 
 @section('content')
 
-{{-- DỮ LIỆU GIẢ --}}
-@php
-    $products = [
-        [
-            'id' => 1, 'name' => 'Áo Khoác Denim Nam Classic Form Rộng',
-            'image' => 'images/jacket.png',
-            'price' => 850000, 'old_price' => 1200000, 'discount' => '-29%', 'rating' => 5, 'reviews' => 42
-        ],
-        [
-            'id' => 2, 'name' => 'Áo Polo Nam Vải Cá Sấu Cao Cấp',
-            'image' => 'images/jacket.png',
-            'price' => 350000, 'old_price' => null, 'discount' => null, 'rating' => 4, 'reviews' => 150
-        ],
-        [
-            'id' => 3, 'name' => 'Quần Tây Nam Slimfit Hàn Quốc',
-            'image' => 'images/jacket.png',
-            'price' => 450000, 'old_price' => 550000, 'discount' => '-18%', 'rating' => 5, 'reviews' => 30
-        ],
-        [
-            'id' => 4, 'name' => 'Áo Vest Nam Blazer Lịch Lãm',
-            'image' => 'images/jacket.png',
-            'price' => 1500000, 'old_price' => null, 'discount' => null, 'rating' => 5, 'reviews' => 12
-        ],
-        [
-            'id' => 5, 'name' => 'Giày Sneaker Nam Cổ Thấp Trắng',
-            'image' => 'images/jacket.png',
-            'price' => 650000, 'old_price' => 800000, 'discount' => '-15%', 'rating' => 4, 'reviews' => 25
-        ]
-    ];
-    
-    $categories = [
-        ['name' => 'Tất cả', 'slug' => 'all', 'count' => 5],
-        ['name' => 'Áo sơ mi', 'slug' => 'ao-so-mi', 'count' => 0],
-        ['name' => 'Quần dài', 'slug' => 'quan-dai', 'count' => 0],
-        ['name' => 'Áo khoác', 'slug' => 'ao-khoac', 'count' => 0],
-        ['name' => 'Giày dép', 'slug' => 'giay-dep', 'count' => 0],
-    ];
-@endphp
-
 <div class="bg-white min-h-screen font-sans pb-20">
     <div class="container mx-auto px-4 py-12">
 
@@ -69,13 +30,20 @@
 
         {{-- GRID SẢN PHẨM --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8 mb-12">
-            @foreach($products as $product)
+            @forelse($products as $product)
                 <x-product-card :product="$product" />
-            @endforeach
+            @empty
+                <div class="col-span-full text-center py-12">
+                    <i class="fa-solid fa-box-open text-6xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-500 text-lg">Chưa có sản phẩm nào</p>
+                </div>
+            @endforelse
         </div>
 
         {{-- PHÂN TRANG --}}
-        <x-client.pagination :currentPage="1" :totalPages="1" color="purple" />
+        <div class="flex justify-center">
+            {{ $pagination->links() }}
+        </div>
 
     </div>
 </div>

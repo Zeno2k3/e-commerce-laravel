@@ -1,63 +1,156 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Services\ProductService;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-
-use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 
 class ProductClientController extends Controller
 {
+    protected ProductService $productService;
+    protected CategoryService $categoryService;
+
+    public function __construct(ProductService $productService, CategoryService $categoryService)
+    {
+        $this->productService = $productService;
+        $this->categoryService = $categoryService;
+    }
+
+    /**
+     * Base method cho product listing (DRY principle)
+     * 
+     * @param string $view
+     * @param array $filters
+     * @return View
+     */
+    private function productListing(string $view, array $filters = []): View
+    {
+        // Get paginated products
+        $paginatedProducts = $this->productService->getProducts($filters);
+        
+        // Transform products to component format
+        $products = $this->productService->transformCollection($paginatedProducts);
+        
+        // Get categories with counts
+        $categories = $this->categoryService->getCategoriesWithCount();
+        
+        return view($view, [
+            'products' => $products,
+            'categories' => $categories,
+            'pagination' => $paginatedProducts, // Untuk pagination links
+        ]);
+    }
+
     /**
      * Hiển thị danh sách sản phẩm
-     * GET /products
+     * GET /san-pham
      */
     public function index(): View
     {
-        $products = Product::all();
-        return view('client.products.index', compact('products'));
+        return $this->productListing('client.products.index');
+    }
+
+    /**
+     * Hiển thị sản phẩm nam
+     * GET /men
+     */
+    public function men(): View
+    {
+        return $this->productListing('client.products.men', [
+            'product_type' => 'nam'
+        ]);
+    }
+
+    /**
+     * Hiển thị sản phẩm nữ
+     * GET /women
+     */
+    public function women(): View
+    {
+        return $this->productListing('client.products.women', [
+            'product_type' => 'nu'
+        ]);
+    }
+
+    /**
+     * Hiển thị phụ kiện
+     * GET /phu-kien
+     */
+    public function accessories(): View
+    {
+        return $this->productListing('client.products.phu-kien', [
+            'product_type' => 'phu-kien'
+        ]);
+    }
+
+    /**
+     * Hiển thị sản phẩm sale
+     * GET /khuyen-mai
+     */
+    public function sale(): View
+    {
+        return $this->productListing('client.pages.sale', [
+            'on_sale' => true
+        ]);
     }
 
     /**
      * Hiển thị thông tin chi tiết sản phẩm
-     * GET /products/{id}
+     * GET /san-pham/{id}
      */
     public function show(int $id): View
     {
-        $product = Product::findOrFail($id);
-
-        return view('client.products.show', compact('product'));
+        $product = $this->productService->getProductById($id);
+        $transformedProduct = $this->productService->transformForDetail($product);
+        
+        return view('client.products.show', [
+            'product' => $transformedProduct
+        ]);
     }
 
+    /**
+     * API: Get all products
+     * GET /api/products
+     */
     public function getAll(): JsonResponse
     {
-        $products = Product::all();
-        return response()->json($products);
+        $products = $this->productService->getProducts(['per_page' => 1000]);
+        $transformed = $this->productService->transformCollection($products);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $transformed
+        ]);
     }
+    
+    /**
+     * API: Get products by category ID
+     * GET /api/products/category/{id}
+     */
     public function get_product_by_category_id(int $id): JsonResponse
-{
-    // 1. Query sản phẩm
-    $products = Product::where('category_id', $id)
-        // 2. Lọc: Chỉ lấy sản phẩm có ít nhất 1 biến thể còn hàng (stock > 0)
-        ->whereHas('variants', function ($query) {
-            $query->where('stock', '>', 0);
-        })
-        // 3. Eager Loading: Lấy kèm biến thể để hiển thị giá
-        ->with(['variants' => function ($query) {
-            // Sắp xếp biến thể theo giá tăng dần để lấy giá thấp nhất hiển thị ra ngoài
-            $query->orderBy('price', 'asc');
-            // Chỉ lấy các cột cần thiết để query nhẹ hơn
-            $query->select('variant_id', 'product_id', 'size', 'color', 'price', 'stock', 'image'); 
-        }])
-        ->paginate(10); // Phân trang
-
-    // 4. Trả về JSON
-    return response()->json([
-        'success' => true,
-        'data' => $products
-    ]);
-}
+    {
+        $paginatedProducts = $this->productService->getProducts([
+            'category_id' => $id,
+            'per_page' => 10
+        ]);
+        
+        $products = $this->productService->transformCollection($paginatedProducts);
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'products' => $products,
+                'pagination' => [
+                    'current_page' => $paginatedProducts->currentPage(),
+                    'last_page' => $paginatedProducts->lastPage(),
+                    'per_page' => $paginatedProducts->perPage(),
+                    'total' => $paginatedProducts->total(),
+                ]
+            ]
+        ]);
+    }
 }

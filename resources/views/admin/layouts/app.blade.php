@@ -102,7 +102,6 @@
         </main>
     </div>
     
-    @include('admin.layouts.partials.footer')
 
     <script>
         function toggleSidebar() {

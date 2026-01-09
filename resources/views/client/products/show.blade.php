@@ -18,37 +18,19 @@
 
            {{-- 2. CỘT TRÁI: ẢNH SẢN PHẨM --}}
             <div class="space-y-4">
-                @php
-                    // ================================================================
-                    // KHỞI TẠO DỮ LIỆU GIẢ LẬP (Để demo chức năng chuyển ảnh)
-                    // Sau này bạn thay thế đoạn này bằng dữ liệu thật từ Controller
-                    // Ví dụ: $gallery = $product->images;
-                    // ================================================================
-
-                    $mainImg = asset($product['image']);
-
-                    // Mảng chứa 4 ảnh khác nhau (Ảnh chính + 3 ảnh mẫu từ mạng)
-                    $gallery = [
-                        $mainImg,
-                        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
-                        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80',
-                        'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80'
-                    ];
-                @endphp
-
                 {{-- Bắt đầu Alpine.js: Mặc định chọn ảnh đầu tiên --}}
-                <div x-data="{ activeImage: '{{ $gallery[0] }}' }" class="flex flex-col gap-4">
+                <div x-data="{ activeImage: '{{ asset($product['gallery'][0] ?? 'images/no-image.png') }}' }" class="flex flex-col gap-4">
 
                     {{-- ẢNH LỚN --}}
                     <div class="rounded-2xl overflow-hidden border border-gray-100 relative group aspect-square bg-gray-50 flex items-center justify-center">
                         {{-- :src binding giúp thay đổi ảnh ngay lập tức khi click thumbnail --}}
                         <img :src="activeImage"
-                             src="{{ $gallery[0] }}"
+                             src="{{ asset($product['gallery'][0] ?? 'images/no-image.png') }}"
                              alt="{{ $product['name'] }}"
                              class="w-full h-full object-contain transition-opacity duration-300 ease-in-out">
 
                         {{-- Nhãn giảm giá --}}
-                        @if(isset($product['discount']) && $product['discount'])
+                        @if(!empty($product['discount']))
                             <span class="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
                                 {{ $product['discount'] }}
                             </span>
@@ -57,12 +39,12 @@
 
                     {{-- ẢNH NHỎ (THUMBNAILS) --}}
                     <div class="grid grid-cols-4 gap-4">
-                        @foreach($gallery as $imgUrl)
-                            <div @click="activeImage = '{{ $imgUrl }}'"
-                                 :class="activeImage === '{{ $imgUrl }}' ? 'border-[#7d3cff] ring-1 ring-[#7d3cff]/30' : 'border-gray-200 hover:border-gray-400 opacity-70 hover:opacity-100'"
+                        @foreach($product['gallery'] as $imgUrl)
+                            <div @click="activeImage = '{{ asset($imgUrl) }}'"
+                                 :class="activeImage === '{{ asset($imgUrl) }}' ? 'border-[#7d3cff] ring-1 ring-[#7d3cff]/30' : 'border-gray-200 hover:border-gray-400 opacity-70 hover:opacity-100'"
                                  class="rounded-xl overflow-hidden border-2 cursor-pointer transition-all aspect-square h-24 bg-gray-50">
 
-                                 <img src="{{ $imgUrl }}" class="w-full h-full object-cover">
+                                 <img src="{{ asset($imgUrl) }}" class="w-full h-full object-cover">
                             </div>
                         @endforeach
                     </div>
@@ -116,24 +98,30 @@
                     {{ Str::limit($product['description'], 150) }}
                 </p>
 
-                {{-- Chọn Size --}}
-                <div class="mb-8" x-data="{ selectedSize: 'M' }">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="font-bold text-gray-900 text-lg">Kích thước: <span x-text="selectedSize" class="text-[#7d3cff]"></span></span>
-                        <a href="#" class="text-[#7d3cff] text-sm font-medium hover:underline flex items-center gap-1">
-                            <i class="fa-solid fa-ruler"></i> Bảng size
-                        </a>
+                {{-- Chọn Variants (Size/Color) --}}
+                @if($product['variants']->count() > 0)
+                <div class="mb-8" x-data="{ selectedVariant: {{ $product['variants']->first()->variant_id }} }">
+                    <div class="mb-3">
+                        <span class="font-bold text-gray-900 text-lg">Chọn phiên bản:</span>
                     </div>
-                    <div class="flex flex-wrap gap-3">
-                        @foreach(['S', 'M', 'L', 'XL', 'XXL'] as $size)
-                            <button @click="selectedSize = '{{ $size }}'"
-                                    :class="selectedSize === '{{ $size }}' ? 'border-2 border-[#7d3cff] text-[#7d3cff] bg-purple-50' : 'border border-gray-200 text-gray-600 hover:border-[#7d3cff]'"
-                                    class="w-14 h-12 rounded-xl font-bold transition-all">
-                                {{ $size }}
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        @foreach($product['variants'] as $variant)
+                            <button @click="selectedVariant = {{ $variant->variant_id }}"
+                                    :class="selectedVariant === {{ $variant->variant_id }} ? 'border-2 border-[#7d3cff] bg-purple-50' : 'border border-gray-200 hover:border-[#7d3cff]'"
+                                    class="p-3 rounded-xl transition-all text-left"
+                                    {{ $variant->stock == 0 ? 'disabled' : '' }}>
+                                <div class="font-bold text-gray-900">
+                                    {{ $variant->size }} {{ $variant->color ? '- ' . $variant->color : '' }}
+                                </div>
+                                <div class="text-sm text-[#7d3cff] font-semibold">{{ number_format($variant->price, 0, ',', '.') }}₫</div>
+                                <div class="text-xs {{ $variant->stock > 0 ? 'text-green-600' : 'text-red-500' }}">
+                                    {{ $variant->stock > 0 ? 'Còn ' . $variant->stock . ' sản phẩm' : 'Hết hàng' }}
+                                </div>
                             </button>
                         @endforeach
                     </div>
                 </div>
+                @endif
 
                 {{-- Chọn Số lượng & Buttons Action --}}
                 <div class="flex flex-col sm:flex-row gap-4 mb-10 pb-10 border-b border-gray-100" x-data="{ qty: 1 }">
@@ -295,36 +283,35 @@
 
                 {{-- Cột phải: Danh sách bình luận --}}
                 <div class="lg:col-span-8 space-y-6">
-                    @if(count($product['reviews']) > 0)
-                        @foreach($product['reviews'] as $review)
-                            <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="flex items-center gap-4">
-                                        {{-- Avatar chữ cái --}}
-                                        <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-[#7d3cff] font-bold text-lg">
-                                            {{ substr($review['user'], 0, 1) }}
-                                        </div>
-                                        <div>
-                                            <h4 class="font-bold text-gray-900 text-lg">{{ $review['user'] }}</h4>
-                                            <div class="flex items-center gap-2 text-sm">
-                                                <div class="flex text-yellow-400 text-xs">
-                                                    @for($r=1; $r<=5; $r++)
-                                                        <i class="{{ $r <= $review['rating'] ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
-                                                    @endfor
-                                                </div>
-                                                <span class="text-gray-400">• {{ $review['time'] }}</span>
+                    @forelse($product['reviews'] as $review)
+                        <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-[#7d3cff] font-bold text-lg">
+                                        {{ substr($review['user'], 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900 text-lg">{{ $review['user'] }}</h4>
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <div class="flex text-yellow-400 text-xs">
+                                                @for($r=1; $r<=5; $r++)
+                                                    <i class="{{ $r <= $review['rating'] ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
+                                                @endfor
                                             </div>
+                                            <span class="text-gray-400">• {{ $review['time'] }}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <p class="text-gray-600 leading-relaxed">{{ $review['content'] }}</p>
                             </div>
-                        @endforeach
-                    @else
-                        <div class="text-center text-gray-500 py-10">
-                            Chưa có đánh giá nào. Hãy là người đầu tiên!
+                            <p class="text-gray-600 leading-relaxed">{{ $review['content'] }}</p>
                         </div>
-                    @endif
+                    @empty
+                        <div class="bg-gray-50 rounded-2xl p-12 text-center">
+                            <i class="fa-regular fa-comment-dots text-6xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500 font-medium text-lg">Chưa có đánh giá nào</p>
+                            <p class="text-gray-400 text-sm mt-2">Hãy là người đầu tiên đánh giá sản phẩm này!</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </div>

@@ -14,7 +14,7 @@
                             <i class="fa-solid fa-edit text-2xl text-white"></i>
                         </div>
                         <div>
-                            <h2 class="text-2xl font-black text-white tracking-tight">Chỉnh Sửa Sản Phẩm #{{ $product->product_id }}</h2>
+                            <h2 class="text-2xl font-black text-white tracking-tight">Chỉnh Sửa Sản Phẩm:  {{ $product->product_name}}</h2>
                             <p class="text-blue-200 text-sm font-medium">{{ $product->product_name }}</p>
                         </div>
                     </div>
@@ -70,6 +70,14 @@
                                             {{ $cat->category_name }}
                                         </option>
                                     @endforeach
+                                </select>
+                            </div>
+                             <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Loại sản phẩm <span class="text-red-500">*</span></label>
+                                <select name="product_type" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
+                                    <option value="nam" {{ $product->product_type == 'nam' ? 'selected' : '' }}>Nam</option>
+                                    <option value="nu" {{ $product->product_type == 'nu' ? 'selected' : '' }}>Nữ</option>
+                                    <option value="phu-kien" {{ $product->product_type == 'phu-kien' ? 'selected' : '' }}>Phụ kiện</option>
                                 </select>
                             </div>
                             <div class="md:col-span-2">

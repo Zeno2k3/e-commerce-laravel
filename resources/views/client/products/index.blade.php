@@ -2,71 +2,7 @@
 
 @section('content')
 
-{{-- MOCK DATA (Giữ nguyên hoặc thay ảnh online như bạn muốn) --}}
-@php
-    $products = [
-        [
-            'id' => 1,
-            'name' => 'Áo Khoác Jean Phối Nón The Original 039 Xanh Dương',
-            'image' => 'images/jacket.png',
-            'price' => 1000000,
-            'old_price' => 10000000,
-            'discount' => '-90%',
-            'rating' => 5,
-            'reviews' => 69
-        ],
-        [
-            'id' => 2,
-            'name' => 'Áo Thun Basic Cotton Cao Cấp (Đen/Trắng)',
-            'image' => 'images/shirt.png',
-            'price' => 250000,
-            'old_price' => 350000,
-            'discount' => '-28%',
-            'rating' => 4,
-            'reviews' => 120
-        ],
-        [
-            'id' => 3,
-            'name' => 'Quần Jean Slim Fit Co Giãn 4 Chiều Thời Trang',
-            'image' => 'images/jacket.png',
-            'price' => 500000,
-            'old_price' => null,
-            'discount' => null,
-            'rating' => 4,
-            'reviews' => 45
-        ],
-        [
-            'id' => 4,
-            'name' => 'Áo Khoác Bomber Unisex Phong Cách Hàn Quốc',
-            'image' => 'images/shirt.png',
-            'price' => 850000,
-            'old_price' => 1200000,
-            'discount' => '-25%',
-            'rating' => 5,
-            'reviews' => 12
-        ],
-        [
-            'id' => 5,
-            'name' => 'Túi Đeo Chéo Canvas Thời Trang',
-            'image' => 'images/jacket.png',
-            'price' => 150000,
-            'old_price' => null,
-            'discount' => null,
-            'rating' => 4,
-            'reviews' => 210
-        ],
-        [
-            'id' => 6,
-            'name' => 'Mũ Lưỡi Trai Nón Kết Thêu Chữ Cá Tính',
-            'image' => 'images/shirt.png',
-            'price' => 99000,
-            'old_price' => 150000,
-            'discount' => '-34%',
-            'rating' => 5,
-            'reviews' => 56
-        ],
-    ];
-@endphp
+
 <div class="bg-white min-h-screen font-sans pb-20">
     <div class="container mx-auto px-4 py-10">
 
@@ -149,24 +85,18 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    @foreach($products as $product)
+                    @forelse($products as $product)
                         <x-product-card :product="$product" />
-                    @endforeach
+                    @empty
+                        <div class="col-span-full text-center py-12">
+                            <i class="fa-solid fa-box-open text-6xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500 text-lg">Chưa có sản phẩm nào</p>
+                        </div>
+                    @endforelse
                 </div>
-
-
                 <!-- Pagination -->
-
-                <div class="mt-12 flex justify-center items-center gap-4">
-                    <button class="group w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[#7d3cff] bg-white hover:bg-purple-50 rounded-lg transition-all border border-gray-100">
-                        <i class="fa-solid fa-angles-left text-sm group-hover:-translate-x-0.5 transition-transform"></i>
-                    </button>
-                    <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-white border border-[#7d3cff] text-[#7d3cff] font-bold shadow-sm">
-                        1
-                    </button>
-                    <button class="group w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[#7d3cff] bg-white hover:bg-purple-50 rounded-lg transition-all border border-gray-100">
-                        <i class="fa-solid fa-angles-right text-sm group-hover:translate-x-0.5 transition-transform"></i>
-                    </button>
+                <div class="mt-12 flex justify-center">
+                    {{ $pagination->links() }}
                 </div>
 
             </div>

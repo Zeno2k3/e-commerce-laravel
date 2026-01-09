@@ -28,6 +28,7 @@ class ProductController extends Controller
             'product_name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:category,category_id',
+            'product_type' => 'required|in:nam,nu,phu-kien',
             'variants' => 'required|array|min:1',
             'variants.*.size' => 'nullable|string|max:50',
             'variants.*.color' => 'nullable|string|max:50',
@@ -45,6 +46,7 @@ class ProductController extends Controller
                 'product_name' => $validated['product_name'],
                 'description' => $validated['description'] ?? null,
                 'category_id' => $validated['category_id'] ?? null,
+                'product_type' => $validated['product_type'],
             ]);
 
             // Create Variants with image handling
@@ -102,6 +104,7 @@ class ProductController extends Controller
             'product_name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:category,category_id',
+            'product_type' => 'required|in:nam,nu,phu-kien',
             'variants' => 'nullable|array',
             'variants.*.id' => 'nullable|integer|exists:product_variant,variant_id',
             'variants.*.size' => 'nullable|string|max:50',
@@ -119,6 +122,7 @@ class ProductController extends Controller
                 'product_name' => $validated['product_name'],
                 'description' => $validated['description'] ?? null,
                 'category_id' => $validated['category_id'] ?? null,
+                'product_type' => $validated['product_type'],
             ]);
 
             // Handle variants

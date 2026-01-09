@@ -95,6 +95,14 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Loại sản phẩm <span class="text-red-500">*</span></label>
+                                <select name="product_type" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
+                                    <option value="nam" selected>Nam</option>
+                                    <option value="nu">Nữ</option>
+                                    <option value="phu-kien">Phụ kiện</option>
+                                </select>
+                            </div>
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Mô tả</label>
                                 <textarea name="description" rows="3"
@@ -230,6 +238,14 @@
                                     @foreach($categories as $cat)
                                         <option value="{{ $cat->category_id }}">{{ $cat->category_name }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Loại sản phẩm <span class="text-red-500">*</span></label>
+                                <select id="edit_product_type" name="product_type" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                                    <option value="nam">Nam</option>
+                                    <option value="nu">Nữ</option>
+                                    <option value="phu-kien">Phụ kiện</option>
                                 </select>
                             </div>
                             <div class="md:col-span-2">

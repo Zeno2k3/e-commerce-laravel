@@ -21,11 +21,6 @@ use App\Http\Controllers\Client\ProductClientController;
 Route::get('/', function () { return view('client.pages.home'); })->name('home');
 Route::get('/voucher', function () { return view('client.layouts.voucher'); })->name('client.voucher');
 Route::get('/success', function () { return view('client.carts.success'); })->name('client.carts.success');
-Route::get('/san-pham', function () { return view('client.products.index'); })->name('client.products.index');
-Route::get('/men', function () { return view('client.products.men'); })->name('client.men');
-Route::get('/women', function () { return view('client.products.women'); })->name('client.women');
-Route::get('/phu-kien', function () { return view('client.products.phu-kien'); })->name('client.accessories');
-Route::get('/khuyen-mai', function () { return view('client.pages.sale'); })->name('client.sale');
 Route::get('/profile', function () { return view('client.account.profile'); })->name('client.profile');
 Route::get('/about', function() { return view('client.pages.about'); })->name('client.about');
 Route::get('/contact', function() { return view('client.pages.contact'); })->name('client.contact');
@@ -46,6 +41,13 @@ Route::get('/san-pham', [ProductClientController::class, 'index'])->name('client
 Route::get('/san-pham/{id}', [ProductClientController::class, 'show'])->name('client.products.show');
 Route::get('/san-pham/{category_id}', [ProductClientController::class, 'get_product_by_category_id'])->name('client.products.get_product_by_category_id');
 
+Route::get('/men', [ProductClientController::class, 'men'])->name('client.men');
+Route::get('/women', [ProductClientController::class, 'women'])->name('client.women');
+Route::get('/phu-kien', [ProductClientController::class, 'accessories'])->name('client.accessories');
+Route::get('/khuyen-mai', [ProductClientController::class, 'sale'])->name('client.sale');
+
+
+
 Route::get('/payment', function () {
     return view('client.carts.payment');
 })->name('client.carts.payment');
@@ -65,41 +67,7 @@ Route::post('/gio-hang', [CartController::class, 'addToCart'])->name('client.car
 
 
 
-//Giả dữ liệu Chi tiết sp
 
-Route::get('/san-pham/{id}', function ($id) {
-    // --- KHAI BÁO DỮ LIỆU GIẢ TẠI ĐÂY ---
-    $product = [
-        'id' => $id,
-        'name' => 'Áo Khoác Jean Phối Nón The Original 039 Xanh Dương',
-        'sku' => 'W9ED09E',
-        'price' => 1000000,
-        'old_price' => 10999000,
-        'discount' => '-90%',
-        'description' => 'Áo khoác jean 100% có nón, form regular fit, phù hợp mặc hàng ngày. Chất liệu bền đẹp...',
-        'image' => 'images/jacket.png', // Đảm bảo ảnh này có trong thư mục public/images
-        'rating' => 4.0,
-        'reviews_count' => 69,
-        'specs' => [
-            'material' => 'Jean Cotton 100%',
-            'origin' => 'Việt Nam',
-            'brand' => 'FlexStyle',
-            'style' => 'Regular'
-        ],
-        'reviews' => [
-            ['user' => 'Nguyễn Văn A', 'avatar_text' => 'A', 'rating' => 5, 'time' => '2 ngày trước', 'content' => 'Sản phẩm tốt!'],
-            ['user' => 'Trần Thị B', 'avatar_text' => 'B', 'rating' => 4, 'time' => '1 tuần trước', 'content' => 'Giao hàng nhanh.'],
-        ],
-        'related_products' => [
-             ['id' => 101, 'name' => 'Sản phẩm gợi ý 1', 'price' => 500000, 'image' => 'images/jacket.png', 'discount' => '-50%'],
-             ['id' => 102, 'name' => 'Sản phẩm gợi ý 2', 'price' => 250000, 'image' => 'images/shirt.png', 'discount' => null],
-        ]
-    ];
-
-    // Truyền biến $product vào giao diện 'client.products.show'
-    return view('client.products.show', compact('product'));
-
-})->name('client.product.detail');
 
 /*
 |--------------------------------------------------------------------------
