@@ -49,53 +49,53 @@ class ProductClientController extends Controller
      * Hiển thị danh sách sản phẩm
      * GET /san-pham
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        return $this->productListing('client.products.index');
+        return $this->productListing('client.products.index', $request->all());
     }
 
     /**
      * Hiển thị sản phẩm nam
      * GET /men
      */
-    public function men(): View
+    public function men(Request $request): View
     {
-        return $this->productListing('client.products.men', [
+        return $this->productListing('client.products.men', array_merge($request->all(), [
             'product_type' => 'nam'
-        ]);
+        ]));
     }
 
     /**
      * Hiển thị sản phẩm nữ
      * GET /women
      */
-    public function women(): View
+    public function women(Request $request): View
     {
-        return $this->productListing('client.products.women', [
+        return $this->productListing('client.products.women', array_merge($request->all(), [
             'product_type' => 'nu'
-        ]);
+        ]));
     }
 
     /**
      * Hiển thị phụ kiện
      * GET /phu-kien
      */
-    public function accessories(): View
+    public function accessories(Request $request): View
     {
-        return $this->productListing('client.products.phu-kien', [
+        return $this->productListing('client.products.phu-kien', array_merge($request->all(), [
             'product_type' => 'phu-kien'
-        ]);
+        ]));
     }
 
     /**
      * Hiển thị sản phẩm sale
      * GET /khuyen-mai
      */
-    public function sale(): View
+    public function sale(Request $request): View
     {
-        return $this->productListing('client.pages.sale', [
+        return $this->productListing('client.pages.sale', array_merge($request->all(), [
             'on_sale' => true
-        ]);
+        ]));
     }
 
     /**

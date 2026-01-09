@@ -78,6 +78,11 @@ Route::get('/lichsu-donhang', function () {
 })->name('client.account.orders');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
+// ChatBot
+Route::post('/chatbot/send', [App\Http\Controllers\Client\ChatBotController::class, 'sendMessage'])->name('chatbot.send');
+
+require __DIR__.'/authRoute.php';
+
 // --------------------------- Gio hang User ---------------------------
 Route::middleware('auth')->group(function () {
     Route::get('/gio-hang', [CartController::class, 'index'])->name('client.cart.index');

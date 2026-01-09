@@ -51,6 +51,7 @@
     </div>
     @endif
 
+    @include('client.layouts.partials.chatbot')
 </body>
 </html>
 

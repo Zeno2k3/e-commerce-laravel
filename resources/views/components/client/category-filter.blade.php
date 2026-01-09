@@ -45,19 +45,43 @@
 <div class="mb-12">
     <h3 class="font-bold text-gray-800 text-2xl mb-6">Danh mục</h3>
     <div class="flex flex-wrap gap-4">
+    <div class="flex flex-wrap gap-4">
         @foreach($categories as $category)
             @php
-                $isActive = ($category['slug'] ?? '') === $activeCategory;
+                // Determine if this category is active based on request params
+                // Check both single 'category_id' and array 'categories'
+                $currentCats = request('categories', []);
+                if (!is_array($currentCats)) $currentCats = [$currentCats];
+                
+                $catId = $category['id'];
+                
+                // Logic for "All" (id is null or 'all') vs Specific Category
+                if (empty($catId)) {
+                    // "All" is active if no categories are selected
+                    $isActive = empty($currentCats) && !request('category_id');
+                    $url = request()->fullUrlWithQuery(['categories' => null, 'category_id' => null, 'page' => 1]); 
+                } else {
+                    // Specific category is active if its ID is in the requests
+                    $isActive = in_array((string)$catId, $currentCats) || request('category_id') == $catId;
+                    
+                    // Clicking a specific category:
+                    // For now, let's implement single-select behavior per user request ("filter out THIS one")
+                    // Usually this means switching to this category.
+                    // To keep it robust, we'll use 'categories' array but just one item for now to match typical singular filter behavior in this UI style
+                    $url = request()->fullUrlWithQuery(['categories' => [$catId], 'category_id' => null, 'page' => 1]);
+                }
+
                 $buttonClass = $isActive ? $colors['active'] : $colors['inactive'];
                 $badgeClass = $isActive ? $colors['badge_active'] : $colors['badge_inactive'];
             @endphp
             
-            <button class="group flex items-center gap-3 {{ $buttonClass }} px-8 py-4 rounded-xl font-bold text-lg transition transform hover:scale-105">
+            <a href="{{ $url }}" class="group flex items-center gap-3 {{ $buttonClass }} px-8 py-4 rounded-xl font-bold text-lg transition transform hover:scale-105 select-none no-underline">
                 {{ $category['name'] }}
                 <span class="{{ $badgeClass }} px-2.5 py-0.5 rounded-md text-sm font-extrabold transition">
                     {{ $category['count'] ?? 0 }}
                 </span>
-            </button>
+            </a>
         @endforeach
+    </div>
     </div>
 </div>

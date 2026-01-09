@@ -49,15 +49,26 @@
     </div>
 
     <div class="flex flex-wrap gap-3">
-        @foreach($sortOptions as $index => $option)
+        @php
+            $sortMap = [
+                'newest' => 'Nổi bật',
+                'price_asc' => 'Giá thấp',
+                'price_desc' => 'Giá cao',
+                'name' => 'Tên A-Z',
+            ];
+            $currentSort = request('sort', 'newest');
+        @endphp
+
+        @foreach($sortMap as $key => $label)
             @php
-                $isActive = $index === $activeSort;
+                $isActive = $currentSort === $key;
                 $buttonClass = $isActive ? $colors['active'] : $colors['inactive'];
             @endphp
             
-            <button class="px-6 py-3 rounded-lg {{ $buttonClass }} font-bold text-base transition">
-                {{ $option }}
-            </button>
+            <a href="{{ request()->fullUrlWithQuery(['sort' => $key]) }}" 
+               class="px-6 py-3 rounded-lg {{ $buttonClass }} font-bold text-base transition inline-block text-center select-none">
+                {{ $label }}
+            </a>
         @endforeach
     </div>
 </div>

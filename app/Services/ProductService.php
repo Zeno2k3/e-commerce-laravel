@@ -49,33 +49,87 @@ class ProductService
     public function getProducts(array $filters = []): LengthAwarePaginator
     {
         $query = Product::with(['variants' => function ($q) {
-            // Sắp xếp variants theo giá để lấy giá thấp nhất
             $q->orderBy('price', 'asc');
-        }])->orderBy('created_at', 'desc');
-        
-        // Filter by product_type (nam, nu, phu-kien)
-        if (!empty($filters['product_type'])) {
-            $query->where('product_type', $filters['product_type']);
+        }]);
+
+        // Filter: Product Types (supports array or string)
+        if (!empty($filters['product_types'])) {
+            $types = is_array($filters['product_types']) ? $filters['product_types'] : [$filters['product_types']];
+            $query->whereIn('product_type', $types);
+        } elseif (!empty($filters['product_type'])) {
+             $query->where('product_type', $filters['product_type']);
         }
-        
-        // Filter by category (optional - for sub-categories like Áo khoác, Quần...)
-        if (!empty($filters['category_id'])) {
-            $query->where('category_id', $filters['category_id']);
+
+        // Filter: Categories (supports array or string)
+        if (!empty($filters['categories'])) {
+             $cats = is_array($filters['categories']) ? $filters['categories'] : [$filters['categories']];
+             $query->whereIn('category_id', $cats);
+        } elseif (!empty($filters['category_id'])) {
+             $query->where('category_id', $filters['category_id']);
         }
         
         // Filter products on sale
         if (!empty($filters['on_sale'])) {
             $query->where('discount_percentage', '>', 0);
         }
+
+        // Filter: Search
+        if (!empty($filters['search'])) {
+            $query->where(function($q) use ($filters) {
+                $q->where('product_name', 'like', '%' . $filters['search'] . '%')
+                  ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+            });
+        }
         
-        // Filter by stock (chỉ lấy sản phẩm có variant còn hàng)
-        $query->whereHas('variants', function ($q) {
+        // Filter by stock and Price Range
+        $query->whereHas('variants', function ($q) use ($filters) {
             $q->where('stock', '>', 0);
+            
+            if (!empty($filters['price_min'])) {
+                $q->where('price', '>=', $filters['price_min']);
+            }
+            if (!empty($filters['price_max'])) {
+                $q->where('price', '<=', $filters['price_max']);
+            }
         });
+
+        // Sorting
+        $sort = $filters['sort'] ?? 'newest';
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'price_asc':
+                // Sort by the lowest price of variants
+                $query->orderBy(
+                    \App\Models\ProductVariant::select('price')
+                        ->whereColumn('product_variant.product_id', 'product.product_id')
+                        ->orderBy('price', 'asc')
+                        ->limit(1),
+                    'asc'
+                );
+                break;
+            case 'price_desc':
+                // Sort by the lowest price of variants (listing price)
+                $query->orderBy(
+                    \App\Models\ProductVariant::select('price')
+                        ->whereColumn('product_variant.product_id', 'product.product_id')
+                        ->orderBy('price', 'asc')
+                        ->limit(1),
+                    'desc'
+                );
+                break;
+            case 'name':
+                $query->orderBy('product_name', 'asc');
+                break;
+            default: // newest
+                $query->orderBy('created_at', 'desc');
+                break;
+        }
         
         $perPage = $filters['per_page'] ?? 12;
         
-        return $query->paginate($perPage);
+        return $query->paginate($perPage)->withQueryString();
     }
 
     /**
