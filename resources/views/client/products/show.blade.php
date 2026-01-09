@@ -1,7 +1,7 @@
 @extends('client.layouts.app')
 
 @section('content')
-<div class="bg-white font-sans pb-20">
+<div class="bg-white font-sans pb-20" x-data="productDetailApp({{ $product['id'] }}, {{ json_encode($product['variants']->toArray()) }}, {{ json_encode($product['gallery']) }})" x-init="init()">
     <div class="container mx-auto px-4 py-8 max-w-7xl">
 
         {{-- 1. BREADCRUMB --}}
@@ -14,7 +14,7 @@
 
         <x-breadcrumb :links="$breadcrumbs" />
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-6" x-data="productDetailApp({{ $product['id'] }}, {{ json_encode($product['variants']->toArray()) }}, {{ json_encode($product['gallery']) }})" x-init="init()">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-6">
 
            {{-- 2. CỘT TRÁI: ẢNH SẢN PHẨM --}}
             <div class="space-y-4">
@@ -329,7 +329,7 @@
                             @endfor
                         </div>
                         <p class="text-gray-500 font-medium mb-8">({{ count($product['reviews']) }} đánh giá)</p>
-                        <button class="w-full bg-white border-2 border-[#7d3cff] text-[#7d3cff] font-bold py-3 px-6 rounded-xl hover:bg-[#7d3cff] hover:text-white transition-all shadow-sm">
+                        <button @click="showReviewModal = true" class="w-full bg-white border-2 border-[#7d3cff] text-[#7d3cff] font-bold py-3 px-6 rounded-xl hover:bg-[#7d3cff] hover:text-white transition-all shadow-sm">
                             Viết đánh giá
                         </button>
                     </div>
@@ -355,8 +355,20 @@
                                             <span class="text-gray-400">• {{ $review['time'] }}</span>
                                         </div>
                                     </div>
+                                    </div>
+                                    @auth
+                                        @if($review['user_id'] === auth()->id())
+                                            <div class="ml-auto flex gap-2">
+                                                <button @click="editReview({{ Js::from($review) }})" class="text-gray-400 hover:text-[#7d3cff] transition-colors" title="Sửa đánh giá">
+                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                </button>
+                                                <button @click="deleteReview({{ $review['id'] }})" class="text-gray-400 hover:text-red-500 transition-colors" title="Xóa đánh giá">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        @endif
+                                    @endauth
                                 </div>
-                            </div>
                             <p class="text-gray-600 leading-relaxed">{{ $review['content'] }}</p>
                         </div>
                     @empty
@@ -371,6 +383,7 @@
         </div>
 
         {{-- 5. SẢN PHẨM LIÊN QUAN --}}
+        @if(!empty($product['related_products']) && count($product['related_products']) > 0)
         <div class="mt-24">
             <h2 class="text-3xl font-extrabold text-gray-900 mb-10 text-center">Sản phẩm liên quan</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -395,9 +408,74 @@
                 @endforeach
             </div>
         </div>
+        @endif
 
+    {{-- REVIEW MODAL --}}
+    <div x-cloak x-show="showReviewModal" 
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        x-transition.opacity>
+        <div class="bg-white rounded-2xl w-full max-w-lg p-8 mx-4 shadow-2xl transform transition-all"
+            @click.outside="showReviewModal = false"
+            x-transition.scale>
+            
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900">Đánh giá sản phẩm</h3>
+                <button type="button" @click="showReviewModal = false" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+
+            @auth
+            <form @submit.prevent="submitReview">
+                <div class="mb-6 text-center">
+                    <p class="text-gray-600 mb-2">Bạn cảm thấy sản phẩm này thế nào?</p>
+                    <div class="flex justify-center gap-2">
+                        <template x-for="star in 5">
+                            <button type="button" 
+                                    @click="reviewRating = star"
+                                    @mouseenter="hoverRating = star"
+                                    @mouseleave="hoverRating = 0"
+                                    class="text-3xl transition-transform hover:scale-110 focus:outline-none">
+                                <i class="fa-star" 
+                                   :class="(hoverRating || reviewRating) >= star ? 'fa-solid text-yellow-400' : 'fa-regular text-gray-300'">
+                                </i>
+                            </button>
+                        </template>
+                    </div>
+                    <div class="mt-2 font-bold text-yellow-500 h-6" x-text="getRatingLabel(hoverRating || reviewRating)"></div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block font-bold text-gray-700 mb-2">Nhận xét của bạn</label>
+                    <textarea x-model="reviewContent" 
+                              rows="4" 
+                              class="w-full border-gray-200 rounded-xl focus:ring-[#7d3cff] focus:border-[#7d3cff]"
+                              placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..."></textarea>
+                </div>
+
+                <button type="submit" 
+                        :disabled="isSubmitting || reviewRating === 0"
+                        class="w-full bg-[#7d3cff] text-white font-bold py-3 rounded-xl hover:bg-[#6c2bd9] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-purple-200">
+                    <span x-show="!isSubmitting">Gửi đánh giá</span>
+                    <span x-show="isSubmitting"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Đang gửi...</span>
+                </button>
+            </form>
+            @else
+            <div class="text-center py-8">
+                <div class="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4 text-[#7d3cff] text-2xl">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h4 class="font-bold text-gray-900 text-xl mb-2">Vui lòng đăng nhập</h4>
+                <p class="text-gray-500 mb-6">Bạn cần đăng nhập để viết đánh giá cho sản phẩm này.</p>
+                <a href="{{ route('login') }}" class="inline-block bg-[#7d3cff] text-white font-bold py-3 px-8 rounded-xl hover:bg-[#6c2bd9] transition">
+                    Đăng nhập ngay
+                </a>
+            </div>
+            @endauth
+        </div>
     </div>
 </div>
+
 
 <script>
 function productDetailApp(productId, variants, galleryArray) {
@@ -414,6 +492,13 @@ function productDetailApp(productId, variants, galleryArray) {
         selectedVariant: null,
         isLoading: false,
         qty: 1,
+        
+        // Review State
+        showReviewModal: false,
+        reviewRating: 0,
+        hoverRating: 0,
+        reviewContent: '',
+        isSubmitting: false,
         
         // Computed Arrays
         availableSizes: [],
@@ -437,6 +522,115 @@ function productDetailApp(productId, variants, galleryArray) {
                 this.selectSize(this.availableSizes[0]);
             } else {
                 this.updatePrice();
+            }
+        },
+        
+        getRatingLabel(star) {
+            const labels = ['Chưa chọn', 'Tệ', 'Không hài lòng', 'Bình thường', 'Hài lòng', 'Tuyệt vời'];
+            return labels[star] || '';
+        },
+
+        editReview(review) {
+            this.reviewRating = review.rating;
+            this.reviewContent = review.content;
+            this.showReviewModal = true;
+        },
+
+        deleteReview(reviewId) {
+            if (!confirm('Bạn có chắc chắn muốn xóa đánh giá này không?')) return;
+
+            fetch(`/review/${reviewId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(async response => {
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    alert('Đánh giá đã được xóa thành công!');
+                    window.location.reload(); 
+                } else {
+                    throw new Error(data.message || 'Có lỗi xảy ra');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error.message || 'Có lỗi xảy ra khi xóa đánh giá');
+            });
+        },
+
+        async submitReview() {
+            if (this.reviewRating === 0) {
+                alert('Vui lòng chọn số sao đánh giá!');
+                return;
+            }
+            if (!this.reviewContent.trim()) {
+                alert('Vui lòng nhập nội dung đánh giá!');
+                return;
+            }
+
+            this.isSubmitting = true;
+            let timeoutId;
+
+            try {
+                // Get CSRF Token safely
+                const csrfElement = document.querySelector('meta[name="csrf-token"]');
+                if (!csrfElement) {
+                    throw new Error('Lỗi bảo mật: Không tìm thấy CSRF Token. Vui lòng tải lại trang.');
+                }
+                const csrfToken = csrfElement.content;
+
+                const controller = new AbortController();
+                timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
+                const response = await fetch('{{ route("client.review.store") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        product_id: this.productId,
+                        rating: this.reviewRating,
+                        content: this.reviewContent
+                    }),
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+                
+                let data;
+                try {
+                    data = await response.json();
+                } catch(e) {
+                    throw new Error('Lỗi phản hồi từ máy chủ (Invalid JSON).');
+                }
+
+                if (response.ok && data.success) {
+                    alert('Đánh giá của bạn đã được ghi nhận!');
+                    this.showReviewModal = false;
+                    window.location.reload(); 
+                } else {
+                    throw new Error(data.message || 'Có lỗi xảy ra khi lưu trữ.');
+                }
+
+            } catch (error) {
+                if (timeoutId) clearTimeout(timeoutId);
+                console.error('Submit Error:', error);
+                
+                if (error.name === 'AbortError') {
+                     alert('Kết nối quá hạn (15s). Vui lòng kiểm tra mạng.');
+                } else {
+                     alert(error.message || 'Có lỗi xảy ra.');
+                }
+            } finally {
+                this.isSubmitting = false;
             }
         },
         

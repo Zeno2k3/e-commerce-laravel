@@ -24,10 +24,13 @@ use App\Http\Controllers\Client\ProductClientController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () { return view('client.pages.home'); })->name('home');
+use App\Http\Controllers\Client\HomeController;
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/voucher', function () { return view('client.layouts.voucher'); })->name('client.voucher');
 Route::get('/success', function () { return view('client.carts.success'); })->name('client.carts.success');
-Route::get('/profile', function () { return view('client.account.profile'); })->name('client.profile');
+Route::post('/review', [\App\Http\Controllers\Client\ReviewController::class, 'store'])->name('client.review.store')->middleware('auth');
+Route::delete('/review/{id}', [\App\Http\Controllers\Client\ReviewController::class, 'destroy'])->name('client.review.destroy')->middleware('auth');
 Route::get('/about', function() { return view('client.pages.about'); })->name('client.about');
 Route::get('/contact', function() { return view('client.pages.contact'); })->name('client.contact');
 Route::get('/chinhsach-giaohang',  function() { return view('client.pages.shipping-policy'); })->name('client.chinhsach-giaohang');
@@ -42,10 +45,11 @@ Route::post('/logout', function () {
 })->name('logout');
 
 // Profile
-Route::prefix('profile-user')->group(function () {
-Route::get('/client', [App\Http\Controllers\Client\ProfileController::class, 'index'])->name('client.profile.index');
-Route::put('/info-client', [App\Http\Controllers\Client\ProfileController::class, 'update'])->name('client.profile.update');
-Route::put('/password-client', [App\Http\Controllers\Client\ProfileController::class, 'updatePassword'])->name('client.profile.password');
+// Profile
+Route::prefix('profile')->group(function () {
+    Route::get('/', [App\Http\Controllers\Client\ProfileController::class, 'index'])->name('client.profile.index');
+    Route::put('/info', [App\Http\Controllers\Client\ProfileController::class, 'update'])->name('client.profile.update');
+    Route::put('/password', [App\Http\Controllers\Client\ProfileController::class, 'updatePassword'])->name('client.profile.password');
 });
 // ----------------------------- San Pham -----------------------------
 

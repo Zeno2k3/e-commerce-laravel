@@ -2,31 +2,6 @@
 
 @section('content')
 
-{{-- DỮ LIỆU GIẢ CHO TRANG CHỦ --}}
-@php
-    $featured_products = [
-        [
-            'id' => 1,
-            'name' => 'Áo Khoác Jean Phối Nón The Original 039 Xanh Dương',
-            'image' => 'images/shirt.png',
-            'price' => 1000000,
-            'old_price' => 1250000,
-            'discount' => '-20%',
-            'rating' => 5,
-            'reviews' => 69
-        ],
-        [
-            'id' => 2, 'name' => 'Áo Khoác Jean Phối Nón The Original 039 Xanh Dương', 'image' => 'images/jacket.png', 'price' => 1000000, 'old_price' => 1250000, 'discount' => '-20%', 'rating' => 5, 'reviews' => 69
-        ],
-        [
-            'id' => 3, 'name' => 'Áo Khoác Jean Phối Nón The Original 039 Xanh Dương', 'image' => 'images/shirt.png', 'price' => 1000000, 'old_price' => 1250000, 'discount' => '-20%', 'rating' => 5, 'reviews' => 69
-        ],
-        [
-            'id' => 4, 'name' => 'Áo Khoác Jean Phối Nón The Original 039 Xanh Dương', 'image' => 'images/jacket.png', 'price' => 1000000, 'old_price' => 1250000, 'discount' => '-20%', 'rating' => 5, 'reviews' => 69
-        ]
-    ];
-@endphp
-
 <div class="font-sans text-gray-800">
 
     {{-- 1. HERO SECTION (Banner chính) --}}
@@ -78,7 +53,7 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                @foreach($featured_products as $product)
+                @foreach($products as $product)
                     <x-product-card :product="$product" />
                 @endforeach
             </div>
