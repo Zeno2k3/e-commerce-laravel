@@ -20,13 +20,22 @@ class CategoryController extends Controller
         if ($request->has('categories') && !empty($request->categories)) {
             $query->whereIn('category_id', $request->categories);
         }
+
+        // Filter by product_type
+        if ($request->has('product_types') && !empty($request->product_types)) {
+            $query->whereIn('product_type', $request->product_types);
+        }
         
         // Filter by price range
-        if ($request->filled('price_min')) {
-            $query->where('price', '>=', $request->price_min);
-        }
-        if ($request->filled('price_max')) {
-            $query->where('price', '<=', $request->price_max);
+        if ($request->filled('price_min') || $request->filled('price_max')) {
+            $query->whereHas('variants', function ($q) use ($request) {
+                if ($request->filled('price_min')) {
+                    $q->where('price', '>=', $request->price_min);
+                }
+                if ($request->filled('price_max')) {
+                    $q->where('price', '<=', $request->price_max);
+                }
+            });
         }
         
         // Search by product name
@@ -44,10 +53,12 @@ class CategoryController extends Controller
                 $query->orderBy('product_name', 'asc');
                 break;
             case 'price_asc':
-                $query->orderBy('price', 'asc');
+                $query->withMin('variants as min_price', 'price')
+                      ->orderBy('min_price', 'asc');
                 break;
             case 'price_desc':
-                $query->orderBy('price', 'desc');
+                $query->withMin('variants as min_price', 'price')
+                      ->orderBy('min_price', 'desc');
                 break;
             default:
                 $query->orderBy('created_at', 'desc');

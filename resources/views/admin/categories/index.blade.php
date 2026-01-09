@@ -20,11 +20,16 @@
                         <input type="hidden" name="categories[]" value="{{ $cat }}">
                     @endforeach
                 @endif
+                @if(request('product_types'))
+                    @foreach(request('product_types') as $type)
+                        <input type="hidden" name="product_types[]" value="{{ $type }}">
+                    @endforeach
+                @endif
                 @if(request('price_min'))<input type="hidden" name="price_min" value="{{ request('price_min') }}">@endif
                 @if(request('price_max'))<input type="hidden" name="price_max" value="{{ request('price_max') }}">@endif
                 @if(request('search'))<input type="hidden" name="search" value="{{ request('search') }}">@endif
                 
-                <div class="relative">
+                <div class="relative flex items-center">
                     <select name="sort" onchange="this.form.submit()" class="appearance-none bg-white border border-gray-200 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-gray-700 focus:outline-none focus:border-purple-400">
                         <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Mới nhất</option>
                         <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Cũ nhất</option>
@@ -32,7 +37,7 @@
                         <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Giá tăng dần</option>
                         <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Giá giảm dần</option>
                     </select>
-                    <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+                    <i class="fa-solid fa-chevron-down absolute right-3 text-gray-400 text-xs pointer-events-none"></i>
                 </div>
             </form>
             <div class="flex bg-purple-50 rounded-lg p-1">
@@ -40,7 +45,7 @@
                 <button id="listViewBtn" class="p-2.5 text-purple-400 hover:text-purple-600 rounded-lg"><i class="fa-solid fa-list"></i></button>
             </div>
             
-            @if(request()->hasAny(['categories', 'price_min', 'price_max', 'search']))
+            @if(request()->hasAny(['categories', 'product_types', 'price_min', 'price_max', 'search']))
                 <a href="{{ route('admin.categories.index') }}" class="text-sm text-purple-600 hover:underline">
                     <i class="fa-solid fa-times mr-1"></i>Xóa bộ lọc
                 </a>
@@ -116,17 +121,27 @@
                     <span class="font-bold text-gray-900">Bộ lọc</span>
                 </div>
 
-                {{-- Danh mục filter --}}
-                <h4 class="font-semibold text-gray-700 mb-2 text-sm">Danh mục</h4>
+                {{-- Loại sản phẩm filter --}}
+                <h4 class="font-semibold text-gray-700 mb-2 text-sm">Loại sản phẩm</h4>
                 <div class="space-y-2 mb-4">
-                    @foreach($categories->take(5) as $category)
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="categories[]" value="{{ $category->category_id }}" 
-                                   class="w-4 h-4 rounded border-purple-300 text-purple-600"
-                                   {{ in_array($category->category_id, request('categories', [])) ? 'checked' : '' }}>
-                            <span class="text-sm text-gray-600">{{ $category->category_name }}</span>
-                        </label>
-                    @endforeach
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="product_types[]" value="nam" 
+                               class="w-4 h-4 rounded border-purple-300 text-purple-600"
+                               {{ in_array('nam', request('product_types', [])) ? 'checked' : '' }}>
+                        <span class="text-sm text-gray-600">Nam</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="product_types[]" value="nu" 
+                               class="w-4 h-4 rounded border-purple-300 text-purple-600"
+                               {{ in_array('nu', request('product_types', [])) ? 'checked' : '' }}>
+                        <span class="text-sm text-gray-600">Nữ</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="product_types[]" value="phu-kien" 
+                               class="w-4 h-4 rounded border-purple-300 text-purple-600"
+                               {{ in_array('phu-kien', request('product_types', [])) ? 'checked' : '' }}>
+                        <span class="text-sm text-gray-600">Phụ kiện</span>
+                    </label>
                 </div>
 
                 {{-- Khoảng giá --}}
