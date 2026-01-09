@@ -36,7 +36,7 @@ class NotificationController extends Controller
 
         Notification::create($validated);
 
-        return redirect()->route('vanhanh.notifications.index')
+        return redirect()->route('admin.notifications.index')
             ->with('success', 'Đăng thông báo thành công!');
     }
 
@@ -44,7 +44,7 @@ class NotificationController extends Controller
     {
         $notification->delete();
 
-        return redirect()->route('vanhanh.notifications.index')
+        return redirect()->route('admin.notifications.index')
             ->with('success', 'Xóa thông báo thành công!');
     }
 }

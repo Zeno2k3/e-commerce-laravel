@@ -27,7 +27,7 @@ class PromotionEventController extends Controller
 
         PromotionEvent::create($validated);
 
-        return redirect()->route('vanhanh.events.index')
+        return redirect()->route('admin.events.index')
             ->with('success', 'Tạo sự kiện ưu đãi thành công!');
     }
 
@@ -44,7 +44,7 @@ class PromotionEventController extends Controller
 
         $event->update($validated);
 
-        return redirect()->route('vanhanh.events.index')
+        return redirect()->route('admin.events.index')
             ->with('success', 'Cập nhật sự kiện ưu đãi thành công!');
     }
 
@@ -52,7 +52,7 @@ class PromotionEventController extends Controller
     {
         $event->delete();
 
-        return redirect()->route('vanhanh.events.index')
+        return redirect()->route('admin.events.index')
             ->with('success', 'Xóa sự kiện ưu đãi thành công!');
     }
 }

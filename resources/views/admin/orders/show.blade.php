@@ -82,7 +82,7 @@
             <div class="bg-gray-50 rounded-2xl p-6 shadow-sm border border-gray-200">
                  <h3 class="text-lg font-bold text-gray-800 mb-4">Lịch sử trạng thái</h3>
                  <div class="relative pl-4 border-l-2 border-gray-200 space-y-6">
-                    @forelse($order->statusHistory as $history)
+                    {{-- @forelse($order->statusHistory as $history)
                         <div class="relative">
                             <span class="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-purple-500 border-2 border-white"></span>
                             <p class="text-sm font-bold text-gray-900 ucfirst">{{ $history->status }}</p>
@@ -91,9 +91,9 @@
                                 <p class="text-sm text-gray-600 mt-1 italic">"{{ $history->note }}"</p>
                             @endif
                         </div>
-                    @empty
-                        <p class="text-sm text-gray-500">Chưa có lịch sử trạng thái</p>
-                    @endforelse
+                    @empty --}}
+                        <p class="text-sm text-gray-500">Chưa có lịch sử trạng thái (Tính năng đang phát triển)</p>
+                    {{-- @endforelse --}}
                  </div>
             </div>
         </div>
@@ -174,7 +174,7 @@
             <form id="statusForm" method="POST">
                 @csrf @method('PATCH')
                 <div class="px-6 py-6">
-                    <x-admin.select name="order_status" label="Trạng thái mới" :options="[
+                    <x-admin.select name="status" label="Trạng thái mới" :options="[
                         'pending' => 'Đang xử lý',
                         'processing' => 'Đang giao hàng',
                         'shipping' => 'Đang vận chuyển',
@@ -199,7 +199,7 @@
     function openStatusModal(id, currentStatus) {
         document.getElementById('statusForm').action = '/admin/orders/' + id + '/status';
         
-        document.querySelector('#statusModal select[name="order_status"]').value = currentStatus;
+        document.querySelector('#statusModal select[name="status"]').value = currentStatus;
         openModal('statusModal');
     }
 </script>

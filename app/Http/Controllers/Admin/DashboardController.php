@@ -23,6 +23,9 @@ class DashboardController extends Controller {
             $query->where('status', 'completed');
         })->sum('total_price');
 
-        return view('admin.dashboard', compact('totalOrders', 'totalProducts', 'totalUsers', 'totalRevenue'));
+        // Lấy 5 đơn hàng mới nhất
+        $recentOrders = Order::with('user')->orderBy('created_at', 'desc')->take(5)->get();
+
+        return view('admin.dashboard', compact('totalOrders', 'totalProducts', 'totalUsers', 'totalRevenue', 'recentOrders'));
     }
 }

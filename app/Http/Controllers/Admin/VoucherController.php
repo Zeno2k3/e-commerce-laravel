@@ -57,7 +57,7 @@ class VoucherController extends Controller
         $validated = $request->validated();
         Voucher::create($validated);
 
-        return redirect()->route('vanhanh.vouchers.index')->with('success', 'Tạo voucher thành công!');
+        return redirect()->route('admin.vouchers.index')->with('success', 'Tạo voucher thành công!');
     }
 
     /**
@@ -79,7 +79,7 @@ class VoucherController extends Controller
         $validated = $request->validated();
         $voucher->update($validated);
 
-        return redirect()->route('vanhanh.vouchers.index')->with('success', 'Cập nhật voucher thành công!');
+        return redirect()->route('admin.vouchers.index')->with('success', 'Cập nhật voucher thành công!');
     }
 
     /**
@@ -90,12 +90,12 @@ class VoucherController extends Controller
     {
         // Kiểm tra nếu voucher đã được sử dụng
         if ($voucher->usages()->exists()) {
-            return redirect()->route('vanhanh.vouchers.index')->with('error', 'Không thể xóa voucher đã được sử dụng. Hãy vô hiệu hóa thay vì xóa.');
+            return redirect()->route('admin.vouchers.index')->with('error', 'Không thể xóa voucher đã được sử dụng. Hãy vô hiệu hóa thay vì xóa.');
         }
 
         $voucher->delete();
 
-        return redirect()->route('vanhanh.vouchers.index')->with('success', 'Xóa voucher thành công!');
+        return redirect()->route('admin.vouchers.index')->with('success', 'Xóa voucher thành công!');
     }
 
     /**
