@@ -55,8 +55,10 @@
                 <div class="flex items-center gap-6 text-sm text-gray-500 mb-6">
                     <div class="flex items-center text-yellow-400 gap-1">
                         @for($i = 1; $i <= 5; $i++)
-                            @if($i <= round($product['rating']))
+                            @if($i <= floor($product['rating']))
                                 <i class="fa-solid fa-star"></i>
+                            @elseif($i == ceil($product['rating']) && ($product['rating'] - floor($product['rating'])) >= 0.1)
+                                <i class="fa-solid fa-star-half-stroke"></i>
                             @else
                                 <i class="fa-regular fa-star text-gray-300"></i>
                             @endif
@@ -325,7 +327,13 @@
                         <div class="text-6xl font-black text-[#7d3cff] mb-2">{{ $product['rating'] }}</div>
                         <div class="flex justify-center gap-1 text-yellow-400 text-xl mb-2">
                             @for($i = 1; $i <= 5; $i++)
-                                <i class="{{ $i <= round($product['rating']) ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
+                                @if($i <= floor($product['rating']))
+                                    <i class="fa-solid fa-star"></i>
+                                @elseif($i == ceil($product['rating']) && ($product['rating'] - floor($product['rating'])) >= 0.1)
+                                    <i class="fa-solid fa-star-half-stroke"></i>
+                                @else
+                                    <i class="fa-regular fa-star text-gray-300"></i>
+                                @endif
                             @endfor
                         </div>
                         <p class="text-gray-500 font-medium mb-8">({{ count($product['reviews']) }} đánh giá)</p>
@@ -349,7 +357,13 @@
                                         <div class="flex items-center gap-2 text-sm">
                                             <div class="flex text-yellow-400 text-xs">
                                                 @for($r=1; $r<=5; $r++)
-                                                    <i class="{{ $r <= $review['rating'] ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
+                                                    @if($r <= floor($review['rating']))
+                                                        <i class="fa-solid fa-star"></i>
+                                                    @elseif($r == ceil($review['rating']) && ($review['rating'] - floor($review['rating'])) >= 0.1)
+                                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                                    @else
+                                                        <i class="fa-regular fa-star text-gray-300"></i>
+                                                    @endif
                                                 @endfor
                                             </div>
                                             <span class="text-gray-400">• {{ $review['time'] }}</span>
@@ -390,16 +404,22 @@
                 @foreach($product['related_products'] as $related)
                 <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all group flex flex-col">
                     <div class="relative overflow-hidden rounded-xl mb-4 h-72 w-full">
-                        <img src="{{ asset($related['image']) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        @if($related['discount'])
-                            <span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">{{ $related['discount'] }}</span>
-                        @endif
+                        <a href="{{ route('client.products.show', $related['id']) }}" class="block w-full h-full">
+                            <img src="{{ asset($related['image']) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            @if($related['discount'])
+                                <span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">{{ $related['discount'] }}</span>
+                            @endif
+                        </a>
                     </div>
                     <div class="mt-auto">
-                        <h3 class="font-bold text-gray-900 mb-1 truncate">{{ $related['name'] }}</h3>
+                        <a href="{{ route('client.products.show', $related['id']) }}" class="block group-hover:text-[#7d3cff] transition-colors">
+                            <h3 class="font-bold text-gray-900 mb-1 truncate">{{ $related['name'] }}</h3>
+                        </a>
                         <div class="flex items-center justify-between">
                             <span class="text-[#7d3cff] font-bold">{{ number_format($related['price'], 0, ',', '.') }}₫</span>
-                            <button class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#7d3cff] hover:text-white transition-colors">
+                            <button @click="quickAddToCart({{ $related['id'] }}, {{ $related['variant_id'] ?? 'null' }})" 
+                               class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#7d3cff] hover:text-white transition-colors"
+                               title="Thêm nhanh vào giỏ hàng">
                                 <i class="fa-solid fa-cart-plus"></i>
                             </button>
                         </div>
@@ -632,6 +652,59 @@ function productDetailApp(productId, variants, galleryArray) {
             } finally {
                 this.isSubmitting = false;
             }
+        },
+
+        // Quick Add for Related Products
+        quickAddToCart(productId, variantId) {
+            if (!variantId) {
+                alert('Sản phẩm này cần chọn biến thể. Vui lòng xem chi tiết.');
+                window.location.href = `/san-pham/${productId}`;
+                return;
+            }
+
+            // Using existing addToCart logic but simplified
+            this.isLoading = true; // Use global loading state or individual? Global is safer to prevent double clicks.
+
+            fetch('{{ route("client.cart.add") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    variant_id: variantId,
+                    quantity: 1
+                })
+            })
+            .then(async response => {
+                if (response.status === 401) {
+                    window.location.href = '{{ route("login") }}';
+                    return;
+                }
+                const data = await response.json();
+                if (response.ok && data.status === 'success') {
+                    alert('Đã thêm 1 sản phẩm vào giỏ hàng!');
+                    // Update cart count
+                    const cartCountEl = document.getElementById('cart-count');
+                    if (cartCountEl && data.total_items) {
+                        cartCountEl.innerText = data.total_items;
+                        cartCountEl.classList.add('animate-bounce');
+                        setTimeout(() => cartCountEl.classList.remove('animate-bounce'), 1000);
+                    }
+                } else {
+                    throw new Error(data.message || 'Có lỗi xảy ra');
+                }
+            })
+            .catch(error => {
+                console.error('Quick Add Error:', error);
+                alert(error.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng');
+            })
+            .finally(() => {
+                this.isLoading = false;
+            });
         },
         
         // Select Size

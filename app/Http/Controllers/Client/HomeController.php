@@ -24,7 +24,8 @@ class HomeController extends Controller
         // We can easily change this logic later (e.g., sort by views, or specific flag)
         $featuredProducts = $this->productService->getProducts([
             'sort' => 'newest',
-            'per_page' => 8
+            'per_page' => 8,
+            'min_rating' => 4
         ]);
 
         $transformedProducts = $this->productService->transformCollection($featuredProducts);

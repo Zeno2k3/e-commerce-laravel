@@ -40,7 +40,13 @@
         <div class="flex items-center gap-1.5 mb-3">
             <div class="flex text-yellow-400 text-xs">
                 @for($i = 1; $i <= 5; $i++)
-                    <i class="{{ $i <= ($product['rating'] ?? 0) ? 'fa-solid' : 'fa-regular' }} fa-star{{ $i > ($product['rating'] ?? 0) ? ' text-gray-200' : '' }}"></i>
+                    @if($i <= floor($product['rating'] ?? 0))
+                        <i class="fa-solid fa-star"></i>
+                    @elseif($i == ceil($product['rating'] ?? 0) && (($product['rating'] ?? 0) - floor($product['rating'] ?? 0)) >= 0.1)
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                    @else
+                        <i class="fa-regular fa-star text-gray-200"></i>
+                    @endif
                 @endfor
             </div>
             <span class="text-xs text-gray-400">({{ $product['reviews'] ?? 0 }})</span>

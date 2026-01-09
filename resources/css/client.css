@@ -21,3 +21,6 @@
 }
 
 /* Client-specific styles có thể thêm ở đây */
+[x-cloak] {
+  display: none !important;
+}

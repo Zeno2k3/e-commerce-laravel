@@ -98,6 +98,12 @@ class ProductService
             }
         });
 
+        // Filter: Minimum Rating
+        if (isset($filters['min_rating'])) {
+            $query->withAvg('reviews', 'rating')
+                  ->havingRaw('COALESCE(reviews_avg_rating, 0) >= ?', [$filters['min_rating']]);
+        }
+
         // Sorting
         $sort = $filters['sort'] ?? 'newest';
         switch ($sort) {
@@ -203,6 +209,7 @@ class ProductService
                     'price' => $v?->price ?? 0,
                     'image' => $v?->url_image ?? 'images/no-image.png',
                     'discount' => $p->discount,
+                    'variant_id' => $v?->variant_id,
                 ];
             })
             ->toArray();
