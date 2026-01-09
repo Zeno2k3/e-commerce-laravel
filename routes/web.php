@@ -62,6 +62,9 @@ Route::get('/women', [ProductClientController::class, 'women'])->name('client.wo
 Route::get('/phu-kien', [ProductClientController::class, 'accessories'])->name('client.accessories');
 Route::get('/khuyen-mai', [ProductClientController::class, 'sale'])->name('client.sale');
 
+// Ajax Search
+Route::get('/ajax/search', [App\Http\Controllers\Client\AjaxSearchController::class, 'search'])->name('client.ajax.search');
+
 
 
 //---------------------------- Thanh Toan ------------------------------
