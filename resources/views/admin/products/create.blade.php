@@ -216,15 +216,14 @@ function addVariantRow() {
                         placeholder="100">
                 </div>
             </div>
-            <div>
-                <label class="block text-xs font-bold text-slate-400 mb-2">Ảnh biến thể</label>
-                <div class="flex items-center gap-3">
-                    <input type="file" name="variants[${variantIndex}][url_image]" accept="image/*" onchange="previewImage(this, ${variantIndex})"
-                        class="flex-1 text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-500 file:text-white file:cursor-pointer hover:file:bg-blue-600">
-                    <div id="preview-${variantIndex}" class="hidden w-16 h-16 rounded-lg overflow-hidden border-2 border-slate-600">
-                        <img src="" class="w-full h-full object-cover" alt="Preview">
-                    </div>
-                </div>
+
+            <div class="flex flex-col space-y-3">
+                <button type="submit" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-500/40 hover:bg-blue-700 active:scale-95 transition-all uppercase tracking-widest text-xs">
+                    <i class="fa-solid fa-floppy-disk mr-2"></i> Lưu sản phẩm ngay
+                </button>
+                <a href="{{ route('admin.products.index') }}" class="w-full bg-white text-slate-400 font-black py-4 rounded-2xl border border-slate-100 text-center hover:bg-slate-50 transition-all uppercase tracking-widest text-[10px]">
+                    Hủy bỏ & Quay lại
+                </a>
             </div>
         </div>
     `;

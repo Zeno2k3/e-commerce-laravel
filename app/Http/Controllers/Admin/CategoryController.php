@@ -14,7 +14,7 @@ class CategoryController extends Controller
         $categories = Category::orderBy('created_at', 'desc')->get();
         
         // Build query with filters
-        $query = Product::with('category');
+        $query = Product::with(['category', 'variants']);
         
         // Filter by categories
         if ($request->has('categories') && !empty($request->categories)) {

@@ -29,7 +29,7 @@ class CustomerController extends Controller
         $validated['password'] = Hash::make($validated['password']);
         $validated['role'] = 'user';
         User::create($validated);
-        return redirect()->route('admin.customers.index')->with('success', 'Tạo tài khoản thành công!');
+        return redirect()->route('manager.customers.index')->with('success', 'Tạo tài khoản thành công!');
     }
 
     public function update(Request $request, User $customer)
@@ -47,12 +47,12 @@ class CustomerController extends Controller
             unset($validated['password']);
         }
         $customer->update($validated);
-        return redirect()->route('admin.customers.index')->with('success', 'Cập nhật thành công!');
+        return redirect()->route('manager.customers.index')->with('success', 'Cập nhật thành công!');
     }
 
     public function destroy(User $customer)
     {
         $customer->delete();
-        return redirect()->route('admin.customers.index')->with('success', 'Xóa thành công!');
+        return redirect()->route('manager.customers.index')->with('success', 'Xóa thành công!');
     }
 }

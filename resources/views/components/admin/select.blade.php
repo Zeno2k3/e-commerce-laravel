@@ -4,12 +4,13 @@
     'label' => '',
     'options' => [],
     'value' => '',
+    'id' => null,
 ])
 
 <div class="relative">
     <select 
         name="{{ $name }}"
-        id="{{ $name }}"
+        id="{{ $id ?? $name }}"
         {{ $attributes->merge(['class' => 'appearance-none w-full px-5 py-3 bg-purple-500 text-white font-semibold rounded-xl cursor-pointer hover:bg-purple-600 focus:ring-2 focus:ring-purple-300 transition']) }}
     >
         <option value="" disabled {{ empty($value) ? 'selected' : '' }}>{{ $label }}</option>

@@ -2,24 +2,26 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\User;
+use App\Models\OrderDetail;
 
 class DashboardController extends Controller {
     public function index() {
         // Đếm tổng số đơn hàng
-        $totalOrders = DB::table('order')->count();
+        $totalOrders = Order::count();
         
         // Đếm tổng sản phẩm hiện có
-        $totalProducts = DB::table('product')->count();
+        $totalProducts = Product::count();
         
-        // Đếm tổng khách hàng (user)
-        $totalUsers = DB::table('user')->count();
+        // Đếm tổng khách hàng (user với role = 'user')
+        $totalUsers = User::where('role', 'user')->count();
         
         // Tính doanh thu từ các đơn hàng có trạng thái 'completed'
-        $totalRevenue = DB::table('order_detail')
-            ->join('order', 'order_detail.order_id', '=', 'order.order_id')
-            ->where('order.status', 'completed')
-            ->sum('order_detail.total_price');
+        $totalRevenue = OrderDetail::whereHas('order', function ($query) {
+            $query->where('status', 'completed');
+        })->sum('total_price');
 
         return view('admin.dashboard', compact('totalOrders', 'totalProducts', 'totalUsers', 'totalRevenue'));
     }

@@ -5,10 +5,7 @@
     </div>
 
     <div class="flex items-center space-x-6">
-        <div class="hidden lg:flex items-center bg-slate-100 rounded-2xl px-4 py-2 w-64 border border-transparent focus-within:border-blue-500/30 focus-within:bg-white transition">
-            <i class="fas fa-search text-slate-400 mr-3"></i>
-            <input type="text" placeholder="Tìm nhanh..." class="bg-transparent border-none outline-none text-sm w-full">
-        </div>
+
 
         <button class="relative w-10 h-10 flex items-center justify-center rounded-2xl bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition">
             <i class="far fa-bell text-lg"></i>

@@ -55,4 +55,22 @@ class Order extends Model
     {
         return $this->belongsTo(Voucher::class, 'voucher_id', 'voucher_id');
     }
+
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class, 'order_id', 'order_id');
+    }
+
+    /**
+     * Tính total_price động từ orderDetails
+     */
+    public function getTotalPriceAttribute()
+    {
+        return $this->orderDetails->sum('total_price');
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'order_id';
+    }
 }

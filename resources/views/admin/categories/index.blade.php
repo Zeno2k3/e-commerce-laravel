@@ -55,9 +55,18 @@
                         @if($product->discount_percentage ?? false)
                             <span class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-{{ $product->discount_percentage }}%</span>
                         @endif
-                        <img src="{{ $product->image ?? 'https://via.placeholder.com/300x300?text=No+Image' }}" 
-                             alt="{{ $product->product_name }}" 
-                             class="w-full h-full object-cover">
+                        @php
+                            $image = $product->variants->first()?->url_image;
+                        @endphp
+                        @if($image)
+                            <img src="{{ asset($image) }}" 
+                                 alt="{{ $product->product_name }}" 
+                                 class="w-full h-full object-cover">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center">
+                                <i class="fa-solid fa-image text-4xl text-gray-300"></i>
+                            </div>
+                        @endif
                     </div>
                     <div class="p-4">
                         <h3 class="font-semibold text-gray-900 mb-1 line-clamp-2">{{ $product->product_name }}</h3>
@@ -68,10 +77,10 @@
                             <span class="text-gray-500 ml-1">(69)</span>
                         </div>
                         <div class="flex items-center gap-2 mb-4">
-                            <span class="text-purple-600 font-bold">{{ number_format($product->price ?? 0) }}đ</span>
-                            @if($product->original_price ?? false)
-                                <span class="text-gray-400 line-through text-sm">{{ number_format($product->original_price) }}đ</span>
-                            @endif
+                            @php
+                                $price = $product->variants->first()?->price ?? 0;
+                            @endphp
+                            <span class="text-purple-600 font-bold">{{ number_format($price) }}đ</span>
                         </div>
                         <button onclick="openCategoryModal({{ $product->product_id }}, '{{ $product->category_id ?? '' }}')" 
                                 class="w-full py-2 bg-purple-500 text-white text-sm font-semibold rounded-lg hover:bg-purple-600 transition flex items-center justify-center gap-2">

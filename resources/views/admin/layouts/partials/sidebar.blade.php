@@ -13,6 +13,16 @@
             <span>Dashboard</span>
         </a>
 
+        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] px-4 mt-8 mb-4">Quản trị</p>
+        <a href="{{ route('admin.roles.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-2xl transition group {{ request()->routeIs('admin.roles.*') ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 hover:text-white' }}">
+            <i class="fas fa-user-shield"></i>
+            <span>Quản lý chức vụ</span>
+        </a>
+        <a href="{{ route('admin.suppliers.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-2xl transition group {{ request()->routeIs('admin.suppliers.*') ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 hover:text-white' }}">
+            <i class="fas fa-truck"></i>
+            <span>Quản lý nhà cung cấp</span>
+        </a>
+
         <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] px-4 mt-8 mb-4">Cửa hàng</p>
         <a href="{{ route('admin.products.index') }}" class="flex items-center justify-between px-4 py-3 rounded-2xl transition group {{ request()->is('admin/products*') ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 hover:text-white' }}">
             <div class="flex items-center space-x-3">

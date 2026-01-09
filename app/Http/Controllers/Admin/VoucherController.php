@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VoucherRequest;
 use App\Models\Voucher;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class VoucherController extends Controller
 {
@@ -55,61 +55,47 @@ class VoucherController extends Controller
     public function store(VoucherRequest $request)
     {
         $validated = $request->validated();
-
         Voucher::create($validated);
 
-        return redirect()->route('admin.vouchers.index')->with('success', 'Tạo voucher thành công!');
+        return redirect()->route('vanhanh.vouchers.index')->with('success', 'Tạo voucher thành công!');
     }
 
     /**
      * Display the specified voucher.
      * GET /admin/vouchers/{voucher}
-     * 
-     * Route Model Binding: Laravel tự động inject Voucher model
      */
-    public function show(Voucher $voucher): JsonResponse
+    public function show(Voucher $voucher)
     {
-        // Eager load usages với user info
         $voucher->load(['usages.user:user_id,full_name,email']);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Lấy thông tin voucher thành công.',
-            'data' => $voucher,
-        ]);
+        return view('admin.vouchers.show', compact('voucher'));
     }
 
     /**
      * Update the specified voucher in storage.
      * PUT/PATCH /admin/vouchers/{voucher}
-     * 
-     * Route Model Binding: Laravel tự động inject Voucher model
      */
     public function update(VoucherRequest $request, Voucher $voucher)
     {
         $validated = $request->validated();
-
         $voucher->update($validated);
 
-        return redirect()->route('admin.vouchers.index')->with('success', 'Cập nhật voucher thành công!');
+        return redirect()->route('vanhanh.vouchers.index')->with('success', 'Cập nhật voucher thành công!');
     }
 
     /**
      * Remove the specified voucher from storage.
      * DELETE /admin/vouchers/{voucher}
-     * 
-     * Route Model Binding: Laravel tự động inject Voucher model
      */
     public function destroy(Voucher $voucher)
     {
         // Kiểm tra nếu voucher đã được sử dụng
         if ($voucher->usages()->exists()) {
-            return redirect()->route('admin.vouchers.index')->with('error', 'Không thể xóa voucher đã được sử dụng. Hãy vô hiệu hóa thay vì xóa.');
+            return redirect()->route('vanhanh.vouchers.index')->with('error', 'Không thể xóa voucher đã được sử dụng. Hãy vô hiệu hóa thay vì xóa.');
         }
 
         $voucher->delete();
 
-        return redirect()->route('admin.vouchers.index')->with('success', 'Xóa voucher thành công!');
+        return redirect()->route('vanhanh.vouchers.index')->with('success', 'Xóa voucher thành công!');
     }
 
     /**

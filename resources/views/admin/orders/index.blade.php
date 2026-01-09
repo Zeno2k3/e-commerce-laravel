@@ -2,9 +2,9 @@
 @section('title', 'Quản lý đơn hàng')
 
 @section('content')
-<div class="bg-white min-h-full p-6">
+<div class="p-6">
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Quản lý đơn hàng</h1>
+        <h1 class="text-2xl font-bold text-gray-800">Quản lý đơn hàng</h1>
         <p class="text-gray-500 text-sm">Xử lý đơn hàng và đơn lỗi</p>
     </div>
 
@@ -14,8 +14,8 @@
         </div>
     @endif
 
-    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100">
+    <div class="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-100 bg-white">
             <h2 class="font-bold text-gray-900">Danh sách đơn hàng</h2>
         </div>
         <div class="overflow-x-auto">
@@ -29,10 +29,10 @@
                         <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase">Tổng tiền</th>
                         <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Trạng thái</th>
                         <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Vấn đề</th>
-                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Thao tác</th>
+                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Chi tiết</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody class="divide-y divide-gray-100 bg-white">
                     @forelse($orders as $order)
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 text-sm font-medium text-gray-900">ORD-{{ str_pad($order->order_id, 4, '0', STR_PAD_LEFT) }}</td>
@@ -57,22 +57,28 @@
                                     'cancelled' => 'Bị lỗi',
                                 ];
                             @endphp
-                            <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold {{ $statusColors[$order->order_status] ?? 'bg-gray-100 text-gray-700' }}">
-                                {{ $statusTexts[$order->order_status] ?? $order->order_status }}
+                            <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-700' }}">
+                                {{ $statusTexts[$order->status] ?? $order->status }}
                             </span>
                         </td>
                         <td class="px-6 py-4 text-center">
-                            @if($order->order_status === 'cancelled')
-                                <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
+                            @if($order->status === 'cancelled')
+                                <div class="flex items-center justify-center gap-1 text-red-500 font-medium">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                    <span>Lỗi</span>
+                                </div>
                             @else
-                                <i class="fa-solid fa-circle-check text-green-500"></i>
+                                <div class="flex items-center justify-center gap-1 text-green-500 font-medium">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    <span>Tốt</span>
+                                </div>
                             @endif
                         </td>
                         <td class="px-6 py-4 text-center">
-                            <button onclick="openStatusModal({{ $order->order_id }}, '{{ $order->order_status }}')" 
-                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-100 text-red-600 text-xs font-bold rounded-lg hover:bg-red-200 transition">
-                                <i class="fa-solid fa-triangle-exclamation"></i> Xử lý
-                            </button>
+                            <a href="{{ route('admin.orders.show', $order->order_id) }}" 
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white text-gray-600 text-xs font-bold rounded-lg hover:bg-purple-50 hover:text-purple-600 transition border border-gray-200">
+                                <i class="fa-solid fa-eye"></i> Xem
+                            </a>
                         </td>
                     </tr>
                     @empty
@@ -84,7 +90,7 @@
             </table>
         </div>
         @if($orders->hasPages())
-            <div class="px-6 py-4 border-t border-gray-100">{{ $orders->links() }}</div>
+            <div class="px-6 py-4 border-t border-gray-100 bg-white">{{ $orders->links() }}</div>
         @endif
     </div>
 </div>

@@ -8,38 +8,40 @@
 @endsection
 
 @section('content')
-<div class="bg-white min-h-full">
-    @if(session('success'))
-        <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
-            <p class="text-green-700">{{ session('success') }}</p>
-        </div>
-    @endif
-
-    @if($customers->count() > 0)
-        @foreach($customers as $customer)
-            <x-admin.card 
-                :title="$customer->full_name"
-                subtitle="Khách hàng"
-                :email="$customer->email"
-                :phone="$customer->phone_number"
-                :status="$customer->status"
-                :id="$customer->user_id"
-                :onEdit="'openEditModal(' . $customer->user_id . ', \'' . addslashes($customer->full_name) . '\', \'' . $customer->email . '\', \'' . $customer->phone_number . '\', \'' . $customer->status . '\')'"
-                :onDelete="'deleteItem(' . $customer->user_id . ')'"
-            />
-        @endforeach
-        
-        @if($customers->hasPages())
-            <div class="px-6 py-4 flex justify-center">{{ $customers->links() }}</div>
-        @endif
-    @else
-        <div class="py-24 text-center">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
-                <i class="fa-solid fa-users-slash text-3xl text-gray-300"></i>
+<div class="p-6">
+    <div class="bg-gray-50 min-h-full rounded-2xl shadow-sm p-6">
+        @if(session('success'))
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
+                <p class="text-green-700">{{ session('success') }}</p>
             </div>
-            <p class="text-gray-500 font-medium">Chưa có người dùng nào</p>
-        </div>
-    @endif
+        @endif
+
+        @if($customers->count() > 0)
+            @foreach($customers as $customer)
+                <x-admin.card 
+                    :title="$customer->full_name"
+                    subtitle="Khách hàng"
+                    :email="$customer->email"
+                    :phone="$customer->phone_number"
+                    :status="$customer->status"
+                    :id="$customer->user_id"
+                    :onEdit="'openEditModal(' . $customer->user_id . ', \'' . addslashes($customer->full_name) . '\', \'' . $customer->email . '\', \'' . $customer->phone_number . '\', \'' . $customer->status . '\')'"
+                    :onDelete="'deleteItem(' . $customer->user_id . ')'"
+                />
+            @endforeach
+            
+            @if($customers->hasPages())
+                <div class="px-6 py-4 flex justify-center">{{ $customers->links() }}</div>
+            @endif
+        @else
+            <div class="py-24 text-center">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
+                    <i class="fa-solid fa-users-slash text-3xl text-gray-300"></i>
+                </div>
+                <p class="text-gray-500 font-medium">Chưa có người dùng nào</p>
+            </div>
+        @endif
+    </div>
 </div>
 
 {{-- Create Modal --}}

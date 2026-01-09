@@ -17,6 +17,12 @@ class EmployeeController extends Controller
         return view('admin.employees.index', compact('employees'));
     }
 
+    public function byRole($role)
+    {
+        $employees = User::where('role', $role)->orderBy('created_at', 'desc')->get();
+        return response()->json($employees);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -28,8 +34,13 @@ class EmployeeController extends Controller
             'status' => 'required|in:active,inactive',
         ]);
         $validated['password'] = Hash::make($validated['password']);
-        User::create($validated);
-        return redirect()->route('admin.employees.index')->with('success', 'Tạo tài khoản thành công!');
+        $user = User::create($validated);
+        
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Tạo tài khoản thành công!', 'user' => $user]);
+        }
+        
+        return redirect()->route('manager.employees.index')->with('success', 'Tạo tài khoản thành công!');
     }
 
     public function update(Request $request, User $employee)
@@ -48,12 +59,22 @@ class EmployeeController extends Controller
             unset($validated['password']);
         }
         $employee->update($validated);
-        return redirect()->route('admin.employees.index')->with('success', 'Cập nhật thành công!');
+        
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Cập nhật thành công!', 'user' => $employee]);
+        }
+
+        return redirect()->route('manager.employees.index')->with('success', 'Cập nhật thành công!');
     }
 
     public function destroy(User $employee)
     {
         $employee->delete();
-        return redirect()->route('admin.employees.index')->with('success', 'Xóa thành công!');
+        
+        if (request()->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Xóa thành công!']);
+        }
+        
+        return redirect()->route('manager.employees.index')->with('success', 'Xóa thành công!');
     }
 }

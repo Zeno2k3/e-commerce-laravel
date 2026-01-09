@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with('category')->orderBy('created_at', 'desc')->paginate(10);
+        $products = Product::with(['category', 'variants'])->orderBy('created_at', 'desc')->paginate(10);
         $categories = Category::all();
         return view('admin.products.index', compact('products', 'categories'));
     }
@@ -28,74 +28,24 @@ class ProductController extends Controller
             'product_name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:category,category_id',
-            'product_type' => 'required|in:nam,nu,phu-kien',
-            'variants' => 'required|array|min:1',
-            'variants.*.size' => 'nullable|string|max:50',
-            'variants.*.color' => 'nullable|string|max:50',
-            'variants.*.material' => 'nullable|string|max:50',
-            'variants.*.price' => 'required|numeric|min:0',
-            'variants.*.stock' => 'required|integer|min:0',
-            'variants.*.url_image' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:2048',
+            'selling_price' => 'required|numeric|min:0',
+            'color' => 'nullable|string|max:50',
+            'status' => 'required|in:active,inactive',
+            'images' => 'nullable|array',
         ]);
-
-        \DB::beginTransaction();
-        
-        try {
-            // Create Product
-            $product = Product::create([
-                'product_name' => $validated['product_name'],
-                'description' => $validated['description'] ?? null,
-                'category_id' => $validated['category_id'] ?? null,
-                'product_type' => $validated['product_type'],
-            ]);
-
-            // Create Variants with image handling
-            foreach ($request->variants as $index => $variantData) {
-                $imagePath = null;
-                
-                // Handle image upload if present
-                if ($request->hasFile("variants.{$index}.url_image")) {
-                    $image = $request->file("variants.{$index}.url_image");
-                    $imageName = time() . '_' . $index . '_' . $image->getClientOriginalName();
-                    $image->move(public_path('uploads/products'), $imageName);
-                    $imagePath = 'uploads/products/' . $imageName;
-                }
-
-                $product->variants()->create([
-                    'size' => $variantData['size'] ?? null,
-                    'color' => $variantData['color'] ?? null,
-                    'material' => $variantData['material'] ?? null,
-                    'price' => $variantData['price'],
-                    'stock' => $variantData['stock'],
-                    'url_image' => $imagePath,
-                ]);
+        $data = $validated;
+        if ($request->hasFile('images')) {
+            $imagePaths = [];
+            foreach ($request->file('images') as $image) {
+                // Store in public/products folder
+                $filename = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('storage/products'), $filename);
+                $imagePaths[] = 'storage/products/' . $filename;
             }
-
-            \DB::commit();
-            return redirect()->route('admin.products.index')->with('success', 'Tạo sản phẩm thành công!');
-            
-        } catch (\Exception $e) {
-            \DB::rollBack();
-            return redirect()->back()->withInput()->with('error', 'Lỗi khi tạo sản phẩm: ' . $e->getMessage());
+            $data['images'] = $imagePaths; // Store array directly (casted to json in model)
         }
-    }
-
-    public function edit(Request $request, Product $product)
-    {
-        $product->load('variants');
-        $categories = Category::all();
-        
-        // If AJAX request, return JSON
-        if ($request->wantsJson() || $request->ajax()) {
-            return response()->json([
-                'product' => $product,
-                'variants' => $product->variants,
-                'categories' => $categories
-            ]);
-        }
-        
-        // Otherwise return view
-        return view('admin.products.edit', compact('product', 'categories'));
+        Product::create($data);
+        return redirect()->route('admin.products.index')->with('success', 'Tạo sản phẩm thành công!');
     }
 
     public function update(Request $request, Product $product)
@@ -104,91 +54,28 @@ class ProductController extends Controller
             'product_name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:category,category_id',
-            'product_type' => 'required|in:nam,nu,phu-kien',
-            'variants' => 'nullable|array',
-            'variants.*.id' => 'nullable|integer|exists:product_variant,variant_id',
-            'variants.*.size' => 'nullable|string|max:50',
-            'variants.*.color' => 'nullable|string|max:50',
-            'variants.*.material' => 'nullable|string|max:50',
-            'variants.*.price' => 'required|numeric|min:0',
-            'variants.*.stock' => 'required|integer|min:0',
-            'variants.*.url_image' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:2048',
+            'selling_price' => 'required|numeric|min:0',
+            'color' => 'nullable|string|max:50',
+            'status' => 'required|in:active,inactive',
+            'images' => 'nullable|array',
         ]);
-
-        \DB::beginTransaction();
-        
-        try {
-            $product->update([
-                'product_name' => $validated['product_name'],
-                'description' => $validated['description'] ?? null,
-                'category_id' => $validated['category_id'] ?? null,
-                'product_type' => $validated['product_type'],
-            ]);
-
-            // Handle variants
-            if (isset($request->variants)) {
-                // Get current variant IDs
-                $existingIds = $product->variants->pluck('variant_id')->toArray();
-                $submittedIds = [];
-                
-                foreach ($request->variants as $key => $variantData) {
-                    if (isset($variantData['id'])) {
-                        $submittedIds[] = $variantData['id'];
-                    }
-                }
-
-                // Delete removed variants
-                $toDelete = array_diff($existingIds, $submittedIds);
-                \App\Models\ProductVariant::destroy($toDelete);
-
-                foreach ($request->variants as $index => $variantData) {
-                    $imagePath = null;
-                    
-                    // Handle image upload if present
-                    if ($request->hasFile("variants.{$index}.url_image")) {
-                        $image = $request->file("variants.{$index}.url_image");
-                        $imageName = time() . '_' . $index . '_' . $image->getClientOriginalName();
-                        $image->move(public_path('uploads/products'), $imageName);
-                        $imagePath = 'uploads/products/' . $imageName;
-                    }
-                    
-                    if (isset($variantData['id'])) {
-                        // Update existing
-                        $updateData = [
-                            'size' => $variantData['size'] ?? null,
-                            'color' => $variantData['color'] ?? null,
-                            'material' => $variantData['material'] ?? null,
-                            'price' => $variantData['price'],
-                            'stock' => $variantData['stock'],
-                        ];
-                        
-                        // Only update image if new one was uploaded
-                        if ($imagePath) {
-                            $updateData['url_image'] = $imagePath;
-                        }
-                        
-                        $product->variants()->where('variant_id', $variantData['id'])->update($updateData);
-                    } else {
-                        // Create new
-                        $product->variants()->create([
-                            'size' => $variantData['size'] ?? null,
-                            'color' => $variantData['color'] ?? null,
-                            'material' => $variantData['material'] ?? null,
-                            'price' => $variantData['price'],
-                            'stock' => $variantData['stock'],
-                            'url_image' => $imagePath,
-                        ]);
-                    }
-                }
+        $data = $validated;
+        if ($request->hasFile('images')) {
+            $imagePaths = [];
+            foreach ($request->file('images') as $image) {
+                $filename = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('storage/products'), $filename);
+                $imagePaths[] = 'storage/products/' . $filename;
             }
-
-            \DB::commit();
-            return redirect()->route('admin.products.index')->with('success', 'Cập nhật thành công!');
-            
-        } catch (\Exception $e) {
-            \DB::rollBack();
-            return redirect()->back()->withInput()->with('error', 'Lỗi khi cập nhật sản phẩm: ' . $e->getMessage());
+            $data['images'] = $imagePaths;
+        } else {
+            // Keep old images if no new ones uploaded
+            // Note: If you want to delete images, you need more complex logic.
+            // For now, if no file is uploaded, we update other fields but keep images.
+            unset($data['images']); 
         }
+        $product->update($data);
+        return redirect()->route('admin.products.index')->with('success', 'Cập nhật thành công!');
     }
 
     public function destroy(Product $product)

@@ -1,23 +1,23 @@
-{{-- Admin Form Modal Component --}}
 @props([
     'id' => 'modal',
     'title' => 'Form',
     'action' => '#',
     'method' => 'POST',
+    'maxWidth' => 'max-w-lg', // Default width
 ])
 
-<div id="{{ $id }}" class="fixed inset-0 z-50 hidden overflow-y-auto" role="dialog" aria-modal="true">
+<div id="{{ $id }}" {{ $attributes->merge(['class' => 'fixed inset-0 z-50 hidden overflow-y-auto']) }} role="dialog" aria-modal="true">
     <div class="fixed inset-0 bg-black/40 transition-opacity" onclick="closeModal('{{ $id }}')"></div>
     
     <div class="flex min-h-full items-center justify-center p-4">
-        <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg transform transition-all">
+        <div class="relative bg-white rounded-2xl shadow-xl w-full {{ $maxWidth }} transform transition-all">
             @if($title)
                 <div class="px-6 py-4 border-b border-gray-100">
                     <h3 class="text-xl font-bold text-gray-900">{{ $title }}</h3>
                 </div>
             @endif
             
-            <form action="{{ $action }}" method="{{ $method === 'GET' ? 'GET' : 'POST' }}">
+            <form action="{{ $action }}" method="{{ $method === 'GET' ? 'GET' : 'POST' }}" enctype="multipart/form-data">
                 @csrf
                 @if(!in_array($method, ['GET', 'POST']))
                     @method($method)
@@ -39,14 +39,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    function openModal(modalId) {
-        document.getElementById(modalId).classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-    function closeModal(modalId) {
-        document.getElementById(modalId).classList.add('hidden');
-        document.body.style.overflow = 'auto';
-    }
-</script>
