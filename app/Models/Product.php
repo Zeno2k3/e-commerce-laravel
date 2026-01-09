@@ -29,6 +29,7 @@ class Product extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'product_code',
         'category_id',
         'product_name',
         'description',

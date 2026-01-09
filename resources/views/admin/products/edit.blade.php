@@ -62,6 +62,13 @@
                                     placeholder="VD: Nike Air Jordan 1 Retro">
                             </div>
                             <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Mã sản phẩm
+                                </label>
+                                <input type="text" name="product_code" value="{{ $product->product_code }}" readonly
+                                    class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl focus:outline-none cursor-not-allowed text-gray-500 font-bold">
+                            </div>
+                            <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Danh mục</label>
                                 <select name="category_id" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
                                     <option value="">-- Chọn danh mục --</option>

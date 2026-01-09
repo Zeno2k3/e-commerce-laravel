@@ -18,8 +18,20 @@ class ProductController extends Controller
 
     public function create()
     {
+        // Auto-increment Product Code (PRxx)
+        $lastProduct = Product::latest('product_id')->first();
+        $nextCode = 'PR01';
+
+        if ($lastProduct && $lastProduct->product_code) {
+            // Extract number from PRxx
+            if (preg_match('/PR(\d+)/', $lastProduct->product_code, $matches)) {
+                $number = intval($matches[1]) + 1;
+                $nextCode = 'PR' . str_pad($number, 2, '0', STR_PAD_LEFT);
+            }
+        }
+
         $categories = Category::all();
-        return view('admin.products.create', compact('categories'));
+        return view('admin.products.create', compact('categories', 'nextCode'));
     }
 
     public function store(Request $request)
@@ -29,6 +41,7 @@ class ProductController extends Controller
             'product_name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:category,category_id',
+            'product_code' => 'required|string|unique:product,product_code',
             'product_type' => 'required|string',
             'status' => 'nullable|string',
             'variants' => 'required|array|min:1',
@@ -43,6 +56,7 @@ class ProductController extends Controller
         // 2. Create Product
         $product = Product::create([
             'product_name' => $validated['product_name'],
+            'product_code' => $validated['product_code'],
             'description' => $validated['description'] ?? null,
             'category_id' => $validated['category_id'] ?? null,
             'product_type' => $validated['product_type'],
