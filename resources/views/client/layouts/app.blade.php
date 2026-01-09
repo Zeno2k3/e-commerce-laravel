@@ -23,6 +23,34 @@
 
     @include('client.layouts.partials.footer')
 
+    {{-- Notifications UI --}}
+    @if(session('success'))
+    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce flex items-center gap-2">
+        <i class="fa-solid fa-circle-check"></i>
+        {{ session('success') }}
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" class="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce flex items-center gap-2">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        {{ session('error') }}
+    </div>
+    @endif
+
+    @if($errors->any())
+    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+        <div class="flex items-center gap-2 mb-2 font-bold">
+            <i class="fa-solid fa-triangle-exclamation"></i> Có lỗi xảy ra:
+        </div>
+        <ul class="list-disc pl-4 text-sm">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
 </body>
 </html>
 
