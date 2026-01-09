@@ -42,7 +42,7 @@
                 
                 {{-- ADMIN & EMPLOYEE MENU --}}
                 @if(in_array($userRole, ['admin', 'employee']))
-                    <p class="text-xs font-semibold text-gray-400 uppercase px-3 mb-4">Tổng quan</p>
+                    <p class="text-xs font-semibold text-gray-400 uppercase px-3 mb-4 sidebar-text">Tổng quan</p>
                     <a href="{{ route('admin.dashboard') }}" 
                        class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 mb-3 {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                         <i class="fa-solid fa-gauge w-5 text-center"></i>
@@ -54,7 +54,7 @@
                         <span class="sidebar-text">Thống kê</span>
                     </a>
                     
-                    <p class="text-xs font-semibold text-gray-400 uppercase px-3 mb-4 mt-4">Quản lý</p>
+                    <p class="text-xs font-semibold text-gray-400 uppercase px-3 mb-4 mt-4 sidebar-text">Quản lý</p>
                     <a href="{{ route('admin.products.index') }}" 
                        class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 mb-3 {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
                         <i class="fa-solid fa-box w-5 text-center"></i>
@@ -81,7 +81,7 @@
                         <span class="sidebar-text">Khách hàng</span>
                     </a>
                     
-                    <p class="text-xs font-semibold text-gray-400 uppercase px-3 mb-4 mt-4">Marketing</p>
+                    <p class="text-xs font-semibold text-gray-400 uppercase px-3 mb-4 mt-4 sidebar-text">Marketing</p>
                     <a href="{{ route('admin.vouchers.index') }}" 
                        class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 mb-3 {{ request()->routeIs('admin.vouchers.*') ? 'active' : '' }}">
                         <i class="fa-solid fa-ticket w-5 text-center"></i>
@@ -89,7 +89,7 @@
                     </a>
                     <a href="{{ route('admin.events.index') }}" 
                        class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 mb-3 {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
-                        <i class="fa-solid fa-calendar-star w-5 text-center"></i>
+                        <i class="fa-solid fa-gift w-5 text-center"></i>
                         <span class="sidebar-text">Sự kiện ưu đãi</span>
                     </a>
                     <a href="{{ route('admin.notifications.index') }}" 
@@ -98,7 +98,7 @@
                         <span class="sidebar-text">Thông báo</span>
                     </a>
                     
-                    <p class="text-xs font-semibold text-gray-400 uppercase px-3 mb-4 mt-4">Kho hàng</p>
+                    <p class="text-xs font-semibold text-gray-400 uppercase px-3 mb-4 mt-4 sidebar-text">Kho hàng</p>
                     <a href="{{ route('admin.suppliers.index') }}" 
                        class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 mb-3 {{ request()->routeIs('admin.suppliers.*') ? 'active' : '' }}">
                         <i class="fa-solid fa-truck w-5 text-center"></i>
@@ -113,7 +113,7 @@
                 
                 {{-- ADMIN ONLY --}}
                 @if($userRole === 'admin')
-                    <p class="text-xs font-semibold text-gray-400 uppercase px-3 mb-4 mt-4">Hệ thống</p>
+                    <p class="text-xs font-semibold text-gray-400 uppercase px-3 mb-4 mt-4 sidebar-text">Hệ thống</p>
                     <a href="{{ route('admin.roles.index') }}" 
                        class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 mb-3 {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
                         <i class="fa-solid fa-user-shield w-5 text-center"></i>
@@ -155,11 +155,14 @@
             const sidebar = document.getElementById('sidebar');
             const icon = document.getElementById('sidebar-toggle-icon');
             const texts = document.querySelectorAll('.sidebar-text');
+            const links = document.querySelectorAll('.sidebar-link');
+            
             sidebar.classList.toggle('w-60');
             sidebar.classList.toggle('w-16');
             icon.classList.toggle('fa-chevron-left');
             icon.classList.toggle('fa-chevron-right');
             texts.forEach(text => text.classList.toggle('hidden'));
+            links.forEach(link => link.classList.toggle('justify-center'));
         }
         function openModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
