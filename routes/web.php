@@ -103,6 +103,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
         Route::get('/', [ProductController::class, 'index'])->name('admin.products.index');
         Route::get('/create', [ProductController::class, 'create'])->name('admin.products.create');
         Route::post('/', [ProductController::class, 'store'])->name('admin.products.store');
+        Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
         Route::put('/{product}', [ProductController::class, 'update'])->name('admin.products.update');
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
     });

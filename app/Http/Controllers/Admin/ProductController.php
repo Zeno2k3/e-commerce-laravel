@@ -24,28 +24,64 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        // 1. Validate Product Info
         $validated = $request->validate([
             'product_name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:category,category_id',
-            'selling_price' => 'required|numeric|min:0',
-            'color' => 'nullable|string|max:50',
-            'status' => 'required|in:active,inactive',
-            'images' => 'nullable|array',
+            'product_type' => 'required|string',
+            'status' => 'nullable|string',
+            'variants' => 'required|array|min:1',
+            'variants.*.price' => 'required|numeric|min:0',
+            'variants.*.stock' => 'required|integer|min:0',
+            'variants.*.size' => 'nullable|string|max:50',
+            'variants.*.color' => 'nullable|string|max:50',
+            'variants.*.material' => 'nullable|string|max:50',
+            'variants.*.url_image' => 'nullable|image|max:2048',
         ]);
-        $data = $validated;
-        if ($request->hasFile('images')) {
-            $imagePaths = [];
-            foreach ($request->file('images') as $image) {
-                // Store in public/products folder
-                $filename = time() . '_' . $image->getClientOriginalName();
+
+        // 2. Create Product
+        $product = Product::create([
+            'product_name' => $validated['product_name'],
+            'description' => $validated['description'] ?? null,
+            'category_id' => $validated['category_id'] ?? null,
+            'product_type' => $validated['product_type'],
+            'status' => $validated['status'] ?? 'active',
+        ]);
+
+        // 3. Create Variants
+        foreach ($request->variants as $index => $variantData) {
+            $imageUrl = null;
+            if ($request->hasFile("variants.$index.url_image")) {
+                $image = $request->file("variants.$index.url_image");
+                $filename = time() . '_' . $index . '_' . $image->getClientOriginalName();
                 $image->move(public_path('storage/products'), $filename);
-                $imagePaths[] = 'storage/products/' . $filename;
+                $imageUrl = 'storage/products/' . $filename;
             }
-            $data['images'] = $imagePaths; // Store array directly (casted to json in model)
+
+            $product->variants()->create([
+                'size' => $variantData['size'] ?? null,
+                'color' => $variantData['color'] ?? null,
+                'material' => $variantData['material'] ?? null,
+                'price' => $variantData['price'],
+                'stock' => $variantData['stock'],
+                'url_image' => $imageUrl,
+            ]);
         }
-        Product::create($data);
+
         return redirect()->route('admin.products.index')->with('success', 'Tạo sản phẩm thành công!');
+    }
+
+    public function edit($id)
+    {
+        $product = Product::with('variants')->findOrFail($id);
+        if (request()->wantsJson()) {
+            return response()->json([
+                'product' => $product,
+                'variants' => $product->variants
+            ]);
+        }
+        return view('admin.products.edit', compact('product'));
     }
 
     public function update(Request $request, Product $product)
@@ -54,32 +90,86 @@ class ProductController extends Controller
             'product_name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:category,category_id',
-            'selling_price' => 'required|numeric|min:0',
-            'color' => 'nullable|string|max:50',
-            'status' => 'required|in:active,inactive',
-            'images' => 'nullable|array',
+            'product_type' => 'required|string',
+            'status' => 'nullable|string',
+            'variants' => 'nullable|array',
         ]);
-        $data = $validated;
-        if ($request->hasFile('images')) {
-            $imagePaths = [];
-            foreach ($request->file('images') as $image) {
-                $filename = time() . '_' . $image->getClientOriginalName();
-                $image->move(public_path('storage/products'), $filename);
-                $imagePaths[] = 'storage/products/' . $filename;
+
+        // 1. Update Product
+        $product->update([
+            'product_name' => $validated['product_name'],
+            'description' => $validated['description'] ?? null,
+            'category_id' => $validated['category_id'] ?? null,
+            'product_type' => $validated['product_type'],
+            'status' => $validated['status'] ?? 'active',
+        ]);
+
+        // 2. Sync Variants
+        // Strategy: 
+        // - Loop through submitted variants
+        // - If has ID, update
+        // - If no ID, create
+        // - (Optional) Delete missing variants? For now user only deletes manually in UI which sends specific delete request? 
+        //   Actually, in the UI if user removes a row, it's not sent here. So we should probably find existing variants and delete those not in the request? 
+        //   For simplicity and safety, let's just update/create for now. If user deleted in UI, that variance won't be sent. 
+        //   If we want "Sync", we need to know all IDs sent.
+
+        if ($request->has('variants')) {
+            $sentVariantIds = [];
+
+            foreach ($request->variants as $index => $variantData) {
+                $imageUrl = null;
+                // Handle Image Upload
+                if ($request->hasFile("variants.$index.url_image")) {
+                    $image = $request->file("variants.$index.url_image");
+                    $filename = time() . '_' . $index . '_' . $image->getClientOriginalName();
+                    $image->move(public_path('storage/products'), $filename);
+                    $imageUrl = 'storage/products/' . $filename;
+                }
+
+                if (isset($variantData['id'])) {
+                    $variant = $product->variants()->find($variantData['id']);
+                    if ($variant) {
+                        $updateData = [
+                            'size' => $variantData['size'] ?? null,
+                            'color' => $variantData['color'] ?? null,
+                            'material' => $variantData['material'] ?? null,
+                            'price' => $variantData['price'],
+                            'stock' => $variantData['stock'],
+                        ];
+                        if ($imageUrl) {
+                            $updateData['url_image'] = $imageUrl;
+                        }
+                        $variant->update($updateData);
+                        $sentVariantIds[] = $variantData['id'];
+                    }
+                } else {
+                    // Create new
+                    $newVariant = $product->variants()->create([
+                        'size' => $variantData['size'] ?? null,
+                        'color' => $variantData['color'] ?? null,
+                        'material' => $variantData['material'] ?? null,
+                        'price' => $variantData['price'],
+                        'stock' => $variantData['stock'],
+                        'url_image' => $imageUrl,
+                    ]);
+                    $sentVariantIds[] = $newVariant->variant_id;
+                }
             }
-            $data['images'] = $imagePaths;
-        } else {
-            // Keep old images if no new ones uploaded
-            // Note: If you want to delete images, you need more complex logic.
-            // For now, if no file is uploaded, we update other fields but keep images.
-            unset($data['images']); 
+            
+            // Delete variants not in the request
+            // $product->variants()->whereNotIn('variant_id', $sentVariantIds)->delete(); 
+            // Uncomment above line if we want to delete variants removed from UI
+            // But let's act based on user intent - assuming UI removal means delete:
+             $product->variants()->whereNotIn('variant_id', $sentVariantIds)->delete(); 
         }
-        $product->update($data);
+
         return redirect()->route('admin.products.index')->with('success', 'Cập nhật thành công!');
     }
 
     public function destroy(Product $product)
     {
+        $product->variants()->delete();
         $product->delete();
         return redirect()->route('admin.products.index')->with('success', 'Xóa thành công!');
     }

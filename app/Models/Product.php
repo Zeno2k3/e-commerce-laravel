@@ -37,6 +37,7 @@ class Product extends Model
         'discount_percentage',
         'old_price',
         'product_type',
+        'status',
     ];
 
     public $timestamps=true;
