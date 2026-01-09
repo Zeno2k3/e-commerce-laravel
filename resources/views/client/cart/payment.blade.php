@@ -173,7 +173,7 @@
 
                  {{-- Nút Quay lại --}}
                  <div>
-                    <a href="{{ route('client.carts.index') }}" class="text-gray-500 font-bold hover:text-gray-900 flex items-center gap-2 transition-colors w-fit">
+                    <a href="{{ route('client.cart.index') }}" class="text-gray-500 font-bold hover:text-gray-900 flex items-center gap-2 transition-colors w-fit">
                         <i class="fa-solid fa-arrow-left"></i> Quay lại giỏ hàng
                     </a>
                  </div>
@@ -244,7 +244,7 @@
                         <span class="text-2xl font-black text-gray-900" x-text="total.toLocaleString('vi-VN') + 'đ'"></span>
                     </div>
 
-                    <a href="{{ route('client.carts.success') }}"
+                    <a href="{{ route('client.cart.success') }}"
                         class="block text-center w-full bg-[#8b5cf6] hover:bg-[#7c3aed] text-white font-bold text-lg py-3 rounded-md shadow-lg shadow-purple-200 transition-all active:scale-95">
                             Hoàn tất đơn hàng
                     </a>

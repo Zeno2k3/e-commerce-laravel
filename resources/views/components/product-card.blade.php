@@ -61,14 +61,10 @@
 
         {{-- 3. NÚT THÊM GIỎ HÀNG --}}
         @auth
-        <form action="{{ route('client.cart.add') }}" method="POST">
-            @csrf
-            <input type="hidden" name="product_id" value="{{ $product['id'] }}">
-            <button type="submit" class="w-full bg-gradient-to-r from-[#7d3cff] to-[#a76bf8] hover:to-[#7d3cff] text-white font-bold text-sm py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-purple-200 hover:shadow-lg hover:shadow-purple-300 transform active:scale-95">
-                <i class="fa-solid fa-cart-plus"></i>
-                Thêm vào giỏ
-            </button>
-        </form>
+        <a href="{{ route('client.products.show', $product['id']) }}" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 group-hover:bg-[#7d3cff] group-hover:text-white">
+            <i class="fa-solid fa-eye"></i>
+            Xem chi tiết
+        </a>
         @else
         <a href="{{ route('login') }}" class="w-full bg-gradient-to-r from-[#7d3cff] to-[#a76bf8] hover:to-[#7d3cff] text-white font-bold text-sm py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-purple-200 hover:shadow-lg hover:shadow-purple-300 transform active:scale-95">
             <i class="fa-solid fa-cart-plus"></i>
