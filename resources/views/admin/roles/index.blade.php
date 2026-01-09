@@ -122,14 +122,17 @@
         </div>
         <div class="grid grid-cols-2 gap-4">
             <x-admin.input name="phone_number" id="create_phone" label="Số điện thoại" />
-            <x-admin.select name="status" id="create_status" label="Trạng thái" :options="['active' => 'Hoạt động', 'inactive' => 'Ngưng hoạt động']" required />
+            <div>
+                
+                <x-admin.select name="status" id="create_status" label="Chọn trạng thái" :options="['active' => 'Hoạt động', 'inactive' => 'Ngưng hoạt động']" required />
+            </div>
         </div>
         <div class="grid grid-cols-2 gap-4">
             <x-admin.input name="password" id="create_password" label="Mật khẩu" type="password" required />
             <x-admin.input name="password_confirmation" id="create_password_confirm" label="Xác nhận mật khẩu" type="password" required />
-        </div>
+        </div>    
     </x-admin.form-modal>
-
+          
     <x-admin.form-modal id="editEmployeeModal" title="Cập nhật nhân viên" action="#" method="PUT" maxWidth="max-w-2xl">
         <input type="hidden" name="role" id="edit_role_input">
         <div class="grid grid-cols-2 gap-4">
@@ -138,7 +141,10 @@
         </div>
         <div class="grid grid-cols-2 gap-4">
             <x-admin.input name="phone_number" id="edit_phone" label="Số điện thoại" />
-            <x-admin.select name="status" id="edit_status" label="Trạng thái" :options="['active' => 'Hoạt động', 'inactive' => 'Ngưng hoạt động']" required />
+            <div>
+                 <label class="block text-gray-800 font-semibold mb-2">Trạng thái</label>
+                 <x-admin.select name="status" id="edit_status" label="Chọn trạng thái" :options="['active' => 'Hoạt động', 'inactive' => 'Ngưng hoạt động']" required />
+            </div>
         </div>
         <div class="grid grid-cols-2 gap-4">
             <x-admin.input name="password" id="edit_password" label="Mật khẩu (Để trống nếu không đổi)" type="password" />

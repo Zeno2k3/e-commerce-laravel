@@ -51,14 +51,14 @@ class ImportReceiptController extends Controller
             ]);
         }
 
-        return redirect()->route('manager.imports.index')
+            return redirect()->route('admin.imports.index')
             ->with('success', 'Tạo phiếu nhập hàng thành công!');
     }
 
     public function confirm(ImportReceipt $receipt)
     {
         if ($receipt->status !== 'pending') {
-            return redirect()->route('manager.imports.index')
+                return redirect()->route('admin.imports.index')
                 ->with('error', 'Chỉ có thể xác nhận phiếu nhập đang chờ xử lý!');
         }
 
@@ -72,7 +72,7 @@ class ImportReceiptController extends Controller
             'confirmed_by' => auth()->id(),
         ]);
 
-        return redirect()->route('manager.imports.index')
+            return redirect()->route('admin.imports.index')
             ->with('success', 'Xác nhận phiếu nhập hàng thành công! Đã cập nhật tồn kho.');
     }
 }

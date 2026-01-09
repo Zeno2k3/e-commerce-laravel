@@ -93,7 +93,10 @@
     </div>
     <div class="grid grid-cols-2 gap-4">
         <x-admin.input name="discount_percent" label="Phần trăm giảm (%)" type="number" min="1" max="100" placeholder="50" required />
-        <x-admin.select name="status" label="Trạng thái" :options="['active' => 'Hoạt động', 'inactive' => 'Tạm dừng']" required />
+        <div>
+            
+            <x-admin.select name="status" label="Chọn trạng thái" :options="['active' => 'Hoạt động', 'inactive' => 'Tạm dừng']" required />
+        </div>
     </div>
     <x-admin.textarea name="description" label="Mô tả" placeholder="Mô tả sự kiện..." />
 </x-admin.form-modal>
@@ -107,7 +110,10 @@
     </div>
     <div class="grid grid-cols-2 gap-4">
         <x-admin.input name="discount_percent" id="edit_discount_percent" label="Phần trăm giảm (%)" type="number" required />
-        <x-admin.select name="status" id="edit_status" label="Trạng thái" :options="['active' => 'Hoạt động', 'inactive' => 'Tạm dừng', 'expired' => 'Hết hạn']" required />
+        <div>
+            <label class="block text-gray-800 font-semibold mb-2">Trạng thái</label>
+            <x-admin.select name="status" id="edit_status" label="Chọn trạng thái" :options="['active' => 'Hoạt động', 'inactive' => 'Tạm dừng', 'expired' => 'Hết hạn']" required />
+        </div>
     </div>
     <x-admin.textarea name="description" id="edit_description" label="Mô tả" />
 </x-admin.form-modal>
