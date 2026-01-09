@@ -41,6 +41,12 @@ Route::post('/logout', function () {
     return redirect('/'); 
 })->name('logout');
 
+// Profile
+Route::prefix('profile-user')->group(function () {
+Route::get('/client', [App\Http\Controllers\Client\ProfileController::class, 'index'])->name('client.profile.index');
+Route::put('/info-client', [App\Http\Controllers\Client\ProfileController::class, 'update'])->name('client.profile.update');
+Route::put('/password-client', [App\Http\Controllers\Client\ProfileController::class, 'updatePassword'])->name('client.profile.password');
+});
 // ----------------------------- San Pham -----------------------------
 
 Route::get('/san-pham', [ProductClientController::class, 'index'])->name('client.products.index');
