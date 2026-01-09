@@ -14,7 +14,7 @@
 
         <x-breadcrumb :links="$breadcrumbs" />
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-6" x-data="productDetailApp({{ json_encode($product['variants']->toArray()) }}, {{ json_encode($product['gallery']) }})" x-init="init()">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-6" x-data="productDetailApp({{ $product['id'] }}, {{ json_encode($product['variants']->toArray()) }}, {{ json_encode($product['gallery']) }})" x-init="init()">
 
            {{-- 2. CỘT TRÁI: ẢNH SẢN PHẨM --}}
             <div class="space-y-4">
@@ -176,11 +176,18 @@
 
                     <button 
                         @click="addToCart()"
-                        :disabled="!selectedVariant || selectedVariant.stock === 0"
-                        :class="selectedVariant && selectedVariant.stock > 0 ? 'bg-[#7d3cff] hover:bg-[#6c2bd9] shadow-lg shadow-purple-200' : 'bg-gray-300 cursor-not-allowed'"
+                        :disabled="!selectedVariant || selectedVariant.stock === 0 || isLoading"
+                        :class="selectedVariant && selectedVariant.stock > 0 && !isLoading ? 'bg-[#7d3cff] hover:bg-[#6c2bd9] shadow-lg shadow-purple-200' : 'bg-gray-300 cursor-not-allowed'"
                         class="flex-1 text-white font-bold text-lg py-3 px-6 rounded-xl transition-all transform active:scale-95 flex items-center justify-center gap-3">
-                        <i class="fa-solid fa-cart-plus"></i>
-                        <span x-text="selectedVariant && selectedVariant.stock > 0 ? 'Thêm vào giỏ hàng' : 'Vui lòng chọn biến thể'"></span>
+                        
+                        <template x-if="isLoading">
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                        </template>
+                        <template x-if="!isLoading">
+                            <i class="fa-solid fa-cart-plus"></i>
+                        </template>
+                        
+                        <span x-text="isLoading ? 'Đang xử lý...' : (selectedVariant && selectedVariant.stock > 0 ? 'Thêm vào giỏ hàng' : 'Vui lòng chọn biến thể')"></span>
                     </button>
 
                     <button class="w-14 h-14 flex-shrink-0 border-2 border-gray-200 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 hover:border-red-200 transition-all">
@@ -393,25 +400,26 @@
 </div>
 
 <script>
-function productDetailApp(variants, galleryArray) {
+function productDetailApp(productId, variants, galleryArray) {
     return {
-        // All variants from database
+        // Core Data
+        productId: productId,
         allVariants: variants,
-        
-        // Gallery images
         gallery: galleryArray.map(img => '{{ asset("") }}' + img),
-        activeImage: '',
         
-        // Current selections
+        // State
+        activeImage: '',
         selectedSize: null,
         selectedColor: null,
         selectedVariant: null,
+        isLoading: false,
+        qty: 1,
         
-        // Dynamic computed arrays
+        // Computed Arrays
         availableSizes: [],
         availableColors: [],
         
-        // Display values
+        // Display Values
         currentPrice: 0,
         currentOldPrice: null,
         currentDiscount: null,
@@ -421,22 +429,21 @@ function productDetailApp(variants, galleryArray) {
             // Set initial active image
             this.activeImage = this.gallery[0] || '{{ asset("images/no-image.png") }}';
             
-            // Get unique sizes from all variants
+            // Get unique sizes
             this.availableSizes = [...new Set(this.allVariants.map(v => v.size))].filter(Boolean);
             
-            // Auto-select first size if only one available
+            // Auto-select logic
             if (this.availableSizes.length === 1) {
                 this.selectSize(this.availableSizes[0]);
             } else {
-                // Initialize with base price
                 this.updatePrice();
             }
         },
         
-        // Select size handler
+        // Select Size
         selectSize(size) {
             this.selectedSize = size;
-            this.selectedColor = null; // Reset color when size changes
+            this.selectedColor = null; 
             this.updateAvailableColors();
             
             // Auto-select first available color
@@ -446,17 +453,13 @@ function productDetailApp(variants, galleryArray) {
             }
         },
         
-        // Update available colors based on selected size
+        // Update Colors
         updateAvailableColors() {
             if (!this.selectedSize) {
                 this.availableColors = [];
                 return;
             }
-            
-            // Get all variants matching selected size
             const matchingVariants = this.allVariants.filter(v => v.size === this.selectedSize);
-            
-            // Group by color
             const colorMap = new Map();
             matchingVariants.forEach(variant => {
                 const color = variant.color || 'Không màu';
@@ -470,80 +473,113 @@ function productDetailApp(variants, galleryArray) {
                     });
                 }
             });
-            
             this.availableColors = Array.from(colorMap.values());
         },
         
-        // Select color handler
+        // Select Color
         selectColor(color) {
             if (!this.selectedSize) return;
-            
             this.selectedColor = color;
             this.updateSelectedVariant();
         },
         
-        // Find and set the matching variant
+        // Update Variant
         updateSelectedVariant() {
             if (!this.selectedSize || !this.selectedColor) {
                 this.selectedVariant = null;
                 this.updatePrice();
                 return;
             }
-            
-            // Find exact matching variant
             this.selectedVariant = this.allVariants.find(v => 
                 v.size === this.selectedSize && 
                 (v.color === this.selectedColor || (!v.color && this.selectedColor === 'Không màu'))
             );
-            
-            // UPDATE IMAGE when variant changes
             if (this.selectedVariant && this.selectedVariant.url_image) {
                 this.activeImage = '{{ asset("") }}' + this.selectedVariant.url_image;
             }
-            
             this.updatePrice();
+            
+            // Reset quantity if it exceeds new stock
+            if (this.selectedVariant && this.qty > this.selectedVariant.stock) {
+                this.qty = Math.max(1, this.selectedVariant.stock);
+            }
         },
         
-        // Update displayed price
+        // Update Price
         updatePrice() {
             if (this.selectedVariant) {
                 this.currentPrice = this.selectedVariant.price;
-                // You can add logic for old_price and discount here
-                this.currentOldPrice = null;
-                this.currentDiscount = null;
             } else if (this.allVariants.length > 0) {
-                // Show base price (lowest price)
                 const prices = this.allVariants.map(v => v.price);
                 this.currentPrice = Math.min(...prices);
-                this.currentOldPrice = null;
-                this.currentDiscount = null;
             }
         },
         
-        // Format price helper
         formatPrice(price) {
             if (!price) return '0₫';
-            return new Intl.NumberFormat('vi-VN', { 
-                style: 'currency', 
-                currency: 'VND' 
-            }).format(price);
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
         },
         
-        // Add to cart handler
+        // AJAX Add to Cart
         addToCart() {
-            if (!this.selectedVariant || this.selectedVariant.stock === 0) {
-                alert('Vui lòng chọn biến thể sản phẩm!');
+            if (!this.selectedVariant) {
+                alert('Vui lòng chọn đầy đủ kích thước và màu sắc!');
                 return;
             }
             
-            console.log('Adding to cart:', {
-                variant: this.selectedVariant,
-                size: this.selectedSize,
-                color: this.selectedColor
+            if (this.qty > this.selectedVariant.stock) {
+                alert(`Xin lỗi, chỉ còn ${this.selectedVariant.stock} sản phẩm trong kho!`);
+                return;
+            }
+
+            this.isLoading = true;
+
+            fetch('{{ route("client.cart.add") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest', // Important for Laravel to detect AJAX
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: this.productId,
+                    variant_id: this.selectedVariant.variant_id,
+                    quantity: this.qty
+                })
+            })
+            .then(async response => {
+                if (response.status === 401) {
+                    window.location.href = '{{ route("login") }}';
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok && data.status === 'success') {
+                    // Success logic
+                    alert(data.message);
+                    
+                    // Update cart count in header if element exists
+                    const cartCountEl = document.getElementById('cart-count');
+                    if (cartCountEl) {
+                        cartCountEl.innerText = data.total_items;
+                        // Optional: Add simple animation
+                        cartCountEl.classList.add('animate-bounce');
+                        setTimeout(() => cartCountEl.classList.remove('animate-bounce'), 1000);
+                    }
+                } else {
+                    // Error from server
+                    throw new Error(data.message || 'Có lỗi xảy ra');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng');
+            })
+            .finally(() => {
+                this.isLoading = false;
             });
-            
-            // TODO: Implement actual add to cart logic
-            alert(`Đã thêm vào giỏ: ${this.selectedSize} - ${this.selectedColor || 'Không màu'} - ${this.formatPrice(this.currentPrice)}`);
         }
     }
 }

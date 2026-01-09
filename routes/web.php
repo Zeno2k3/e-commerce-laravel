@@ -54,9 +54,17 @@ Route::get('/khuyen-mai', [ProductClientController::class, 'sale'])->name('clien
 
 
 
+//---------------------------- Thanh Toan ------------------------------
+
 Route::get('/payment', function () {
-    return view('client.carts.payment');
-})->name('client.carts.payment');
+    return view('client.cart.payment');
+})->name('client.cart.payment');
+
+Route::get('/success', function () {
+    return view('client.cart.success');
+})->name('client.cart.success');
+
+Route::post('/payment', [CartController::class, 'payment'])->name('client.cart.payment');
 
 
 Route::get('/lichsu-donhang', function () {
@@ -64,16 +72,14 @@ Route::get('/lichsu-donhang', function () {
 })->name('client.account.orders');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
-
-
 // --------------------------- Gio hang User ---------------------------
-
-Route::get('/gio-hang', [CartController::class, 'index'])->name('client.carts.index');
-Route::post('/gio-hang', [CartController::class, 'addToCart'])->name('client.cart.add');
-
-
-
-
+Route::middleware('auth')->group(function () {
+    Route::get('/gio-hang', [CartController::class, 'index'])->name('client.cart.index');
+    Route::post('/gio-hang', [CartController::class, 'addToCart'])->name('client.cart.add');
+    Route::post('/gio-hang/update-quantity', [CartController::class, 'updateQuantity'])->name('client.cart.updateQuantity');
+    Route::post('/gio-hang/remove-item', [CartController::class, 'removeItem'])->name('client.cart.removeItem');
+    Route::post('/gio-hang/clear', [CartController::class, 'clearCart'])->name('client.cart.clear');
+});
 
 // ============================================
 // ADMIN ROUTES (role: admin, employee)

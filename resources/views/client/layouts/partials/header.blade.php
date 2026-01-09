@@ -54,11 +54,11 @@
                 </div>
                 @endauth
                 @auth   
-                <a href="{{ route('client.carts.index') }}" class="relative hover:text-purple-600 transition">
+                <a href="{{ route('client.cart.index') }}" class="relative hover:text-purple-600 transition">
                     <i class="fa-solid fa-bag-shopping text-2xl"></i>
 
-                    <span id="cart-count" class="absolute -top-2 -right-2 bg-purple-600 text-white text-[11px] font-black rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">
-                        0
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-purple-600 text-white text-[11px] font-black rounded-full h-5 min-w-[1.25rem] px-1 flex items-center justify-center border-2 border-white">
+                        {{ $globalCartCount ?? 0 }}
                     </span>
                 </a>
                 @endauth
