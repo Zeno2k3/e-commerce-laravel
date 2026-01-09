@@ -28,6 +28,10 @@ class ProductService
         // Lấy discount từ product (có thể tính từ old_price và variant price)
         $discount = $product->discount;
         
+        // Calculate Rating (Always use relation count to ensure freshness)
+        $reviewsCount = $product->reviews->count();
+        $avgRating = $reviewsCount > 0 ? $product->reviews->avg('rating') : 0;
+
         return [
             'id' => $product->product_id,
             'name' => $product->product_name,
@@ -35,8 +39,9 @@ class ProductService
             'price' => $price,
             'old_price' => $oldPrice,
             'discount' => $discount,
-            'rating' => $product->rating ?? 0,
-            'reviews' => $product->reviews_count ?? 0,
+            'rating' => $avgRating > 0 ? (float)number_format($avgRating, 1) : 0,
+            'reviews_count' => $reviewsCount,
+            'reviews' => $reviewsCount, // Map for backward compatibility with component
         ];
     }
 
@@ -50,7 +55,7 @@ class ProductService
     {
         $query = Product::with(['variants' => function ($q) {
             $q->orderBy('price', 'asc');
-        }]);
+        }, 'reviews']);
 
         // Filter: Product Types (supports array or string)
         if (!empty($filters['product_types'])) {
@@ -177,12 +182,10 @@ class ProductService
             ->take(4)
             ->toArray();
             
-        // If no variant images, use placeholder
         if (empty($gallery)) {
             $gallery = ['images/no-image.png'];
         }
         
-        // Get related products (same category, different product, limit 4)
         $relatedProducts = Product::with('variants')
             ->where('category_id', $product->category_id)
             ->where('product_id', '!=', $product->product_id)
@@ -204,9 +207,26 @@ class ProductService
             })
             ->toArray();
         
-        // TODO: Implement Review model
-        // For now, return empty reviews array
-        $reviews = [];
+        // Fetch Real Reviews (Eager loaded in separate query if not already loaded)
+        // Accessing via relation: $product->reviews
+        // We need to ensuring we load user info: $product->load('reviews.user');
+        $product->load(['reviews.user' => function($q) {
+            $q->select('user_id', 'full_name');
+        }]);
+
+        $reviews = $product->reviews->sortByDesc('created_at')->map(function($review) {
+            return [
+                'id' => $review->review_id,
+                'user_id' => $review->user_id, // Add this for ownership check
+                'user' => $review->user->full_name ?? 'Người dùng ẩn danh',
+                'rating' => $review->rating,
+                'content' => $review->content,
+                'time' => $review->created_at->diffForHumans(), // Requires Carbon
+            ];
+        })->values()->toArray();
+
+        $reviewsCount = $product->reviews->count();
+        $avgRating = $reviewsCount > 0 ? $product->reviews->avg('rating') : 0;
         
         return [
             'id' => $product->product_id,
@@ -219,10 +239,10 @@ class ProductService
             'price' => $firstVariant?->price ?? 0,
             'old_price' => $product->old_price,
             'discount' => $product->discount,
-            'rating' => $product->rating ?? 0,
-            'reviews_count' => $product->reviews_count ?? 0,
+            'rating' => $avgRating > 0 ? number_format($avgRating, 1) : 0,
+            'reviews_count' => $reviewsCount,
             'variants' => $product->variants,
-            'sku' => 'SKU' . str_pad($product->product_id, 6, '0', STR_PAD_LEFT), // Generate SKU from ID
+            'sku' => 'SKU' . str_pad($product->product_id, 6, '0', STR_PAD_LEFT),
             'specs' => [
                 'material' => $firstVariant?->material ?? 'Đang cập nhật',
                 'origin' => 'Việt Nam',

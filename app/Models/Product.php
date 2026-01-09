@@ -79,4 +79,12 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class, 'product_id', 'product_id');
     }
 
+    /**
+     * Quan hệ: Mỗi sản phẩm có nhiều đánh giá
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'product_id', 'product_id');
+    }
+
 }
