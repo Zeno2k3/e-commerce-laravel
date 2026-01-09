@@ -1,5 +1,5 @@
-import './bootstrap';
-import './client/cart.js'; // Import the cart logic
+import '../bootstrap.js';
+import './cart.js'; // Import the cart logic
 
 // Thêm đoạn này để xử lý năm ở Footer
 document.addEventListener('DOMContentLoaded', function () {
