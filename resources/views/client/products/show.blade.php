@@ -7,47 +7,40 @@
         {{-- 1. BREADCRUMB --}}
         @php
             $breadcrumbs = [
-                ['label' => 'Sản phẩm', 'url' => '#'],
-                ['label' => $product['name'], 'url' => '']
+                ['label' => 'Sản phẩm', 'url' => route('client.products.index')],
+                ['label' => $product['name'], 'url' => route('client.products.show', $product['id'])]
             ];
         @endphp
 
         <x-breadcrumb :links="$breadcrumbs" />
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-6" x-data="productDetailApp({{ json_encode($product['variants']->toArray()) }}, {{ json_encode($product['gallery']) }})" x-init="init()">
 
            {{-- 2. CỘT TRÁI: ẢNH SẢN PHẨM --}}
             <div class="space-y-4">
-                {{-- Bắt đầu Alpine.js: Mặc định chọn ảnh đầu tiên --}}
-                <div x-data="{ activeImage: '{{ asset($product['gallery'][0] ?? 'images/no-image.png') }}' }" class="flex flex-col gap-4">
+                {{-- ẢNH LỚN --}}
+                <div class="rounded-2xl overflow-hidden border border-gray-100 relative group aspect-square bg-gray-50 flex items-center justify-center">
+                    <img :src="activeImage"
+                         alt="{{ $product['name'] }}"
+                         class="w-full h-full object-contain transition-opacity duration-300 ease-in-out">
 
-                    {{-- ẢNH LỚN --}}
-                    <div class="rounded-2xl overflow-hidden border border-gray-100 relative group aspect-square bg-gray-50 flex items-center justify-center">
-                        {{-- :src binding giúp thay đổi ảnh ngay lập tức khi click thumbnail --}}
-                        <img :src="activeImage"
-                             src="{{ asset($product['gallery'][0] ?? 'images/no-image.png') }}"
-                             alt="{{ $product['name'] }}"
-                             class="w-full h-full object-contain transition-opacity duration-300 ease-in-out">
+                    {{-- Nhãn giảm giá --}}
+                    @if(!empty($product['discount']))
+                        <span class="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                            {{ $product['discount'] }}
+                        </span>
+                    @endif
+                </div>
 
-                        {{-- Nhãn giảm giá --}}
-                        @if(!empty($product['discount']))
-                            <span class="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                                {{ $product['discount'] }}
-                            </span>
-                        @endif
-                    </div>
-
-                    {{-- ẢNH NHỎ (THUMBNAILS) --}}
-                    <div class="grid grid-cols-4 gap-4">
-                        @foreach($product['gallery'] as $imgUrl)
-                            <div @click="activeImage = '{{ asset($imgUrl) }}'"
-                                 :class="activeImage === '{{ asset($imgUrl) }}' ? 'border-[#7d3cff] ring-1 ring-[#7d3cff]/30' : 'border-gray-200 hover:border-gray-400 opacity-70 hover:opacity-100'"
-                                 class="rounded-xl overflow-hidden border-2 cursor-pointer transition-all aspect-square h-24 bg-gray-50">
-
-                                 <img src="{{ asset($imgUrl) }}" class="w-full h-full object-cover">
-                            </div>
-                        @endforeach
-                    </div>
+                {{-- ẢNH NHỎ (THUMBNAILS) --}}
+                <div class="grid grid-cols-4 gap-4">
+                    <template x-for="(imgUrl, index) in gallery" :key="index">
+                        <div @click="activeImage = imgUrl"
+                             :class="activeImage === imgUrl ? 'border-[#7d3cff] ring-1 ring-[#7d3cff]/30' : 'border-gray-200 hover:border-gray-400 opacity-70 hover:opacity-100'"
+                             class="rounded-xl overflow-hidden border-2 cursor-pointer transition-all aspect-square h-24 bg-gray-50">
+                             <img :src="imgUrl" class="w-full h-full object-cover">
+                        </div>
+                    </template>
                 </div>
             </div>
 
@@ -74,23 +67,27 @@
                     <span>Mã SP: <span class="font-mono text-gray-900 font-bold">{{ $product['sku'] }}</span></span>
                 </div>
 
-                {{-- Giá tiền --}}
-                <div class="bg-gray-50 p-6 rounded-2xl mb-8">
+                {{-- Giá tiền - DYNAMIC --}}
+                <div class="bg-gradient-to-br from-purple-50 to-blue-50 p-6 rounded-2xl mb-8 border border-purple-100">
                     <div class="flex items-end gap-4">
-                        <span class="text-4xl font-black text-[#7d3cff]">
-                            {{ number_format($product['price'], 0, ',', '.') }}₫
+                        <span class="text-4xl font-black text-[#7d3cff]" x-text="formatPrice(currentPrice)">
                         </span>
-                        @if($product['old_price'])
-                            <span class="text-xl text-gray-400 line-through mb-1">
-                                {{ number_format($product['old_price'], 0, ',', '.') }}₫
+                        <template x-if="currentOldPrice && currentOldPrice > currentPrice">
+                            <span class="text-xl text-gray-400 line-through mb-1" x-text="formatPrice(currentOldPrice)">
                             </span>
-                        @endif
-                        @if(isset($product['discount']) && $product['discount'])
-                            <span class="text-red-600 font-bold bg-red-100 px-2 py-1 rounded-md text-sm mb-2">
-                                Tiết kiệm {{ $product['discount'] }}
+                        </template>
+                        <template x-if="currentDiscount">
+                            <span class="text-red-600 font-bold bg-red-100 px-3 py-1 rounded-md text-sm mb-2">
+                                Tiết kiệm <span x-text="currentDiscount"></span>
                             </span>
-                        @endif
+                        </template>
                     </div>
+                    <template x-if="selectedVariant">
+                        <p class="text-sm text-gray-600 mt-2">
+                            <i class="fa-solid fa-box-open mr-1"></i>
+                            Còn lại: <span class="font-bold text-green-600" x-text="selectedVariant.stock"></span> sản phẩm
+                        </p>
+                    </template>
                 </div>
 
                 {{-- Mô tả ngắn --}}
@@ -98,45 +95,95 @@
                     {{ Str::limit($product['description'], 150) }}
                 </p>
 
-                {{-- Chọn Variants (Size/Color) --}}
-                @if($product['variants']->count() > 0)
-                <div class="mb-8" x-data="{ selectedVariant: {{ $product['variants']->first()->variant_id }} }">
-                    <div class="mb-3">
-                        <span class="font-bold text-gray-900 text-lg">Chọn phiên bản:</span>
+                {{-- ========== SMART VARIANT SELECTOR ========== --}}
+                
+                {{-- Chọn SIZE --}}
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-bold text-gray-900 text-lg">
+                            Kích thước: 
+                            <span class="text-[#7d3cff]" x-text="selectedSize || 'Chưa chọn'"></span>
+                        </span>
+                        <a href="#" class="text-[#7d3cff] text-sm font-medium hover:underline flex items-center gap-1">
+                            <i class="fa-solid fa-ruler"></i> Bảng size
+                        </a>
                     </div>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        @foreach($product['variants'] as $variant)
-                            <button @click="selectedVariant = {{ $variant->variant_id }}"
-                                    :class="selectedVariant === {{ $variant->variant_id }} ? 'border-2 border-[#7d3cff] bg-purple-50' : 'border border-gray-200 hover:border-[#7d3cff]'"
-                                    class="p-3 rounded-xl transition-all text-left"
-                                    {{ $variant->stock == 0 ? 'disabled' : '' }}>
-                                <div class="font-bold text-gray-900">
-                                    {{ $variant->size }} {{ $variant->color ? '- ' . $variant->color : '' }}
-                                </div>
-                                <div class="text-sm text-[#7d3cff] font-semibold">{{ number_format($variant->price, 0, ',', '.') }}₫</div>
-                                <div class="text-xs {{ $variant->stock > 0 ? 'text-green-600' : 'text-red-500' }}">
-                                    {{ $variant->stock > 0 ? 'Còn ' . $variant->stock . ' sản phẩm' : 'Hết hàng' }}
-                                </div>
+                    <div class="flex flex-wrap gap-3">
+                        <template x-for="size in availableSizes" :key="size">
+                            <button 
+                                @click="selectSize(size)"
+                                :class="{
+                                    'border-2 border-[#7d3cff] text-[#7d3cff] bg-purple-50 ring-2 ring-purple-200': selectedSize === size,
+                                    'border border-gray-300 text-gray-700 hover:border-[#7d3cff] hover:bg-purple-50': selectedSize !== size
+                                }"
+                                class="min-w-[56px] h-12 px-4 rounded-xl font-bold transition-all transform hover:scale-105"
+                                x-text="size">
                             </button>
-                        @endforeach
+                        </template>
                     </div>
                 </div>
-                @endif
+
+                {{-- Chọn COLOR --}}
+                <div class="mb-8" x-show="selectedSize">
+                    <div class="mb-3">
+                        <span class="font-bold text-gray-900 text-lg">
+                            Màu sắc: 
+                            <span class="text-[#7d3cff]" x-text="selectedColor || 'Chưa chọn'"></span>
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <template x-for="colorOption in availableColors" :key="colorOption.color">
+                            <button 
+                                @click="selectColor(colorOption.color)"
+                                :disabled="!colorOption.available"
+                                :class="{
+                                    'border-2 border-[#7d3cff] bg-purple-50': selectedColor === colorOption.color,
+                                    'border border-gray-300 hover:border-[#7d3cff]': selectedColor !== colorOption.color && colorOption.available,
+                                    'opacity-40 cursor-not-allowed border-gray-200': !colorOption.available
+                                }"
+                                class="p-3 rounded-xl transition-all text-left relative">
+                                <div class="font-bold text-gray-900" x-text="colorOption.color || 'Không màu'"></div>
+                                <div class="text-sm text-[#7d3cff] font-semibold" x-text="formatPrice(colorOption.price)"></div>
+                                <div 
+                                    :class="colorOption.stock > 0 ? 'text-green-600' : 'text-red-500'"
+                                    class="text-xs font-medium"
+                                    x-text="colorOption.stock > 0 ? 'Còn ' + colorOption.stock : 'Hết hàng'">
+                                </div>
+                                <template x-if="!colorOption.available">
+                                    <div class="absolute inset-0 flex items-center justify-center bg-white/80 rounded-xl">
+                                        <i class="fa-solid fa-lock text-gray-400"></i>
+                                    </div>
+                                </template>
+                            </button> 
+                        </template>
+                    </div>
+                </div>
 
                 {{-- Chọn Số lượng & Buttons Action --}}
                 <div class="flex flex-col sm:flex-row gap-4 mb-10 pb-10 border-b border-gray-100" x-data="{ qty: 1 }">
-                    <div class="flex items-center border border-gray-300 rounded-xl w-fit bg-white">
-                        <button @click="qty > 1 ? qty-- : qty = 1" class="w-12 h-12 flex items-center justify-center text-gray-500 hover:text-[#7d3cff]"><i class="fa-solid fa-minus"></i></button>
-                        <input type="text" x-model="qty" class="w-10 text-center border-none focus:ring-0 font-bold text-gray-900 p-0">
-                        <button @click="qty++" class="w-12 h-12 flex items-center justify-center text-gray-500 hover:text-[#7d3cff]"><i class="fa-solid fa-plus"></i></button>
+                    <div class="flex items-center border-2 border-gray-300 rounded-xl w-fit bg-white">
+                        <button @click="qty > 1 ? qty-- : qty = 1" class="w-12 h-12 flex items-center justify-center text-gray-500 hover:text-[#7d3cff] transition">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                        <input type="text" x-model="qty" class="w-16 text-center border-none focus:ring-0 font-bold text-gray-900 p-0">
+                        <button 
+                            @click="qty++" 
+                            :disabled="!selectedVariant || qty >= selectedVariant.stock"
+                            class="w-12 h-12 flex items-center justify-center text-gray-500 hover:text-[#7d3cff] transition disabled:opacity-40">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
                     </div>
 
-                    <button onclick="addToCartDemo(event)"  class="flex-1 bg-[#7d3cff] hover:bg-[#6c2bd9] text-white font-bold text-lg py-3 px-6 rounded-xl shadow-lg shadow-purple-200 transition-all transform active:scale-95 flex items-center justify-center gap-3">
+                    <button 
+                        @click="addToCart()"
+                        :disabled="!selectedVariant || selectedVariant.stock === 0"
+                        :class="selectedVariant && selectedVariant.stock > 0 ? 'bg-[#7d3cff] hover:bg-[#6c2bd9] shadow-lg shadow-purple-200' : 'bg-gray-300 cursor-not-allowed'"
+                        class="flex-1 text-white font-bold text-lg py-3 px-6 rounded-xl transition-all transform active:scale-95 flex items-center justify-center gap-3">
                         <i class="fa-solid fa-cart-plus"></i>
-                        Thêm vào giỏ hàng
+                        <span x-text="selectedVariant && selectedVariant.stock > 0 ? 'Thêm vào giỏ hàng' : 'Vui lòng chọn biến thể'"></span>
                     </button>
 
-                    <button class="w-14 h-14 flex-shrink-0 border border-gray-200 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 hover:border-red-200 transition-all">
+                    <button class="w-14 h-14 flex-shrink-0 border-2 border-gray-200 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 hover:border-red-200 transition-all">
                         <i class="fa-regular fa-heart text-2xl"></i>
                     </button>
                 </div>
@@ -344,5 +391,162 @@
 
     </div>
 </div>
+
+<script>
+function productDetailApp(variants, galleryArray) {
+    return {
+        // All variants from database
+        allVariants: variants,
+        
+        // Gallery images
+        gallery: galleryArray.map(img => '{{ asset("") }}' + img),
+        activeImage: '',
+        
+        // Current selections
+        selectedSize: null,
+        selectedColor: null,
+        selectedVariant: null,
+        
+        // Dynamic computed arrays
+        availableSizes: [],
+        availableColors: [],
+        
+        // Display values
+        currentPrice: 0,
+        currentOldPrice: null,
+        currentDiscount: null,
+        
+        // Initialize
+        init() {
+            // Set initial active image
+            this.activeImage = this.gallery[0] || '{{ asset("images/no-image.png") }}';
+            
+            // Get unique sizes from all variants
+            this.availableSizes = [...new Set(this.allVariants.map(v => v.size))].filter(Boolean);
+            
+            // Auto-select first size if only one available
+            if (this.availableSizes.length === 1) {
+                this.selectSize(this.availableSizes[0]);
+            } else {
+                // Initialize with base price
+                this.updatePrice();
+            }
+        },
+        
+        // Select size handler
+        selectSize(size) {
+            this.selectedSize = size;
+            this.selectedColor = null; // Reset color when size changes
+            this.updateAvailableColors();
+            
+            // Auto-select first available color
+            const firstAvailable = this.availableColors.find(c => c.available);
+            if (firstAvailable) {
+                this.selectColor(firstAvailable.color);
+            }
+        },
+        
+        // Update available colors based on selected size
+        updateAvailableColors() {
+            if (!this.selectedSize) {
+                this.availableColors = [];
+                return;
+            }
+            
+            // Get all variants matching selected size
+            const matchingVariants = this.allVariants.filter(v => v.size === this.selectedSize);
+            
+            // Group by color
+            const colorMap = new Map();
+            matchingVariants.forEach(variant => {
+                const color = variant.color || 'Không màu';
+                if (!colorMap.has(color)) {
+                    colorMap.set(color, {
+                        color: variant.color,
+                        price: variant.price,
+                        stock: variant.stock,
+                        available: variant.stock > 0,
+                        variant: variant
+                    });
+                }
+            });
+            
+            this.availableColors = Array.from(colorMap.values());
+        },
+        
+        // Select color handler
+        selectColor(color) {
+            if (!this.selectedSize) return;
+            
+            this.selectedColor = color;
+            this.updateSelectedVariant();
+        },
+        
+        // Find and set the matching variant
+        updateSelectedVariant() {
+            if (!this.selectedSize || !this.selectedColor) {
+                this.selectedVariant = null;
+                this.updatePrice();
+                return;
+            }
+            
+            // Find exact matching variant
+            this.selectedVariant = this.allVariants.find(v => 
+                v.size === this.selectedSize && 
+                (v.color === this.selectedColor || (!v.color && this.selectedColor === 'Không màu'))
+            );
+            
+            // UPDATE IMAGE when variant changes
+            if (this.selectedVariant && this.selectedVariant.url_image) {
+                this.activeImage = '{{ asset("") }}' + this.selectedVariant.url_image;
+            }
+            
+            this.updatePrice();
+        },
+        
+        // Update displayed price
+        updatePrice() {
+            if (this.selectedVariant) {
+                this.currentPrice = this.selectedVariant.price;
+                // You can add logic for old_price and discount here
+                this.currentOldPrice = null;
+                this.currentDiscount = null;
+            } else if (this.allVariants.length > 0) {
+                // Show base price (lowest price)
+                const prices = this.allVariants.map(v => v.price);
+                this.currentPrice = Math.min(...prices);
+                this.currentOldPrice = null;
+                this.currentDiscount = null;
+            }
+        },
+        
+        // Format price helper
+        formatPrice(price) {
+            if (!price) return '0₫';
+            return new Intl.NumberFormat('vi-VN', { 
+                style: 'currency', 
+                currency: 'VND' 
+            }).format(price);
+        },
+        
+        // Add to cart handler
+        addToCart() {
+            if (!this.selectedVariant || this.selectedVariant.stock === 0) {
+                alert('Vui lòng chọn biến thể sản phẩm!');
+                return;
+            }
+            
+            console.log('Adding to cart:', {
+                variant: this.selectedVariant,
+                size: this.selectedSize,
+                color: this.selectedColor
+            });
+            
+            // TODO: Implement actual add to cart logic
+            alert(`Đã thêm vào giỏ: ${this.selectedSize} - ${this.selectedColor || 'Không màu'} - ${this.formatPrice(this.currentPrice)}`);
+        }
+    }
+}
+</script>
 
 @endsection
