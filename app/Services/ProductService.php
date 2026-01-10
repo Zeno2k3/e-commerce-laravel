@@ -276,7 +276,8 @@ class ProductService
         $detailPrice = $firstVariant?->price ?? 0;
         $detailOldPrice = $product->old_price;
         $detailDiscount = $product->discount;
-            
+        $discountPercent = 0;
+
         if ($event && $event->discount_percent > $product->discount_percentage) {
              // Base price logic synced
              $basePrice = ($product->old_price && $product->old_price > 0) ? $product->old_price : $detailPrice;
@@ -284,7 +285,22 @@ class ProductService
              $detailPrice = $basePrice * (1 - ($event->discount_percent / 100));
              $detailOldPrice = $basePrice;
              $detailDiscount = '-' . $event->discount_percent . '%';
+             $discountPercent = $event->discount_percent;
         }
+
+        // Inject calculated_price into variants and convert to array for JSON serialization
+        $variantsWithPrice = $product->variants->map(function ($variant) use ($discountPercent) {
+            $variantData = $variant->toArray();
+            $variantPrice = $variant->price;
+            
+            if ($discountPercent > 0) {
+                 $calculatedPrice = $variantPrice * (1 - ($discountPercent / 100));
+                 $variantData['calculated_price'] = $calculatedPrice;
+            } else {
+                 $variantData['calculated_price'] = $variantPrice;
+            }
+            return $variantData;
+        });
 
         return [
             'id' => $product->product_id,
@@ -300,7 +316,7 @@ class ProductService
 
             'rating' => $avgRating > 0 ? number_format($avgRating, 1) : 0,
             'reviews_count' => $reviewsCount,
-            'variants' => $product->variants,
+            'variants' => $variantsWithPrice,
             'sku' => 'SKU' . str_pad($product->product_id, 6, '0', STR_PAD_LEFT),
             'specs' => [
                 'material' => $firstVariant?->material ?? 'Đang cập nhật',

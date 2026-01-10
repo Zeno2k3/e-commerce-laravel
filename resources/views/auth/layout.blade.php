@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title')</title>
-    @vite(['resources/css/client.css', 'resources/js/client.js'])
+    @vite(['resources/css/client.css', 'resources/js/client/client.js'])
 </head>
 
 <body class="bg-gray-50 font-sans antialiased text-gray-900">

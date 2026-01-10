@@ -1,7 +1,7 @@
 @extends('client.layouts.app')
 
 @section('content')
-<div class="bg-white font-sans pb-20" x-data="productDetailApp({{ $product['id'] }}, {{ json_encode($product['variants']->toArray()) }}, {{ json_encode($product['gallery']) }})" x-init="init()">
+<div class="bg-white font-sans pb-20" x-data="productDetailApp({{ $product['id'] }}, {{ json_encode($product['variants']) }}, {{ json_encode($product['gallery']) }})" x-init="init()">
     <div class="container mx-auto px-4 py-8 max-w-7xl">
 
         {{-- 1. BREADCRUMB --}}
@@ -765,7 +765,7 @@ function productDetailApp(productId, variants, galleryArray) {
                 if (!colorMap.has(color)) {
                     colorMap.set(color, {
                         color: variant.color,
-                        price: variant.price,
+                        price: variant.calculated_price !== undefined ? variant.calculated_price : variant.price,
                         stock: variant.stock,
                         available: variant.stock > 0,
                         variant: variant
@@ -807,10 +807,33 @@ function productDetailApp(productId, variants, galleryArray) {
         // Update Price
         updatePrice() {
             if (this.selectedVariant) {
-                this.currentPrice = this.selectedVariant.price;
+                // Determine prices
+                const originalPrice = this.selectedVariant.price;
+                const calculatedPrice = this.selectedVariant.calculated_price !== undefined 
+                    ? this.selectedVariant.calculated_price 
+                    : originalPrice;
+
+                this.currentPrice = calculatedPrice;
+
+                // Show old price if discounted
+                if (calculatedPrice < originalPrice) {
+                    this.currentOldPrice = originalPrice;
+                    // Calculate discount percentage logic if needed for tag, 
+                    // but for now we rely on the main product discount or calculated math
+                    this.currentDiscount = '-' + Math.round((1 - calculatedPrice/originalPrice) * 100) + '%';
+                } else {
+                    this.currentOldPrice = null;
+                    this.currentDiscount = null;
+                }
+
             } else if (this.allVariants.length > 0) {
-                const prices = this.allVariants.map(v => v.price);
+                // Find min calculated price
+                const prices = this.allVariants.map(v => v.calculated_price !== undefined ? v.calculated_price : v.price);
                 this.currentPrice = Math.min(...prices);
+                
+                // Clear specific variant details
+                this.currentOldPrice = null;
+                this.currentDiscount = null; 
             }
         },
         
