@@ -59,4 +59,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Favorite::class, 'user_id', 'user_id');
     }
+    public function getAuthIdentifierName()
+    {
+        return 'user_id';
+    }
+
+    public function getAuthIdentifier()
+    {
+        return $this->getAttribute($this->getAuthIdentifierName());
+    }
 }

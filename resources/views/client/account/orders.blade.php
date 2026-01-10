@@ -58,7 +58,7 @@
                                     <div class="flex flex-wrap items-center justify-between gap-4 mb-4 pb-4 border-b border-dashed border-gray-100">
                                         <div>
                                             <span class="text-sm text-gray-500">Mã đơn hàng:</span>
-                                            <span class="font-bold text-gray-900 ml-1">#{{ $order->order_id }}</span>
+                                            <span class="font-bold text-gray-900 ml-1">#ĐH00{{ $order->order_id }}</span>
                                             <span class="mx-2 text-gray-300">|</span>
                                             <span class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($order->created_at)->format('d/m/Y H:i') }}</span>
                                         </div>

@@ -3,6 +3,8 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ProductVariant;
+use App\Models\Order;
 
 class OrderDetail extends Model
 {
@@ -13,16 +15,6 @@ class OrderDetail extends Model
      * @var string
      */
     protected $table = 'order_detail';
-
-    /**
-     * Khóa chính của bảngApp\Models\Category::all();
-     *
-     * @var string
-     */
-
-    /**
-     * Tắt auto-increment vì đây là composite key
-     */
     public $incrementing = false;
 
     /**

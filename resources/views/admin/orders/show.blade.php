@@ -36,19 +36,22 @@
                                 <td class="px-4 py-4">
                                     <div class="flex items-center gap-3">
                                         <div class="w-12 h-12 rounded-lg bg-white border border-gray-200 flex items-center justify-center overflow-hidden">
-                                            @if($item->product->image)
-                                                <img src="{{ asset('storage/' . $item->product->image) }}" alt="" class="w-full h-full object-cover">
+                                            @if($item->variant->url_image)
+                                                <img src="{{ asset($item->variant->url_image) }}" alt="" class="w-full h-full object-cover">
                                             @else
                                                 <i class="fa-solid fa-box text-gray-300"></i>
                                             @endif
                                         </div>
                                         <div>
-                                            <p class="text-sm font-medium text-gray-900">{{ $item->product->product_name }}</p>
-                                            <p class="text-xs text-gray-500">{{ $item->product->sku ?? 'N/A' }}</p>
+                                            <p class="text-sm font-medium text-gray-900">{{ $item->variant->product->product_name ?? 'Sản phẩm không tồn tại' }}</p>
+                                            <p class="text-xs text-gray-500">
+                                                {{ $item->variant->product->sku ?? '' }} 
+                                                ({{ $item->variant->color ?? '' }}/{{ $item->variant->size ?? '' }})
+                                            </p>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-4 py-4 text-center text-sm text-gray-600">{{ number_format($item->price) }}đ</td>
+                                <td class="px-4 py-4 text-center text-sm text-gray-600">{{ number_format($item->unit_price) }}đ</td>
                                 <td class="px-4 py-4 text-center text-sm text-gray-600">x{{ $item->quantity }}</td>
                                 <td class="px-4 py-4 text-right text-sm font-bold text-gray-900">{{ number_format($item->total_price) }}đ</td>
                             </tr>
@@ -71,7 +74,7 @@
                             @endif
                             <tr>
                                 <td colspan="3" class="px-4 py-4 text-right text-base font-bold text-gray-900">Tổng cộng:</td>
-                                <td class="px-4 py-4 text-right text-xl font-bold text-purple-600">{{ number_format($order->total_amount) }}đ</td>
+                                <td class="px-4 py-4 text-right text-xl font-bold text-purple-600">{{ number_format($order->orderDetails->sum('total_price') + $order->shipping_fee - ($order->discount_amount ?? 0)) }}đ</td>
                             </tr>
                         </tfoot>
                     </table>

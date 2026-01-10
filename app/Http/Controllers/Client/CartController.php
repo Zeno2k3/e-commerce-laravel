@@ -16,9 +16,18 @@ class CartController extends Controller
      */
     public function index()
     {
+        // Debug logging
+        \Illuminate\Support\Facades\Log::info('Cart Index: User ID = ' . auth()->id());
+        
         $cart = Cart::with(['cartItem.product', 'cartItem.variant'])
             ->where('user_id', auth()->id())
             ->first();
+        
+        if ($cart) {
+            \Illuminate\Support\Facades\Log::info('Cart Index: Cart ID = ' . $cart->cart_id . ', Items count = ' . ($cart->cartItem ? $cart->cartItem->count() : 0));
+        } else {
+            \Illuminate\Support\Facades\Log::warning('Cart Index: No cart found for user ' . auth()->id());
+        }
         // Calculate subtotal
         $subtotal = 0;
         $totalItems = 0;
@@ -33,6 +42,45 @@ class CartController extends Controller
             'cart' => $cart,
             'subtotal' => $subtotal,
             'totalItems' => $totalItems
+        ]);
+    }
+
+    /**
+     * Show checkout/payment page
+     */
+    public function checkout()
+    {
+        // Debug logging
+        \Illuminate\Support\Facades\Log::info('Cart Checkout: User ID = ' . auth()->id());
+        
+        $cart = Cart::with(['cartItem.product', 'cartItem.variant'])
+            ->where('user_id', auth()->id())
+            ->first();
+        
+        if ($cart) {
+            $itemCount = $cart->cartItem ? $cart->cartItem->count() : 0;
+            \Illuminate\Support\Facades\Log::info('Cart Checkout: Cart ID = ' . $cart->cart_id . ', Items count = ' . $itemCount);
+        } else {
+            \Illuminate\Support\Facades\Log::warning('Cart Checkout: No cart found for user ' . auth()->id());
+        }
+
+        // Calculate subtotal
+        $subtotal = 0;
+        
+        if ($cart && $cart->cartItem) {
+            foreach ($cart->cartItem as $item) {
+                $subtotal += $item->total_price;
+            }
+        }
+
+        // If cart is empty, redirect back to cart
+        if (!$cart || $cart->cartItem->isEmpty()) {
+            return redirect()->route('client.cart.index')->with('error', 'Giỏ hàng của bạn đang trống!');
+        }
+
+        return view('client.cart.payment', [
+            'cart' => $cart,
+            'subtotal' => $subtotal
         ]);
     }
     /**

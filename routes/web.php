@@ -73,15 +73,14 @@ Route::post('/favorite/toggle', [App\Http\Controllers\Client\FavoriteController:
 
 //---------------------------- Thanh Toan ------------------------------
 
-Route::get('/payment', function () {
-    return view('client.cart.payment');
-})->name('client.cart.payment');
-
-Route::get('/success', function () {
-    return view('client.cart.success');
-})->name('client.cart.success');
-
-Route::post('/payment', [CartController::class, 'payment'])->name('client.cart.payment');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/payment', [CartController::class, 'checkout'])->name('client.cart.payment');
+    Route::post('/checkout/process', [App\Http\Controllers\Client\CheckoutController::class, 'process'])->name('client.checkout.process');
+    Route::get('/success', function () {
+        return view('client.cart.success');
+    })->name('client.cart.success');
+    Route::post('/payment', [CartController::class, 'payment'])->name('client.cart.payment'); 
+});
 
 
 Route::get('/lichsu-donhang', [App\Http\Controllers\Client\ProfileController::class, 'orders'])->name('client.account.orders')->middleware('auth');
@@ -99,6 +98,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/gio-hang/update-quantity', [CartController::class, 'updateQuantity'])->name('client.cart.updateQuantity');
     Route::post('/gio-hang/remove-item', [CartController::class, 'removeItem'])->name('client.cart.removeItem');
     Route::post('/gio-hang/clear', [CartController::class, 'clearCart'])->name('client.cart.clear');
+    
+    // DEBUG ROUTE (Có thể xóa sau khi fix xong)
+    Route::get('/test-cart-debug', function() {
+        $user = auth()->user();
+        $cart = \App\Models\Cart::with('cartItem')->where('user_id', $user->id)->first();
+        return response()->json([
+            'message' => 'Debug Info',
+            'user_id' => $user->id,
+            'user_name' => $user->full_name,
+            'cart' => $cart,
+            'session_id' => request()->session()->getId(),
+        ]);
+    });
 });
 
 // ============================================
