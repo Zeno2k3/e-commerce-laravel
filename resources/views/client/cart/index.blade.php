@@ -65,14 +65,19 @@
                     {{-- Image Logic --}}
                     <div class="w-32 h-32 flex-shrink-0 bg-white rounded-lg overflow-hidden border border-gray-200 p-2 relative">
                         @php
-                            $imageUrl = 'images/placeholder.png';
+                            // Priority 3: Default Placeholder
+                            $imageUrl = 'https://placehold.co/300x300?text=No+Image';
+
+                            // Priority 1: Variant Image
                             if ($item->variant && $item->variant->url_image) {
-                                $imageUrl = $item->variant->url_image;
-                            } elseif ($item->product && $item->product->variants->first() && $item->product->variants->first()->url_image) {
-                                $imageUrl = $item->product->variants->first()->url_image;
+                                $imageUrl = asset($item->variant->url_image);
+                            } 
+                            // Priority 2: Product Image (Fallback if no variant image)
+                            elseif ($item->product && $item->product->image) {
+                                $imageUrl = asset($item->product->image);
                             }
                         @endphp
-                        <img src="{{ asset($imageUrl) }}" class="w-full h-full object-contain" alt="Product Image">
+                        <img src="{{ $imageUrl }}" class="w-full h-full object-contain" alt="Product Image">
                     </div>
 
                     {{-- Info --}}

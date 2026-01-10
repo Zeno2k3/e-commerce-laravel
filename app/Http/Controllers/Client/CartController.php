@@ -257,4 +257,18 @@ class CartController extends Controller
             'message' => 'Đã xóa tất cả sản phẩm!'
         ]);
     }
+
+
+    /**
+     * Show success page
+     */
+    public function success()
+    {
+        // Get order ID from session (flashed from CheckoutController)
+        $orderId = session('success_order_id');
+        
+        return view('client.cart.success', [
+            'orderId' => $orderId
+        ]);
+    }
 }

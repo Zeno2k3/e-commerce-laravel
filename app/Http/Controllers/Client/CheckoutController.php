@@ -10,6 +10,8 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
+
 
 class CheckoutController extends Controller
 {
@@ -24,7 +26,7 @@ class CheckoutController extends Controller
             'province' => 'required|string',
             'district' => 'required|string',
             'ward' => 'required|string',
-            'payment_method' => 'required|in:card,momo,cod',
+            'payment_method' => 'required|in:card,paypal,cod',
             'note' => 'nullable|string',
             'voucher_code' => 'nullable|string' 
         ]);
@@ -121,7 +123,56 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            // 4. Clear Cart
+            // PAYPAL PAYMENT PROCESS
+            if ($request->payment_method === 'paypal') {
+                DB::commit(); // Commit Order Local first
+                
+                // Convert VND to USD (Approx 24,000)
+                $totalUSD = round($total / 24000, 2);
+
+                $provider = new PayPalClient;
+                $provider->setApiCredentials(config('paypal'));
+                $provider->getAccessToken();
+
+                $response = $provider->createOrder([
+                    "intent" => "CAPTURE",
+                    "application_context" => [
+                        "return_url" => route('client.paypal.success'),
+                        "cancel_url" => route('client.paypal.cancel'),
+                    ],
+                    "purchase_units" => [
+                        0 => [
+                            "amount" => [
+                                "currency_code" => "USD",
+                                "value" => $totalUSD
+                            ]
+                        ]
+                    ]
+                ]);
+
+                if (isset($response['id']) && $response['id'] != null) {
+                    // Save Order ID to session to update status later
+                    session()->put('paypal_order_id', $order->order_id);
+
+                    // Redirect to approve href
+                    foreach ($response['links'] as $link) {
+                        if ($link['rel'] === 'approve') {
+                            return response()->json([
+                                'status' => 'success',
+                                'message' => 'Chuyển hướng đến PayPal...',
+                                'redirect_url' => $link['href']
+                            ]);
+                        }
+                    }
+                } else {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Lỗi kết nối PayPal.'
+                    ], 500);
+                }
+            }
+
+            // 4. Clear Cart (Only if not Paypal, as Paypal clears after success)
             CartItem::where('cart_id', $cart->cart_id)->delete();
 
             DB::commit();
@@ -132,12 +183,61 @@ class CheckoutController extends Controller
                 'redirect_url' => route('client.cart.success')
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
+            \Log::error('Checkout Error: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
             return response()->json([
                 'status' => 'error',
                 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function paypalSuccess(Request $request)
+    {
+        $provider = new PayPalClient;
+        $provider->setApiCredentials(config('paypal'));
+        $provider->getAccessToken();
+        $response = $provider->capturePaymentOrder($request['token']);
+
+        if (isset($response['status']) && $response['status'] == 'COMPLETED') {
+            
+            
+            $orderId = session()->get('paypal_order_id');
+
+            session()->forget('paypal_order_id');
+            
+            $successOrderId = null;
+            
+            if ($orderId) {
+                // Update Order Status
+                $order = Order::find($orderId);
+                if ($order) {
+                    $order->status = 'pending'; // Or 'paid' depending on your logic
+                    $order->note .= "\n[PayPal Transaction ID: " . $response['id'] . "]";
+                    $order->save();
+                    
+                    $successOrderId = $order->order_id;
+                    
+                    // Clear Cart
+                    $cart = Cart::where('user_id', $order->user_id)->first();
+                    if ($cart) {
+                        CartItem::where('cart_id', $cart->cart_id)->delete();
+                    }
+                }
+            }
+
+            return redirect()->route('client.cart.success')
+                ->with('success', 'Thanh toán PayPal thành công!')
+                ->with('success_order_id', $successOrderId);
+        } else {
+            return redirect()->route('client.cart.payment')->with('error', 'Thanh toán PayPal không thành công.');
+        }
+    }
+
+    public function paypalCancel()
+    {
+        return redirect()->route('client.cart.payment')->with('error', 'Bạn đã hủy thanh toán PayPal.');
     }
 }

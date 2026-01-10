@@ -29,6 +29,8 @@ use App\Http\Controllers\Client\HomeController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/voucher', function () { return view('client.layouts.voucher'); })->name('client.voucher');
 Route::get('/success', function () { return view('client.carts.success'); })->name('client.carts.success');
+
+
 Route::post('/review', [\App\Http\Controllers\Client\ReviewController::class, 'store'])->name('client.review.store')->middleware('auth');
 Route::delete('/review/{id}', [\App\Http\Controllers\Client\ReviewController::class, 'destroy'])->name('client.review.destroy')->middleware('auth');
 Route::get('/about', function() { return view('client.pages.about'); })->name('client.about');
@@ -76,10 +78,9 @@ Route::post('/favorite/toggle', [App\Http\Controllers\Client\FavoriteController:
 Route::middleware(['auth'])->group(function () {
     Route::get('/payment', [CartController::class, 'checkout'])->name('client.cart.payment');
     Route::post('/checkout/process', [App\Http\Controllers\Client\CheckoutController::class, 'process'])->name('client.checkout.process');
-    Route::get('/success', function () {
-        return view('client.cart.success');
-    })->name('client.cart.success');
-    Route::post('/payment', [CartController::class, 'payment'])->name('client.cart.payment'); 
+    Route::get('/checkout/paypal/success', [App\Http\Controllers\Client\CheckoutController::class, 'paypalSuccess'])->name('client.paypal.success');
+    Route::get('/checkout/paypal/cancel', [App\Http\Controllers\Client\CheckoutController::class, 'paypalCancel'])->name('client.paypal.cancel');
+    Route::get('/success', [CartController::class, 'success'])->name('client.cart.success');
 });
 
 
