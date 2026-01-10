@@ -23,7 +23,11 @@ class ProductController extends Controller
             }
         }
 
-        $products = Product::with(['category', 'variants'])->orderBy('created_at', 'desc')->paginate(10);
+        $products = Product::with(['category', 'variants'])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         $categories = Category::all();
         return view('admin.products.index', compact('products', 'categories', 'nextCode'));
     }

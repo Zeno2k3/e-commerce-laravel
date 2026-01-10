@@ -75,11 +75,22 @@
                     </div>
                     <div class="p-4">
                         <h3 class="font-semibold text-gray-900 mb-1 line-clamp-2">{{ $product->product_name }}</h3>
+                        @php
+                            $avgRating = $product->reviews_avg_rating ?? 0;
+                            $reviewCount = $product->reviews_count ?? 0;
+                            $displayRating = round($avgRating * 2) / 2;
+                        @endphp
                         <div class="flex items-center gap-1 text-yellow-400 text-sm mb-2">
-                            @for($i = 0; $i < 5; $i++)
-                                <i class="fa-solid fa-star {{ $i < 4 ? '' : 'text-gray-300' }}"></i>
+                            @for($i = 1; $i <= 5; $i++)
+                                @if($displayRating >= $i)
+                                    <i class="fa-solid fa-star"></i>
+                                @elseif($displayRating >= $i - 0.5)
+                                    <i class="fa-solid fa-star-half-stroke"></i>
+                                @else
+                                    <i class="fa-solid fa-star text-gray-300"></i>
+                                @endif
                             @endfor
-                            <span class="text-gray-500 ml-1">(69)</span>
+                            <span class="text-gray-500 ml-1">({{ $reviewCount }})</span>
                         </div>
                         <div class="flex items-center gap-2 mb-4">
                             @php
