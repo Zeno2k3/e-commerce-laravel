@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    @vite(['resources/css/client.css', 'resources/js/client.js'])
+    @vite(['resources/css/client.css', 'resources/js/client/client.js'])
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 <body class="bg-white antialiased">
