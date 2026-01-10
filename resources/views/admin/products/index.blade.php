@@ -27,6 +27,7 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-bold tracking-wider">
+                            <th class="p-4">Mã SP</th>
                             <th class="p-4">Tên sản phẩm</th>
                             <th class="p-4">Danh mục</th>
                             <th class="p-4">Giá bán</th>
@@ -47,6 +48,9 @@
                                 $variantCount = $product->variants->count();
                             @endphp
                             <tr class="hover:bg-gray-50 transition group">
+                                <td class="p-4 px-6 text-sm font-bold text-gray-500">
+                                    {{ $product->product_code }}
+                                </td>
                                 <td class="p-4">
                                     <div class="flex items-center gap-4">
                                         <div class="w-12 h-12 rounded-lg border border-gray-200 p-1 bg-white shrink-0">
@@ -132,6 +136,25 @@
             <form id="createForm" action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="p-8 space-y-8 max-h-[calc(100vh-240px)] overflow-y-auto">
+                    {{-- Error Messages --}}
+                    @if($errors->any())
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fa-solid fa-exclamation-circle text-red-500"></i>
+                                <p class="font-semibold text-red-800">Vui lòng kiểm tra lại thông tin:</p>
+                            </div>
+                            <ul class="list-disc list-inside text-red-700 text-sm space-y-1">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    @if(session('error'))
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                             <p class="text-red-700 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-2"></i>{{ session('error') }}</p>
+                        </div>
+                    @endif
                     {{-- Product Info --}}
                     <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -141,9 +164,17 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Tên sản phẩm <span class="text-red-500">*</span></label>
-                                <input type="text" name="product_name" required 
+                                <input type="text" name="product_name" required value="{{ old('product_name') }}"
                                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
                                     placeholder="VD: Nike Air Jordan 1 Retro">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Mã sản phẩm
+                                </label>
+                                <input type="text" name="product_code" value="{{ $nextCode }}" readonly
+                                    class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl focus:outline-none cursor-not-allowed text-gray-500 font-bold"
+                                    placeholder="PRxx">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Danh mục</label>
@@ -157,16 +188,16 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Loại sản phẩm <span class="text-red-500">*</span></label>
                                 <select name="product_type" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
-                                    <option value="nam" selected>Nam</option>
-                                    <option value="nu">Nữ</option>
-                                    <option value="phu-kien">Phụ kiện</option>
+                                    <option value="nam" {{ old('product_type') == 'nam' ? 'selected' : '' }}>Nam</option>
+                                    <option value="nu" {{ old('product_type') == 'nu' ? 'selected' : '' }}>Nữ</option>
+                                    <option value="phu-kien" {{ old('product_type') == 'phu-kien' ? 'selected' : '' }}>Phụ kiện</option>
                                 </select>
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Mô tả</label>
                                 <textarea name="description" rows="3"
                                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none resize-none"
-                                    placeholder="Mô tả chi tiết sản phẩm..."></textarea>
+                                    placeholder="Mô tả chi tiết sản phẩm...">{{ old('description') }}</textarea>
                             </div>
                             <!-- Status field fallback hidden input or default handling -->
                             <input type="hidden" name="status" value="active">
@@ -192,31 +223,31 @@
                                 <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
                                     <div>
                                         <label class="block text-xs font-bold text-gray-400 mb-1">Size</label>
-                                        <input type="text" name="variants[0][size]" 
+                                        <input type="text" name="variants[0][size]" value="{{ old('variants.0.size') }}"
                                             class="w-full px-3 py-2 bg-gray-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
                                             placeholder="42">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-gray-400 mb-1">Màu sắc</label>
-                                        <input type="text" name="variants[0][color]" 
+                                        <input type="text" name="variants[0][color]" value="{{ old('variants.0.color') }}"
                                             class="w-full px-3 py-2 bg-gray-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
                                             placeholder="Đỏ">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-gray-400 mb-1">Chất liệu</label>
-                                        <input type="text" name="variants[0][material]" 
+                                        <input type="text" name="variants[0][material]" value="{{ old('variants.0.material') }}"
                                             class="w-full px-3 py-2 bg-gray-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
                                             placeholder="Leather">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-gray-400 mb-1">Giá <span class="text-red-400">*</span></label>
-                                        <input type="number" name="variants[0][price]" required
+                                        <input type="number" name="variants[0][price]" value="{{ old('variants.0.price') }}" required
                                             class="w-full px-3 py-2 bg-gray-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
                                             placeholder="150000">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-gray-400 mb-1">Tồn kho <span class="text-red-400">*</span></label>
-                                        <input type="number" name="variants[0][stock]" required
+                                        <input type="number" name="variants[0][stock]" value="{{ old('variants.0.stock') }}" required
                                             class="w-full px-3 py-2 bg-gray-700 border-none rounded-lg text-white text-sm outline-none focus:ring-2 focus:ring-blue-500"
                                             placeholder="100">
                                     </div>
@@ -373,6 +404,12 @@ function openCreateModal() {
     document.getElementById('createModal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 }
+
+@if($errors->any() || session('error'))
+    document.addEventListener('DOMContentLoaded', function() {
+        openCreateModal();
+    });
+@endif
 
 function closeCreateModal() {
     document.getElementById('createModal').classList.add('hidden');

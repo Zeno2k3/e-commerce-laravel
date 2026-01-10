@@ -11,9 +11,21 @@ class ProductController extends Controller
 {
     public function index()
     {
+        // Auto-increment Product Code (PRxx)
+        $lastProduct = Product::latest('product_id')->first();
+        $nextCode = 'PR01';
+
+        if ($lastProduct && $lastProduct->product_code) {
+            // Extract number from PRxx
+            if (preg_match('/PR(\d+)/', $lastProduct->product_code, $matches)) {
+                $number = intval($matches[1]) + 1;
+                $nextCode = 'PR' . str_pad($number, 2, '0', STR_PAD_LEFT);
+            }
+        }
+
         $products = Product::with(['category', 'variants'])->orderBy('created_at', 'desc')->paginate(10);
         $categories = Category::all();
-        return view('admin.products.index', compact('products', 'categories'));
+        return view('admin.products.index', compact('products', 'categories', 'nextCode'));
     }
 
     public function create()
@@ -53,37 +65,42 @@ class ProductController extends Controller
             'variants.*.url_image' => 'nullable|image|max:2048',
         ]);
 
-        // 2. Create Product
-        $product = Product::create([
-            'product_name' => $validated['product_name'],
-            'product_code' => $validated['product_code'],
-            'description' => $validated['description'] ?? null,
-            'category_id' => $validated['category_id'] ?? null,
-            'product_type' => $validated['product_type'],
-            'status' => $validated['status'] ?? 'active',
-        ]);
+        // 2. Create Product (wrapped in try-catch)
+        try {
+            $product = Product::create([
+                'product_name' => $validated['product_name'],
+                'product_code' => $validated['product_code'],
+                'description' => $validated['description'] ?? null,
+                'category_id' => $validated['category_id'] ?? null,
+                'product_type' => $validated['product_type'],
+                'status' => $validated['status'] ?? 'active',
+            ]);
 
-        // 3. Create Variants
-        foreach ($request->variants as $index => $variantData) {
-            $imageUrl = null;
-            if ($request->hasFile("variants.$index.url_image")) {
-                $image = $request->file("variants.$index.url_image");
-                $filename = time() . '_' . $index . '_' . $image->getClientOriginalName();
-                $image->move(public_path('storage/products'), $filename);
-                $imageUrl = 'storage/products/' . $filename;
+            // 3. Create Variants
+            foreach ($request->variants as $index => $variantData) {
+                $imageUrl = null;
+                if ($request->hasFile("variants.$index.url_image")) {
+                    $image = $request->file("variants.$index.url_image");
+                    $filename = time() . '_' . $index . '_' . $image->getClientOriginalName();
+                    $image->move(public_path('storage/products'), $filename);
+                    $imageUrl = 'storage/products/' . $filename;
+                }
+
+                $product->variants()->create([
+                    'size' => $variantData['size'] ?? null,
+                    'color' => $variantData['color'] ?? null,
+                    'material' => $variantData['material'] ?? null,
+                    'price' => $variantData['price'],
+                    'stock' => $variantData['stock'],
+                    'url_image' => $imageUrl,
+                ]);
             }
 
-            $product->variants()->create([
-                'size' => $variantData['size'] ?? null,
-                'color' => $variantData['color'] ?? null,
-                'material' => $variantData['material'] ?? null,
-                'price' => $variantData['price'],
-                'stock' => $variantData['stock'],
-                'url_image' => $imageUrl,
-            ]);
-        }
+            return redirect()->route('admin.products.index')->with('success', 'Tạo sản phẩm thành công!');
 
-        return redirect()->route('admin.products.index')->with('success', 'Tạo sản phẩm thành công!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Lỗi khi tạo sản phẩm: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function edit($id)
