@@ -346,18 +346,21 @@
                             <label class="flex items-center p-4 border rounded-xl cursor-pointer transition-all hover:border-gray-400"
                                    :class="paymentMethod === 'card' ? 'border-[#7d3cff] bg-purple-50/10' : 'border-gray-200'">
                                 <input type="radio" name="payment" value="card" x-model="paymentMethod" class="appearance-none w-6 h-6 border-2 border-gray-300 rounded-full checked:bg-[#7d3cff] checked:border-[#7d3cff] cursor-pointer transition-all mr-4">
+                                <i class="fa-brands fa-cc-visa text-2xl text-blue-600 mr-3"></i>
                                 <span class="text-lg font-medium text-gray-900">Thẻ tín dụng/ghi nợ</span>
                             </label>
 
                             <label class="flex items-center p-4 border rounded-xl cursor-pointer transition-all hover:border-gray-400"
-                                   :class="paymentMethod === 'momo' ? 'border-[#7d3cff] bg-purple-50/10' : 'border-gray-200'">
-                                <input type="radio" name="payment" value="momo" x-model="paymentMethod" class="appearance-none w-6 h-6 border-2 border-gray-300 rounded-full checked:bg-[#7d3cff] checked:border-[#7d3cff] cursor-pointer transition-all mr-4">
-                                <span class="text-lg font-medium text-gray-900">Ví MoMo</span>
+                                   :class="paymentMethod === 'paypal' ? 'border-[#7d3cff] bg-purple-50/10' : 'border-gray-200'">
+                                <input type="radio" name="payment" value="paypal" x-model="paymentMethod" class="appearance-none w-6 h-6 border-2 border-gray-300 rounded-full checked:bg-[#7d3cff] checked:border-[#7d3cff] cursor-pointer transition-all mr-4">
+                                <i class="fa-brands fa-paypal text-2xl text-blue-700 mr-3"></i>
+                                <span class="text-lg font-medium text-gray-900">Paypal</span>
                             </label>
 
                             <label class="flex items-center p-4 border rounded-xl cursor-pointer transition-all hover:border-gray-400"
                                    :class="paymentMethod === 'cod' ? 'border-[#7d3cff] bg-purple-50/10' : 'border-gray-200'">
                                 <input type="radio" name="payment" value="cod" x-model="paymentMethod" class="appearance-none w-6 h-6 border-2 border-gray-300 rounded-full checked:bg-[#7d3cff] checked:border-[#7d3cff] cursor-pointer transition-all mr-4">
+                                <i class="fa-solid fa-money-bill-wave text-2xl text-green-600 mr-3"></i>
                                 <span class="text-lg font-medium text-gray-900">Thanh toán khi nhận hàng (COD)</span>
                             </label>
                             
@@ -381,8 +384,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div x-show="paymentMethod === 'momo'" class="pt-6 flex flex-col items-center justify-center border-t border-gray-100 mt-4">
-                                 <p class="text-gray-500">Quét mã để thanh toán</p>
+                            <div x-show="paymentMethod === 'paypal'" class="pt-6 flex flex-col items-center justify-center border-t border-gray-100 mt-4">
+                                 <p class="text-gray-500">Bạn sẽ được chuyển hướng đến Paypal để thanh toán.</p>
                             </div>
                             <div x-show="paymentMethod === 'cod'" class="pt-6 text-center border-t border-gray-100 mt-4">
                                 <p class="text-gray-600 italic">Bạn sẽ thanh toán tiền mặt cho shipper khi nhận được hàng.</p>
