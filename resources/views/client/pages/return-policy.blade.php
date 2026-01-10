@@ -1,265 +1,211 @@
 @extends('client.layouts.app')
 
 @section('content')
+<div class="bg-[#f9fafb] min-h-screen font-sans pb-20">
+    <div class="container mx-auto px-4 py-12">
 
-@php
-    // Dữ liệu giả lập sản phẩm cho Trang 8
-    $featured_products = [
-        [
-            'id' => 1,
-            'name' => 'Áo Khoác Jean Phối Nón The Original 039 Xanh Dương',
-            'image' => 'images/shirt.png',
-            'price' => 1000000,
-            'old_price' => 1250000,
-            'discount' => '-20%',
-            'rating' => 5,
-            'reviews' => 69
-        ],
-        [
-            'id' => 2,
-            'name' => 'Áo Khoác Jean Phối Nón The Original 039 Xanh Dương',
-            'image' => 'images/bag.png',
-            'price' => 1000000,
-            'old_price' => 1250000,
-            'discount' => '-20%',
-            'rating' => 5,
-            'reviews' => 69
-        ],
-        [
-            'id' => 3,
-            'name' => 'Áo Khoác Jean Phối Nón The Original 039 Xanh Dương',
-            'image' => 'https://pos.nvncdn.com/be3159/ps/20240417_A2k3y8k651.jpeg',
-            'price' => 1000000,
-            'old_price' => 1250000,
-            'discount' => '-20%',
-            'rating' => 5,
-            'reviews' => 69
-        ],
-        [
-            'id' => 4,
-            'name' => 'Áo Khoác Jean Phối Nón The Original 039 Xanh Dương',
-            'image' => 'https://pos.nvncdn.com/be3159/ps/20240417_A2k3y8k651.jpeg',
-            'price' => 1000000,
-            'old_price' => 1250000,
-            'discount' => '-20%',
-            'rating' => 5,
-            'reviews' => 69
-        ]
-    ];
-@endphp
-
-{{-- Nền xám nhạt đồng bộ --}}
-<div class="bg-[#f9fafb] min-h-screen font-sans pb-20 overflow-x-hidden">
-
-    {{-- 1. HERO SECTION (BANNER) --}}
-    <div class="container mx-auto px-4 py-12 md:py-20">
-        <div class="flex flex-col md:flex-row items-center gap-12">
-            {{-- Text Content --}}
-            <div class="md:w-1/2 z-10">
-                {{-- Badge: Đồng bộ style mẫu (text-2xl, tím) --}}
-                <span class="inline-block py-2 px-5 rounded-lg bg-purple-100 text-[#7d3cff] font-bold text-xl md:text-2xl mb-6 tracking-widest uppercase">
-                    Bộ sưu tập mới 2025
-                </span>
-
-                {{-- H1: Đồng bộ text-5xl font-black --}}
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6 tracking-tight leading-tight">
-                    Thời trang hiện đại cho <br>
-                    <span class="text-[#7d3cff]">phong cách của bạn</span>
-                </h1>
-
-                {{-- Intro: Đồng bộ text-xl text-gray-500 --}}
-                <p class="text-gray-500 text-xl leading-relaxed mb-10 max-w-lg">
-                    Khám phá những xu hướng thời trang mới nhất với chất lượng cao cấp và giá cả hợp lý. Tự tin thể hiện phong cách riêng.
-                </p>
-
-                {{-- Buttons: Form rounded-xl font-bold --}}
-                <div class="flex flex-wrap gap-4">
-                    <a href="#" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-[#7d3cff] transition text-lg shadow-xl shadow-gray-200">
-                        Mua sắm ngay <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </a>
-                    <a href="#" class="bg-white text-gray-900 border border-gray-200 px-8 py-4 rounded-xl font-bold hover:bg-gray-50 transition text-lg">
-                        Tìm hiểu thêm
-                    </a>
-                </div>
-            </div>
-
-            {{-- Hero Image: Form rounded-[3rem] shadow-xl --}}
-            <div class="md:w-1/2 relative">
-                <div class="relative z-10 bg-white p-4 rounded-[3rem] shadow-2xl shadow-purple-200/50">
-                    <div class="rounded-[2.5rem] overflow-hidden aspect-[4/3]">
-                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop" alt="Hero Image" class="w-full h-full object-cover">
-                    </div>
-                </div>
-                {{-- Decor --}}
-                <div class="absolute -top-10 -right-10 w-40 h-40 bg-purple-300 rounded-full blur-3xl opacity-30"></div>
-                <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-pink-300 rounded-full blur-3xl opacity-30"></div>
-            </div>
-        </div>
-    </div>
-
-    {{-- 2. FEATURES (CAM KẾT) --}}
-    <div class="container mx-auto px-4 mb-20">
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
-            {{-- Feature 1 --}}
-            <div class="bg-white p-6 rounded-[2rem] shadow-xl shadow-gray-200/50 text-center border border-white hover:-translate-y-1 transition duration-300">
-                <div class="w-16 h-16 bg-purple-50 text-[#7d3cff] rounded-full flex items-center justify-center text-3xl mx-auto mb-5">
-                    <i class="fa-solid fa-truck-fast"></i>
-                </div>
-                {{-- Tăng cỡ chữ tiêu đề lên text-xl --}}
-                <h4 class="font-bold text-gray-900 text-xl mb-2">Giao hàng miễn phí</h4>
-                {{-- Tăng cỡ chữ mô tả lên text-base --}}
-                <p class="text-gray-500 text-base">Đơn hàng trên 500k</p>
-            </div>
-
-            {{-- Feature 2 --}}
-            <div class="bg-white p-6 rounded-[2rem] shadow-xl shadow-gray-200/50 text-center border border-white hover:-translate-y-1 transition duration-300">
-                <div class="w-16 h-16 bg-purple-50 text-[#7d3cff] rounded-full flex items-center justify-center text-3xl mx-auto mb-5">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </div>
-                <h4 class="font-bold text-gray-900 text-xl mb-2">Thanh toán an toàn</h4>
-                <p class="text-gray-500 text-base">Bảo mật 100%</p>
-            </div>
-
-            {{-- Feature 3 --}}
-            <div class="bg-white p-6 rounded-[2rem] shadow-xl shadow-gray-200/50 text-center border border-white hover:-translate-y-1 transition duration-300">
-                <div class="w-16 h-16 bg-purple-50 text-[#7d3cff] rounded-full flex items-center justify-center text-3xl mx-auto mb-5">
-                    <i class="fa-regular fa-star"></i>
-                </div>
-                <h4 class="font-bold text-gray-900 text-xl mb-2">Chất lượng đảm bảo</h4>
-                <p class="text-gray-500 text-base">Sản phẩm chính hãng</p>
-            </div>
-
-            {{-- Feature 4 --}}
-            <div class="bg-white p-6 rounded-[2rem] shadow-xl shadow-gray-200/50 text-center border border-white hover:-translate-y-1 transition duration-300">
-                <div class="w-16 h-16 bg-purple-50 text-[#7d3cff] rounded-full flex items-center justify-center text-3xl mx-auto mb-5">
-                    <i class="fa-solid fa-arrow-rotate-left"></i>
-                </div>
-                <h4 class="font-bold text-gray-900 text-xl mb-2">Đổi trả dễ dàng</h4>
-                <p class="text-gray-500 text-base">Trong vòng 30 ngày</p>
-            </div>
-
-            {{-- Feature 5 --}}
-            <div class="bg-white p-6 rounded-[2rem] shadow-xl shadow-gray-200/50 text-center border border-white hover:-translate-y-1 transition duration-300">
-                <div class="w-16 h-16 bg-purple-50 text-[#7d3cff] rounded-full flex items-center justify-center text-3xl mx-auto mb-5">
-                    <i class="fa-solid fa-headset"></i>
-                </div>
-                <h4 class="font-bold text-gray-900 text-xl mb-2">Hỗ trợ 24/7</h4>
-                <p class="text-gray-500 text-base">Tư vấn mọi lúc</p>
-            </div>
-        </div>
-    </div>
-    {{-- 3. SẢN PHẨM NỔI BẬT --}}
-    <div class="container mx-auto px-4 mb-20">
-        {{-- Tiêu đề Section: text-3xl font-bold center --}}
-        <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">Sản Phẩm Nổi Bật</h2>
-            <p class="text-gray-500 text-xl max-w-2xl mx-auto">
-                Khám phá những sản phẩm được yêu thích nhất với chất lượng cao cấp và thiết kế thời thượng.
+        {{-- TIÊU ĐỀ TRANG --}}
+        <x-client.page-header 
+            icon="fa-solid fa-rotate-left"
+            tag="CHÍNH SÁCH ĐỔI TRẢ"
+            title="Đổi Trả"
+            highlight="Dễ Dàng"
+            color="purple">
+            <p class="text-gray-500 text-xl max-w-3xl mx-auto leading-relaxed font-medium mt-6">
+                FlexStyle cam kết mang đến trải nghiệm mua sắm tuyệt vời. Nếu bạn không hoàn toàn hài lòng với sản phẩm, chúng tôi hỗ trợ đổi trả một cách nhanh chóng và thuận tiện.
             </p>
+        </x-client.page-header>
+
+        {{-- KHỐI 1: HIGHLIGHTS (3 ĐIỂM NỔI BẬT) --}}
+        <div class="grid md:grid-cols-3 gap-8 mb-20">
+            <div class="bg-white p-10 rounded-[2rem] shadow-lg shadow-gray-100 border border-purple-50 text-center hover:-translate-y-2 transition-transform duration-300">
+                <div class="w-20 h-20 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fa-regular fa-calendar-check text-[#7d3cff] text-3xl"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-gray-900 mb-3">30 Ngày</h3>
+                <p class="text-gray-500 text-lg">Thời gian đổi trả kể từ ngày nhận hàng</p>
+            </div>
+            <div class="bg-white p-10 rounded-[2rem] shadow-lg shadow-gray-100 border border-purple-50 text-center hover:-translate-y-2 transition-transform duration-300">
+                <div class="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-check text-green-600 text-3xl"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-gray-900 mb-3">Miễn Phí</h3>
+                <p class="text-gray-500 text-lg">Không tính phí đổi trả nếu lỗi từ Shop</p>
+            </div>
+            <div class="bg-white p-10 rounded-[2rem] shadow-lg shadow-gray-100 border border-purple-50 text-center hover:-translate-y-2 transition-transform duration-300">
+                <div class="w-20 h-20 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-shield-heart text-blue-600 text-3xl"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-gray-900 mb-3">100%</h3>
+                <p class="text-gray-500 text-lg">Hài lòng với quy trình xử lý nhanh chóng</p>
+            </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            @foreach($featured_products as $product)
-            {{-- Card sản phẩm: Form rounded-[2rem] --}}
-            <div class="bg-white p-4 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-white hover:border-purple-100 transition duration-300 group">
-                {{-- Ảnh: Bo góc lớn --}}
-                <div class="relative aspect-[3/4] rounded-[1.5rem] overflow-hidden mb-4">
-                    {{-- Badge Sale --}}
-                    <span class="absolute top-3 left-3 bg-[#ef4444] text-white font-bold px-3 py-1 rounded-lg text-sm z-10">
-                        {{ $product['discount'] }}
-                    </span>
-                    <img src="{{ $product['image'] }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-
-                    {{-- Button Add to Cart --}}
-                    <div class="absolute inset-x-4 bottom-4 translate-y-full group-hover:translate-y-0 transition duration-300">
-                        <button class="w-full bg-white/90 backdrop-blur text-gray-900 py-3 rounded-xl font-bold hover:bg-[#7d3cff] hover:text-white shadow-lg flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
-                        </button>
-                    </div>
+        {{-- KHỐI 2: ĐIỀU KIỆN ĐỔI TRẢ (YES/NO) --}}
+        <div class="bg-white p-12 rounded-[3rem] shadow-xl shadow-gray-200/50 border border-gray-50 mb-20">
+            <h2 class="text-3xl font-bold text-gray-900 mb-12 flex items-center gap-4">
+                <i class="fa-solid fa-clipboard-check text-[#7d3cff]"></i> Điều Kiện Đổi Trả
+            </h2>
+            <div class="grid md:grid-cols-2 gap-12">
+                {{-- Cột ĐƯỢC chấp nhận --}}
+                <div class="bg-green-50/50 p-8 rounded-[2rem] border border-green-100">
+                    <h5 class="text-2xl font-bold text-green-700 mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-circle-check"></i> Được chấp nhận
+                    </h5>
+                    <ul class="space-y-4 text-lg text-gray-700 font-medium">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> Sản phẩm còn nguyên tem mác, nhãn hiệu</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> Sản phẩm chưa qua sử dụng, giặt ủi</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> Không có mùi lạ (nước hoa, thuốc lá...)</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> Còn đầy đủ phụ kiện đi kèm</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> Có hóa đơn mua hàng hoặc mã đơn hàng</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> Trong thời hạn 30 ngày kể từ khi nhận</li>
+                    </ul>
                 </div>
 
-                {{-- Info --}}
-                <div class="px-2 pb-2">
-                    <h3 class="font-bold text-gray-900 text-lg mb-2 line-clamp-2 min-h-[3.5rem] leading-snug">
-                        {{ $product['name'] }}
+                {{-- Cột KHÔNG được chấp nhận --}}
+                <div class="bg-red-50/50 p-8 rounded-[2rem] border border-red-100">
+                    <h5 class="text-2xl font-bold text-red-600 mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-circle-xmark"></i> Không chấp nhận
+                    </h5>
+                    <ul class="space-y-4 text-lg text-gray-700 font-medium">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-xmark text-red-500 mt-1"></i> Sản phẩm đã qua sử dụng, giặt ủi</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-xmark text-red-500 mt-1"></i> Sản phẩm bị rách, bẩn do lỗi người dùng</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-xmark text-red-500 mt-1"></i> Sản phẩm có mùi lạ do người dùng</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-xmark text-red-500 mt-1"></i> Sản phẩm Sale trên 50% (trừ lỗi Shop)</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-xmark text-red-500 mt-1"></i> Thiếu phụ kiện, tem mác</li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-xmark text-red-500 mt-1"></i> Quá thời hạn 30 ngày</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        {{-- KHỐI 3: QUY TRÌNH ĐỔI TRẢ (4 BƯỚC) --}}
+        <div class="mb-20">
+            <h2 class="text-3xl font-bold text-gray-900 mb-10 text-center">Quy Trình Đổi Trả</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="relative bg-white p-8 rounded-[2.5rem] shadow-lg border border-gray-100 flex flex-col items-center text-center group hover:border-[#7d3cff] transition-colors">
+                    <span class="absolute top-6 left-6 text-6xl font-black text-gray-100 group-hover:text-purple-100 transition-colors select-none">1</span>
+                    <div class="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mb-6 relative z-10">
+                        <i class="fa-solid fa-headset text-[#7d3cff] text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-900 mb-2 relative z-10">Liên hệ yêu cầu</h4>
+                    <p class="text-gray-500 relative z-10">Gọi Hotline hoặc gửi email thông tin đơn hàng và lý do.</p>
+                </div>
+
+                <div class="relative bg-white p-8 rounded-[2.5rem] shadow-lg border border-gray-100 flex flex-col items-center text-center group hover:border-[#7d3cff] transition-colors">
+                    <span class="absolute top-6 left-6 text-6xl font-black text-gray-100 group-hover:text-purple-100 transition-colors select-none">2</span>
+                    <div class="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mb-6 relative z-10">
+                        <i class="fa-solid fa-file-circle-check text-[#7d3cff] text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-900 mb-2 relative z-10">Xác nhận yêu cầu</h4>
+                    <p class="text-gray-500 relative z-10">Chúng tôi xác nhận và cung cấp mã đổi trả trong vòng 2h.</p>
+                </div>
+
+                <div class="relative bg-white p-8 rounded-[2.5rem] shadow-lg border border-gray-100 flex flex-col items-center text-center group hover:border-[#7d3cff] transition-colors">
+                    <span class="absolute top-6 left-6 text-6xl font-black text-gray-100 group-hover:text-purple-100 transition-colors select-none">3</span>
+                    <div class="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mb-6 relative z-10">
+                        <i class="fa-solid fa-box-open text-[#7d3cff] text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-900 mb-2 relative z-10">Đóng gói sản phẩm</h4>
+                    <p class="text-gray-500 relative z-10">Đóng gói theo hướng dẫn và gửi về địa chỉ được cung cấp.</p>
+                </div>
+
+                <div class="relative bg-white p-8 rounded-[2.5rem] shadow-lg border border-gray-100 flex flex-col items-center text-center group hover:border-[#7d3cff] transition-colors">
+                    <span class="absolute top-6 left-6 text-6xl font-black text-gray-100 group-hover:text-purple-100 transition-colors select-none">4</span>
+                    <div class="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mb-6 relative z-10">
+                        <i class="fa-solid fa-money-bill-transfer text-[#7d3cff] text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-900 mb-2 relative z-10">Xử lý hoàn tiền</h4>
+                    <p class="text-gray-500 relative z-10">Hoàn tiền hoặc gửi sản phẩm thay thế trong 3-5 ngày.</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- KHỐI 4: THỜI GIAN HOÀN TIỀN & PHÍ --}}
+        <div class="bg-[#f1f5f9] p-12 rounded-[3rem] border border-gray-200 mb-20 shadow-inner">
+            <div class="grid md:grid-cols-2 gap-16">
+                {{-- Thời gian hoàn tiền --}}
+                <div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+                        <i class="fa-regular fa-clock text-[#7d3cff]"></i> Thời Gian Hoàn Tiền
                     </h3>
-                    <div class="flex items-end justify-between">
-                        <div class="flex flex-col">
-                            {{-- Giá: text-[#7d3cff] font-black --}}
-                            <span class="text-[#7d3cff] font-black text-xl">{{ number_format($product['price']) }}đ</span>
-                            <span class="text-gray-400 text-sm line-through font-bold">{{ number_format($product['old_price']) }}đ</span>
-                        </div>
-                        <div class="flex text-yellow-400 text-sm gap-1 mb-1">
-                            <i class="fa-solid fa-star"></i>
-                            <span class="font-bold text-gray-600">5.0</span>
-                        </div>
+                    <ul class="space-y-6 text-xl text-gray-600 font-medium">
+                        <li class="flex justify-between border-b border-gray-300 pb-3">
+                            <span>Thanh toán Online:</span>
+                            <span class="text-gray-900 font-bold">3 - 7 ngày làm việc</span>
+                        </li>
+                        <li class="flex justify-between border-b border-gray-300 pb-3">
+                            <span>Thanh toán COD:</span>
+                            <span class="text-gray-900 font-bold">1 - 3 ngày làm việc</span>
+                        </li>
+                        <li class="flex justify-between border-b border-gray-300 pb-3">
+                            <span>Ví điện tử:</span>
+                            <span class="text-gray-900 font-bold">1 - 2 ngày làm việc</span>
+                        </li>
+                        <li class="text-sm italic text-gray-500 mt-4">*Thời gian thực tế có thể tùy thuộc vào ngân hàng thụ hưởng.</li>
+                    </ul>
+                </div>
+
+                {{-- Phí đổi trả --}}
+                <div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+                        <i class="fa-solid fa-coins text-[#7d3cff]"></i> Phí Đổi Trả
+                    </h3>
+                    <ul class="space-y-6 text-xl text-gray-600 font-medium">
+                        <li class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm">
+                            <span>Lỗi từ Shop:</span>
+                            <span class="text-green-600 font-bold bg-green-50 px-3 py-1 rounded-lg">Miễn phí 100%</span>
+                        </li>
+                        <li class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm">
+                            <span>Đổi size/màu:</span>
+                            <span class="text-gray-900 font-bold">30.000₫</span>
+                        </li>
+                        <li class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm">
+                            <span>Thay đổi ý định:</span>
+                            <span class="text-gray-900 font-bold">50.000₫</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        {{-- KHỐI 5: LƯU Ý QUAN TRỌNG --}}
+        <div class="bg-white p-12 rounded-[3rem] shadow-xl shadow-gray-200/50 border border-gray-50 mb-20">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-4">
+                <i class="fa-solid fa-circle-exclamation text-[#7d3cff] text-4xl"></i> Lưu Ý Quan Trọng
+            </h2>
+            <div class="grid md:grid-cols-2 gap-12 text-gray-600 text-xl leading-relaxed font-medium">
+                <ul class="space-y-6">
+                    <li class="flex gap-3"><span class="text-[#7d3cff]">•</span> Vui lòng quay video unboxing khi nhận hàng để làm bằng chứng nếu có vấn đề.</li>
+                    <li class="flex gap-3"><span class="text-[#7d3cff]">•</span> Sản phẩm Sale trên 50% chỉ được đổi trả nếu có lỗi từ nhà sản xuất.</li>
+                </ul>
+                <ul class="space-y-6">
+                    <li class="flex gap-3"><span class="text-[#7d3cff]">•</span> Đối với sản phẩm đặc biệt (đồ lót, trang sức), vui lòng liên hệ trước khi đổi trả.</li>
+                    <li class="flex gap-3"><span class="text-[#7d3cff]">•</span> Khách hàng chịu phí ship khi gửi hàng về (trừ trường hợp lỗi từ shop).</li>
+                </ul>
+            </div>
+        </div>
+
+        {{-- LIÊN HỆ HỖ TRỢ --}}
+        <x-client.cta-section 
+            title="Cần Hỗ Trợ Đổi Trả?"
+            description="Liên hệ ngay với đội ngũ chăm sóc khách hàng để được hỗ trợ nhanh chóng">
+            <div class="flex flex-wrap justify-center gap-16 text-2xl font-bold mt-8">
+                <a href="tel:19006789" class="flex items-center gap-4 hover:text-[#7d3cff] transition-colors">
+                    <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-md">
+                        <i class="fa-solid fa-phone text-[#7d3cff] text-2xl"></i>
                     </div>
-                </div>
+                    1900 6789
+                </a>
+                <a href="mailto:support@flexstyle.com" class="flex items-center gap-4 hover:text-[#7d3cff] transition-colors">
+                    <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-md">
+                        <i class="fa-solid fa-envelope text-[#7d3cff] text-2xl"></i>
+                    </div>
+                    support@flexstyle.com
+                </a>
             </div>
-            @endforeach
-        </div>
+        </x-client.cta-section>
 
-        <div class="text-center">
-            <a href="#" class="inline-block border-2 border-gray-900 text-gray-900 px-10 py-3 rounded-xl font-bold hover:bg-gray-900 hover:text-white transition text-lg tracking-wide">
-                XEM TẤT CẢ SẢN PHẨM
-            </a>
-        </div>
     </div>
-
-    {{-- 4. DANH MỤC (BANNER LỚN) --}}
-    <div class="container mx-auto px-4 mb-20">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {{-- Nam --}}
-            <div class="relative group h-[450px] rounded-[3rem] overflow-hidden cursor-pointer shadow-2xl shadow-gray-200">
-                <img src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?q=80&w=1974&auto=format&fit=crop" class="w-full h-full object-cover transition duration-700 group-hover:scale-105">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-10">
-                    <h3 class="text-4xl font-black text-white mb-2">Thời trang Nam</h3>
-                    <p class="text-gray-300 text-xl mb-6">Phong cách lịch lãm, hiện đại</p>
-                    <span class="inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-xl font-bold self-start hover:bg-[#7d3cff] hover:text-white transition">
-                        Mua ngay <i class="fa-solid fa-arrow-right"></i>
-                    </span>
-                </div>
-            </div>
-
-            {{-- Nữ --}}
-            <div class="relative group h-[450px] rounded-[3rem] overflow-hidden cursor-pointer shadow-2xl shadow-gray-200">
-                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition duration-700 group-hover:scale-105">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-10">
-                    <h3 class="text-4xl font-black text-white mb-2">Thời trang Nữ</h3>
-                    <p class="text-gray-300 text-xl mb-6">Trẻ trung, thanh lịch, quyến rũ</p>
-                    <span class="inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-xl font-bold self-start hover:bg-[#7d3cff] hover:text-white transition">
-                        Mua ngay <i class="fa-solid fa-arrow-right"></i>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- 5. NEWSLETTER (FORM ĐĂNG KÝ) --}}
-    <div class="container mx-auto px-4">
-        {{-- Sử dụng style background tối màu rounded-[3rem] như mẫu --}}
-        <div class="bg-gray-900 rounded-[3rem] p-12 md:p-16 text-white shadow-2xl shadow-purple-200 relative overflow-hidden text-center">
-
-            <div class="relative z-10 max-w-3xl mx-auto">
-                <i class="fa-solid fa-paper-plane text-[#7d3cff] text-5xl mb-6"></i>
-                <h2 class="text-3xl md:text-5xl font-black mb-6">Đăng Ký Nhận Tin Tức</h2>
-                <p class="text-gray-300 text-xl mb-10 leading-relaxed">
-                    Nhận thông tin về sản phẩm mới, ưu đãi đặc biệt và xu hướng thời trang mới nhất trực tiếp vào hộp thư của bạn.
-                </p>
-
-                <form class="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
-                    <input type="email" placeholder="Nhập email của bạn" class="flex-1 px-6 py-4 rounded-xl text-gray-900 text-lg focus:outline-none focus:ring-4 focus:ring-purple-500/50 border-none">
-                    <button type="button" class="bg-[#7d3cff] text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-[#6c2bd9] transition shadow-lg shadow-purple-900/50">
-                        Đăng Ký
-                    </button>
-                </form>
-            </div>
-
-            {{-- Decor --}}
-            <div class="absolute top-0 right-0 w-64 h-64 bg-purple-600 rounded-full blur-[100px] opacity-20"></div>
-            <div class="absolute bottom-0 left-0 w-64 h-64 bg-blue-600 rounded-full blur-[100px] opacity-20"></div>
-        </div>
-    </div>
-
 </div>
 @endsection

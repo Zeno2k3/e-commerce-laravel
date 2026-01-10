@@ -230,43 +230,38 @@
         <div class="mt-20" x-data="{ activeTab: 'description' }">
 
             {{-- Tab Headers (Menu chọn tab) --}}
-            <div class="flex gap-8 border-b border-gray-200 mb-8 overflow-x-auto">
+            <div class="flex gap-10 border-b border-gray-200 mb-8 overflow-x-auto">
                 <button @click="activeTab = 'description'"
                         :class="{ 'border-[#7d3cff] text-[#7d3cff]': activeTab === 'description', 'border-transparent text-gray-500 hover:text-gray-800': activeTab !== 'description' }"
-                        class="pb-4 border-b-4 font-bold text-lg whitespace-nowrap transition-colors">
+                        class="pb-4 border-b-4 font-extrabold text-xl whitespace-nowrap transition-colors">
                     Mô tả chi tiết
                 </button>
                 <button @click="activeTab = 'specs'"
                         :class="{ 'border-[#7d3cff] text-[#7d3cff]': activeTab === 'specs', 'border-transparent text-gray-500 hover:text-gray-800': activeTab !== 'specs' }"
-                        class="pb-4 border-b-4 font-bold text-lg whitespace-nowrap transition-colors">
+                        class="pb-4 border-b-4 font-extrabold text-xl whitespace-nowrap transition-colors">
                     Thông số kỹ thuật
                 </button>
                 <button @click="activeTab = 'reviews'"
                         :class="{ 'border-[#7d3cff] text-[#7d3cff]': activeTab === 'reviews', 'border-transparent text-gray-500 hover:text-gray-800': activeTab !== 'reviews' }"
-                        class="pb-4 border-b-4 font-bold text-lg whitespace-nowrap transition-colors">
+                        class="pb-4 border-b-4 font-extrabold text-xl whitespace-nowrap transition-colors">
                     Đánh giá ({{ count($product['reviews']) }})
                 </button>
             </div>
 {{-- Nội dung Tab 1: Mô tả (Đã sửa theo mẫu ảnh yêu cầu) --}}
-            <div x-show="activeTab === 'description'" class="bg-gray-50 rounded-2xl p-8 text-gray-700 leading-relaxed">
+            <div x-show="activeTab === 'description'" class="bg-gray-50 rounded-2xl p-8 text-gray-800 leading-relaxed text-lg">
 
                 {{-- 1. Đoạn giới thiệu chung --}}
                 <div class="mb-6">
-                    <p class="text-400">
-                        {{--
-                           Nếu data của bạn chưa có HTML, bạn có thể hardcode text mẫu giống ảnh
-                           hoặc dùng {!! $product['description'] !!} nếu trong DB đã lưu dạng HTML.
-                           Dưới đây là text demo giống hệt ảnh bạn gửi:
-                        --}}
+                    <p class="font-medium text-gray-700">
                         Áo khoác jean 100% có nón, form regular fit, phù hợp mặc hàng ngày.
                     </p>
                 </div>
 
                 {{-- 2. Phần Đặc điểm nổi bật --}}
-                <div class="space-y-3">
-                    <h4 class="font-bold text-gray-900 text-lg">Đặc điểm nổi bật:</h4>
+                <div class="space-y-4">
+                    <h4 class="font-extrabold text-gray-900 text-xl">Đặc điểm nổi bật:</h4>
 
-                    <ul class="list-disc pl-5 space-y-2 marker:text-gray-400">
+                    <ul class="list-disc pl-5 space-y-3 marker:text-[#7d3cff]">
                         <li>Chất liệu cao cấp, bền đẹp theo thời gian</li>
                         <li>Thiết kế hiện đại, phù hợp nhiều dịp</li>
                         <li>Form dáng chuẩn, tôn dáng người mặc</li>
@@ -274,6 +269,7 @@
                         <li>Chăm sóc đơn giản, giặt máy được</li>
                     </ul>
                 </div>
+            </div>
 
                 {{--
                    LƯU Ý:
@@ -281,7 +277,6 @@
                    bạn nên cài CKEditor hoặc Summernote cho trang Admin để nhập liệu dạng văn bản phong phú (Rich Text).
                    Khi đó ngoài view chỉ cần gọi: {!! $product['description'] !!} là nó tự hiện danh sách đẹp như trên.
                 --}}
-            </div>
 
             {{-- Nội dung Tab 2: Thông số kỹ thuật (Đã chỉnh sửa để hiện dữ liệu thật) --}}
             <div x-show="activeTab === 'specs'" class="bg-gray-50 rounded-2xl p-8 text-gray-700 leading-relaxed" style="display: none;">

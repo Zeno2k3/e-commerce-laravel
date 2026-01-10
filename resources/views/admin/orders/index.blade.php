@@ -39,7 +39,14 @@
                         <td class="px-6 py-4 text-sm text-gray-600">{{ $order->user->full_name ?? 'N/A' }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600">{{ $order->created_at->format('Y-m-d H:i') }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600 text-center">{{ $order->orderDetails->count() ?? 0 }}</td>
-                        <td class="px-6 py-4 text-sm font-medium text-gray-900 text-right">{{ number_format($order->total_amount) }}đ</td>
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900 text-right">
+                            @php
+                                $displayTotal = $order->total_amount > 0 
+                                    ? $order->total_amount 
+                                    : ($order->orderDetails->sum('total_price') + ($order->shipping_fee ?? 0));
+                            @endphp
+                            {{ number_format($displayTotal) }}đ
+                        </td>
                         <td class="px-6 py-4 text-center">
                             @php
                                 $statusColors = [

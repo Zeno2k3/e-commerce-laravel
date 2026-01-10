@@ -106,6 +106,8 @@ class CheckoutController extends Controller
             
             $order->order_date = now();
             $order->shipping_fee = $shippingFee;
+            $order->total_amount = $total; // Save total amount
+            $order->discount_amount = $discount; // Save discount amount
             $order->note = "Khách hàng: {$validated['name']} - SĐT: {$validated['phone']}\n" .
                            "Địa chỉ: {$validated['address']}, {$validated['ward']}, {$validated['district']}, {$validated['province']}\n" .
                            "Ghi chú: " . ($request->note ?? '');
