@@ -108,8 +108,6 @@ class CheckoutController extends Controller
                            "Địa chỉ: {$validated['address']}, {$validated['ward']}, {$validated['district']}, {$validated['province']}\n" .
                            "Ghi chú: " . ($request->note ?? '');
             $order->status = 'pending'; // Trạng thái chờ xử lý
-            $order->total_amount = $total;
-            $order->discount_amount = $discount;
             $order->save();
 
             // 3. Create Order Details

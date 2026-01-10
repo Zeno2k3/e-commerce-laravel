@@ -5,9 +5,25 @@ namespace App\Services;
 use App\Models\Product;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use App\Models\PromotionEvent;
 
 class ProductService
 {
+    private static $activeEvent = null;
+    private static $hasCheckedEvent = false;
+
+    /**
+     * Get active promotion event (Cached per request)
+     */
+    private function getActiveEvent()
+    {
+        if (!self::$hasCheckedEvent) {
+             self::$activeEvent = PromotionEvent::active()->orderBy('discount_percent', 'desc')->first();
+             self::$hasCheckedEvent = true;
+        }
+        return self::$activeEvent;
+    }
+
     /**
      * Transform product từ database sang format component
      * 
@@ -26,7 +42,26 @@ class ProductService
         $oldPrice = $product->old_price;
         
         // Lấy discount từ product (có thể tính từ old_price và variant price)
-        $discount = $product->discount;
+        $discountDiff = $product->discount_percentage;
+        
+        // --- LOGIC APPLY PROMOTION EVENT ---
+        $event = $this->getActiveEvent();
+        if ($event && $event->discount_percent > $discountDiff) {
+            // Sự kiện giảm giá sâu hơn -> Áp dụng sự kiện
+            // Base price calculation:
+            // Nếu có old_price -> dùng old_price làm gốc
+            // Nếu không có old_price -> dùng giá hiện tại làm gốc (coi như giá gốc chưa giảm)
+            
+            $basePrice = ($product->old_price && $product->old_price > 0) ? $product->old_price : $price;
+            
+            // Tính lại giá mới
+            $price = $basePrice * (1 - ($event->discount_percent / 100));
+            $oldPrice = $basePrice; // Ensure old_price displayed
+            $discount = '-' . $event->discount_percent . '%';
+        } else {
+             // Logic cũ
+            $discount = $product->discount;
+        }
         
         // Calculate Rating (Always use relation count to ensure freshness)
         $reviewsCount = $product->reviews->count();
@@ -236,6 +271,21 @@ class ProductService
         $reviewsCount = $product->reviews->count();
         $avgRating = $reviewsCount > 0 ? $product->reviews->avg('rating') : 0;
         
+        // --- LOGIC APPLY PROMOTION EVENT (Synced) ---
+        $event = $this->getActiveEvent();
+        $detailPrice = $firstVariant?->price ?? 0;
+        $detailOldPrice = $product->old_price;
+        $detailDiscount = $product->discount;
+            
+        if ($event && $event->discount_percent > $product->discount_percentage) {
+             // Base price logic synced
+             $basePrice = ($product->old_price && $product->old_price > 0) ? $product->old_price : $detailPrice;
+                
+             $detailPrice = $basePrice * (1 - ($event->discount_percent / 100));
+             $detailOldPrice = $basePrice;
+             $detailDiscount = '-' . $event->discount_percent . '%';
+        }
+
         return [
             'id' => $product->product_id,
             'name' => $product->product_name,
@@ -244,9 +294,10 @@ class ProductService
             'category_id' => $product->category_id,
             'image' => $firstVariant?->url_image ?? 'images/no-image.png',
             'gallery' => $gallery,
-            'price' => $firstVariant?->price ?? 0,
-            'old_price' => $product->old_price,
-            'discount' => $product->discount,
+            'price' => $detailPrice,
+            'old_price' => $detailOldPrice,
+            'discount' => $detailDiscount,
+
             'rating' => $avgRating > 0 ? number_format($avgRating, 1) : 0,
             'reviews_count' => $reviewsCount,
             'variants' => $product->variants,
@@ -257,7 +308,6 @@ class ProductService
                 'brand' => 'FlexStyle',
                 'style' => 'Modern',
             ],
-            'reviews' => $reviews,
             'reviews' => $reviews,
             'related_products' => $relatedProducts,
             'is_favorited' => auth()->check() ? $product->favorites()->where('user_id', auth()->id())->exists() : false,
