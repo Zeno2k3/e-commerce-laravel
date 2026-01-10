@@ -154,8 +154,19 @@ class ProductController extends Controller
                 if ($request->hasFile("variants.$index.url_image")) {
                     $image = $request->file("variants.$index.url_image");
                     $filename = time() . '_' . $index . '_' . $image->getClientOriginalName();
-                    $image->move(public_path('storage/products'), $filename);
-                    $imageUrl = 'storage/products/' . $filename;
+                    
+                    try {
+                         $image->move(public_path('storage/products'), $filename);
+                         $imageUrl = 'storage/products/' . $filename;
+                         \Log::info("Uploaded image for variant $index: $imageUrl");
+                    } catch (\Exception $e) {
+                         \Log::error("Failed to move image: " . $e->getMessage());
+                    }
+                } else {
+                     // Check if file key exists but hasFile is false
+                     if (isset($request->all()['variants'][$index]['url_image'])) {
+                          \Log::warning("File key exists for variants.$index.url_image but hasFile is false. Value: " . json_encode($request->all()['variants'][$index]['url_image']));
+                     }
                 }
 
                 if (isset($variantData['id'])) {
@@ -196,6 +207,17 @@ class ProductController extends Controller
         }
 
         return redirect()->route('admin.products.index')->with('success', 'Cập nhật thành công!');
+    }
+
+    public function quickUpdateCategory(Request $request, Product $product)
+    {
+        $validated = $request->validate([
+            'category_id' => 'required|exists:category,category_id'
+        ]);
+
+        $product->update(['category_id' => $validated['category_id']]);
+
+        return redirect()->back()->with('success', 'Cập nhật danh mục thành công!');
     }
 
     public function destroy(Product $product)

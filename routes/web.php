@@ -143,6 +143,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
         Route::post('/', [ProductController::class, 'store'])->name('admin.products.store');
         Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
         Route::put('/{product}', [ProductController::class, 'update'])->name('admin.products.update');
+        Route::patch('/{product}/category', [ProductController::class, 'quickUpdateCategory'])->name('admin.products.update.category');
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
     });
     

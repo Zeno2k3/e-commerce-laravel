@@ -40,9 +40,14 @@
                         @foreach($products as $product)
                             @php
                                 $firstVariant = $product->variants->first();
-                                $imageUrl = $firstVariant && $firstVariant->url_image 
-                                    ? asset($firstVariant->url_image) 
+                                $variantWithImage = $product->variants->first(function ($variant) {
+                                    return !empty($variant->url_image);
+                                });
+                                
+                                $imageUrl = $variantWithImage && $variantWithImage->url_image 
+                                    ? asset($variantWithImage->url_image) 
                                     : 'https://placehold.co/600x400?text=No+Image';
+                                    
                                 $price = $firstVariant ? number_format($firstVariant->price, 0, ',', '.') . ' đ' : 'Liên hệ';
                                 $color = $firstVariant ? $firstVariant->color : '-';
                                 $variantCount = $product->variants->count();
@@ -178,20 +183,30 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Danh mục</label>
-                                <select name="category_id" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
-                                    <option value="">-- Chọn danh mục --</option>
-                                    @foreach($categories as $cat)
-                                        <option value="{{ $cat->category_id }}">{{ $cat->category_name }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="relative">
+                                    <select name="category_id" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none appearance-none">
+                                        <option value="">-- Chọn danh mục --</option>
+                                        @foreach($categories as $cat)
+                                            <option value="{{ $cat->category_id }}">{{ $cat->category_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </div>
+                                </div>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Loại sản phẩm <span class="text-red-500">*</span></label>
-                                <select name="product_type" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
-                                    <option value="nam" {{ old('product_type') == 'nam' ? 'selected' : '' }}>Nam</option>
-                                    <option value="nu" {{ old('product_type') == 'nu' ? 'selected' : '' }}>Nữ</option>
-                                    <option value="phu-kien" {{ old('product_type') == 'phu-kien' ? 'selected' : '' }}>Phụ kiện</option>
-                                </select>
+                                <div class="relative">
+                                    <select name="product_type" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none appearance-none">
+                                        <option value="nam" {{ old('product_type') == 'nam' ? 'selected' : '' }}>Nam</option>
+                                        <option value="nu" {{ old('product_type') == 'nu' ? 'selected' : '' }}>Nữ</option>
+                                        <option value="phu-kien" {{ old('product_type') == 'phu-kien' ? 'selected' : '' }}>Phụ kiện</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </div>
+                                </div>
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Mô tả</label>
@@ -328,20 +343,30 @@
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Danh mục</label>
-                                    <select id="edit_category_id" name="category_id" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
-                                        <option value="">-- Chọn danh mục --</option>
-                                        @foreach($categories as $cat)
-                                            <option value="{{ $cat->category_id }}">{{ $cat->category_name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div class="relative">
+                                        <select id="edit_category_id" name="category_id" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none appearance-none">
+                                            <option value="">-- Chọn danh mục --</option>
+                                            @foreach($categories as $cat)
+                                                <option value="{{ $cat->category_id }}">{{ $cat->category_name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
+                                            <i class="fa-solid fa-chevron-down"></i>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Loại sản phẩm <span class="text-red-500">*</span></label>
-                                    <select id="edit_product_type" name="product_type" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
-                                        <option value="nam">Nam</option>
-                                        <option value="nu">Nữ</option>
-                                        <option value="phu-kien">Phụ kiện</option>
-                                    </select>
+                                    <div class="relative">
+                                        <select id="edit_product_type" name="product_type" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none appearance-none">
+                                            <option value="nam">Nam</option>
+                                            <option value="nu">Nữ</option>
+                                            <option value="phu-kien">Phụ kiện</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
+                                            <i class="fa-solid fa-chevron-down"></i>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="md:col-span-2">
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Mô tả</label>

@@ -207,7 +207,7 @@
                 <h3 class="text-xl font-bold text-gray-900">Thay đổi danh mục</h3>
             </div>
             <form id="categoryForm" method="POST">
-                @csrf @method('PUT')
+                @csrf @method('PATCH')
                 <div class="px-6 py-6">
                     <x-admin.select name="category_id" label="Chọn danh mục" :options="$categories->pluck('category_name', 'category_id')->toArray()" />
                 </div>
@@ -226,7 +226,7 @@
 
 <script>
     function openCategoryModal(productId, currentCategoryId) {
-        document.getElementById('categoryForm').action = '/admin/products/' + productId;
+        document.getElementById('categoryForm').action = '/admin/products/' + productId + '/category';
         if(currentCategoryId) {
             document.querySelector('#categoryModal select[name="category_id"]').value = currentCategoryId;
         }
