@@ -3,7 +3,7 @@
 @section('content')
 
 @php
-    [cite_start]// Dữ liệu giả lập sản phẩm cho Trang 8 [cite: 139-151]
+    // Dữ liệu giả lập sản phẩm cho Trang 8
     $featured_products = [
         [
             'id' => 1,
@@ -51,7 +51,7 @@
 {{-- Nền xám nhạt đồng bộ --}}
 <div class="bg-[#f9fafb] min-h-screen font-sans pb-20 overflow-x-hidden">
 
-    [cite_start]{{-- 1. HERO SECTION (BANNER) [cite: 117-124] --}}
+    {{-- 1. HERO SECTION (BANNER) --}}
     <div class="container mx-auto px-4 py-12 md:py-20">
         <div class="flex flex-col md:flex-row items-center gap-12">
             {{-- Text Content --}}
@@ -148,7 +148,7 @@
             </div>
         </div>
     </div>
-    [cite_start]{{-- 3. SẢN PHẨM NỔI BẬT [cite: 134-152] --}}
+    {{-- 3. SẢN PHẨM NỔI BẬT --}}
     <div class="container mx-auto px-4 mb-20">
         {{-- Tiêu đề Section: text-3xl font-bold center --}}
         <div class="text-center mb-12">
@@ -206,7 +206,7 @@
         </div>
     </div>
 
-    [cite_start]{{-- 4. DANH MỤC (BANNER LỚN) [cite: 153-154] --}}
+    {{-- 4. DANH MỤC (BANNER LỚN) --}}
     <div class="container mx-auto px-4 mb-20">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             {{-- Nam --}}
@@ -235,7 +235,7 @@
         </div>
     </div>
 
-    [cite_start]{{-- 5. NEWSLETTER (FORM ĐĂNG KÝ) [cite: 156-160] --}}
+    {{-- 5. NEWSLETTER (FORM ĐĂNG KÝ) --}}
     <div class="container mx-auto px-4">
         {{-- Sử dụng style background tối màu rounded-[3rem] như mẫu --}}
         <div class="bg-gray-900 rounded-[3rem] p-12 md:p-16 text-white shadow-2xl shadow-purple-200 relative overflow-hidden text-center">
